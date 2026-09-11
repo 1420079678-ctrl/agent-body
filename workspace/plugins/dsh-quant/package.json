@@ -1,0 +1,93 @@
+{
+  "name": "dsh-quant",
+  "version": "0.90.0",
+  "description": "🐳 The Everything-Plugin Quant OS — AI-native & DSH-native: 46 tools, 6 pluggable domains (data/alpha/ML/risk/execution), one end-to-end PDAT→PET pipeline. Methods open, secrets internal.",
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "quant",
+    "trading",
+    "technical-analysis",
+    "indicators",
+    "backtest"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "mcp",
+    "docs",
+    "log",
+    "skill",
+    "tool-use",
+    "memory",
+    "rag",
+    "benchmark",
+    "eval",
+    "plan",
+    "README.md",
+    "NEWS.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "demos",
+    "quant-history",
+    "quant-repo",
+    "plugin",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "cli"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test:unit": "tsx --test tests/*.spec.ts",
+    "test:loader": "tsx --test tests/loader-composition.spec.ts",
+    "test:verify": "tsx verify.ts",
+    "test": "npm run build && npm run typecheck && npm run test:unit",
+    "prepublishOnly": "npm run build && npm test",
+    "gen:tools": "tsx scripts/gen-tools-json.ts",
+    "typecheck": "tsc --noEmit",
+    "bench": "tsx benchmark/smoke.ts",
+    "test:cov": "node --experimental-test-coverage --import tsx --test tests/*.spec.ts"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/dsh-system-prompt": "^0.1.0-rc.5",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.5"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/cordis-plugin-include": "^1.0.6",
+    "@deepseek-ai/cordis-plugin-loader": "^1.0.2",
+    "@deepseek-ai/dsh-system-prompt": "^0.1.0-rc.5",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.5",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "bin": {
+    "dsh-quant": "./cli/main.mjs"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "dependencies": {
+    "undici": "^8.10.0"
+  }
+}

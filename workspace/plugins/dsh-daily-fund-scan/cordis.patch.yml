@@ -1,0 +1,4 @@
+# dsh bundle patch: inserts the daily fund scan plugin into the profile layer stack.
+- insert:
+    - id: dsh-daily-fund-scan
+      name: '@dsh-external/dsh-daily-fund-scan'

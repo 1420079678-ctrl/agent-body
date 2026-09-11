@@ -1,0 +1,600 @@
+/**
+ * 回测纯函数（零 dsh 依赖，可独立测试）。
+ *
+ * 策略：双均线交叉——fast SMA 上穿 slow SMA 时全仓买入，下穿时清仓。
+ * 信号在 bar i 确认，在 bar i+1 以收盘价成交（避免未来函数）。
+ * 输出含交易列表、资金曲线、总收益、最大回撤、夏普比率（年化假设 365 根/年）。
+ */
+
+export interface BacktestTrade {
+  /** 入场 bar 索引（信号确认的下一根） */
+  entryIndex: number
+  /** 入场价 */
+  entryPrice: number
+  /** 出场 bar 索引 */
+  exitIndex: number | null
+  /** 出场价（null = 持仓到末尾未平仓） */
+  exitPrice: number | null
+  /** 该笔收益（含手续费后的净收益率） */
+  returnPct: number | null
+  /** 出场原因：策略信号 / 止损 / 止盈 */
+  exitReason?: 'signal' | 'stop_loss' | 'take_profit'
+}
+
+export interface BacktestOutput {
+  totalReturnPct: number
+  maxDrawdownPct: number
+  sharpe: number
+  /** 与输入等长：1 表示满仓，0 表示空仓 */
+  position: (0 | 1)[]
+  /** 与输入等长的归一化资金曲线（初始 1） */
+  equityCurve: number[]
+  trades: BacktestTrade[]
+  fast: number
+  slow: number
+  feeRate: number
+}
+
+/**
+ * 双均线交叉回测。要求 fast < slow，feeRate >= 0。
+ * 若序列尾部仍持仓，最后一笔交易的 exitIndex/exitPrice/returnPct 为 null（未平仓）。
+ */
+export function backtestMaCross(
+  close: readonly number[],
+  fast: number,
+  slow: number,
+  feeRate: number,
+  stopLoss?: number,
+  takeProfit?: number,
+): BacktestOutput {
+  if (!Number.isInteger(fast) || fast < 1) throw new RangeError(`fast must be a positive integer, got ${fast}`)
+  if (!Number.isInteger(slow) || slow < 1) throw new RangeError(`slow must be a positive integer, got ${slow}`)
+  if (fast >= slow) throw new RangeError('fast must be < slow')
+  if (!Number.isFinite(feeRate) || feeRate < 0) throw new RangeError(`feeRate must be >= 0, got ${feeRate}`)
+  if (stopLoss !== undefined && (!Number.isFinite(stopLoss) || stopLoss <= 0 || stopLoss >= 1)) {
+    throw new RangeError(`stopLoss must be in (0, 1), got ${stopLoss}`)
+  }
+  if (takeProfit !== undefined && (!Number.isFinite(takeProfit) || takeProfit <= 0)) {
+    throw new RangeError(`takeProfit must be > 0, got ${takeProfit}`)
+  }
+
+  const n = close.length
+  if (n === 0) {
+    return {
+      totalReturnPct: 0, maxDrawdownPct: 0, sharpe: 0,
+      position: [], equityCurve: [], trades: [], fast, slow, feeRate,
+    }
+  }
+  const fastMa = smaArray(close, fast)
+  const slowMa = smaArray(close, slow)
+
+  const position: (0 | 1)[] = new Array(n).fill(0)
+  const equityCurve: number[] = new Array(n).fill(1)
+  const trades: BacktestTrade[] = []
+
+  let cash = 1 // 归一化资金
+  let holding = false
+  let entryIndex: number | null = null
+  let entryPrice = 0
+  let pendingEntry = false
+  let pendingExit = false
+
+  for (let i = 0; i < n; i++) {
+    // 1) 成交上一根 bar 确认的信号（bar i+1 收盘价成交）
+    if (pendingEntry && !holding) {
+      holding = true
+      entryIndex = i
+      entryPrice = close[i]!
+      cash *= 1 - feeRate
+    }
+    if (pendingExit && holding) {
+      const exitPrice = close[i]!
+      cash *= 1 - feeRate
+      trades.push({
+        entryIndex: entryIndex!,
+        entryPrice,
+        exitIndex: i,
+        exitPrice,
+        returnPct: exitPrice / entryPrice - 1,
+        exitReason: 'signal',
+      })
+      holding = false
+      entryIndex = null
+    }
+    if (holding) {
+      const reason = stopTargetReason(close, i, entryPrice, stopLoss, takeProfit)
+      if (reason !== undefined) {
+        const exitPrice = close[i]!
+        cash *= 1 - feeRate
+        trades.push({
+          entryIndex: entryIndex!,
+          entryPrice,
+          exitIndex: i,
+          exitPrice,
+          returnPct: exitPrice / entryPrice - 1,
+          exitReason: reason,
+        })
+        holding = false
+        entryIndex = null
+      }
+    }
+    pendingEntry = false
+    pendingExit = false
+
+    // 2) 本根确认交叉信号（下一根成交）
+    const prevValid = i > 0 && fastMa[i - 1] !== null && slowMa[i - 1] !== null
+    const curValid = fastMa[i] !== null && slowMa[i] !== null
+    if (prevValid && curValid) {
+      const prevFast = fastMa[i - 1]!
+      const prevSlow = slowMa[i - 1]!
+      const curFast = fastMa[i]!
+      const curSlow = slowMa[i]!
+      const crossUp = prevFast <= prevSlow && curFast > curSlow
+      const crossDown = prevFast >= prevSlow && curFast < curSlow
+      if (crossUp && !holding) pendingEntry = true
+      else if (crossDown && holding) pendingExit = true
+    }
+
+    // 3) 记录本根持仓与市值
+    position[i] = holding ? 1 : 0
+    equityCurve[i] = holding ? cash * (close[i]! / entryPrice) : cash
+  }
+
+  // 尾部未平仓：记录 open trade
+  if (holding) {
+    trades.push({
+      entryIndex: entryIndex!,
+      entryPrice,
+      exitIndex: null,
+      exitPrice: null,
+      returnPct: null,
+    })
+  }
+
+  const totalReturnPct = (equityCurve[n - 1]! - 1) * 100
+  const maxDrawdownPct = computeMaxDrawdown(equityCurve)
+  const sharpe = computeSharpe(equityCurve)
+  return { totalReturnPct, maxDrawdownPct, sharpe, position, equityCurve, trades, fast, slow, feeRate }
+}
+
+/** 简单移动平均（与 indicators.ts 相同语义，内部复用避免跨文件依赖）。 */
+function smaArray(values: readonly number[], window: number): (number | null)[] {
+  const out: (number | null)[] = new Array(values.length).fill(null)
+  if (values.length < window) return out
+  let sum = 0
+  for (let i = 0; i < window; i++) sum += values[i]!
+  out[window - 1] = sum / window
+  for (let i = window; i < values.length; i++) {
+    sum += values[i]! - values[i - window]!
+    out[i] = sum / window
+  }
+  return out
+}
+
+/** 检查持仓中 bar i 是否触发止损/止盈；触发返回原因。 */
+function stopTargetReason(
+  close: readonly number[],
+  i: number,
+  entryPrice: number,
+  stopLoss: number | undefined,
+  takeProfit: number | undefined,
+): 'stop_loss' | 'take_profit' | undefined {
+  if (stopLoss !== undefined && close[i]! <= entryPrice * (1 - stopLoss)) return 'stop_loss'
+  if (takeProfit !== undefined && close[i]! >= entryPrice * (1 + takeProfit)) return 'take_profit'
+  return undefined
+}
+
+function computeMaxDrawdown(equity: readonly number[]): number {
+  let peak = -Infinity
+  let maxDd = 0
+  for (const v of equity) {
+    if (v > peak) peak = v
+    const dd = (peak - v) / peak
+    if (dd > maxDd) maxDd = dd
+  }
+  return maxDd * 100
+}
+
+function computeSharpe(equity: readonly number[]): number {
+  if (equity.length < 2) return 0
+  const returns: number[] = []
+  for (let i = 1; i < equity.length; i++) {
+    returns.push(equity[i]! / equity[i - 1]! - 1)
+  }
+  const mean = returns.reduce((a, b) => a + b, 0) / returns.length
+  const variance = returns.reduce((a, r) => a + (r - mean) ** 2, 0) / returns.length
+  const std = Math.sqrt(variance)
+  if (std === 0) return 0
+  // 年化：假设日频（365），sqrt(365)
+  return (mean / std) * Math.sqrt(365)
+}
+
+export interface GridResult {
+  fast: number
+  slow: number
+  totalReturnPct: number
+  maxDrawdownPct: number
+  sharpe: number
+  trades: number
+}
+
+export interface BacktestGridOutput {
+  /** 按总收益降序排列的所有组合结果 */
+  results: GridResult[]
+  /** 总收益最高的组合 */
+  best: GridResult
+  fastRange: { min: number; max: number }
+  slowRange: { min: number; max: number }
+  feeRate: number
+}
+
+/**
+ * 双均线参数网格搜索：对 fast ∈ [fastMin, fastMax]、slow ∈ [slowMin, slowMax]
+ * 的每个 (fast, slow) 组合（要求 fast < slow）跑 backtestMaCross，
+ * 返回按总收益降序的结果列表与最佳组合。纯计算，零依赖。
+ */
+export function backtestGrid(
+  close: readonly number[],
+  fastMin: number,
+  fastMax: number,
+  slowMin: number,
+  slowMax: number,
+  feeRate: number,
+): BacktestGridOutput {
+  for (const [v, name] of [[fastMin, 'fastMin'], [fastMax, 'fastMax'], [slowMin, 'slowMin'], [slowMax, 'slowMax']] as const) {
+    if (!Number.isInteger(v) || v < 1) throw new RangeError(`${name} must be a positive integer, got ${v}`)
+  }
+  if (fastMin > fastMax) throw new RangeError('fastMin must be <= fastMax')
+  if (slowMin > slowMax) throw new RangeError('slowMin must be <= slowMax')
+  if (!Number.isFinite(feeRate) || feeRate < 0) throw new RangeError(`feeRate must be >= 0, got ${feeRate}`)
+
+  const results: GridResult[] = []
+  for (let fast = fastMin; fast <= fastMax; fast++) {
+    for (let slow = slowMin; slow <= slowMax; slow++) {
+      if (fast >= slow) continue // 非法组合跳过
+      const out = backtestMaCross(close, fast, slow, feeRate)
+      results.push({
+        fast,
+        slow,
+        totalReturnPct: out.totalReturnPct,
+        maxDrawdownPct: out.maxDrawdownPct,
+        sharpe: out.sharpe,
+        trades: out.trades.length,
+      })
+    }
+  }
+  results.sort((a, b) => b.totalReturnPct - a.totalReturnPct)
+  if (results.length === 0) {
+    throw new RangeError('no valid (fast, slow) combinations in the given ranges')
+  }
+  return {
+    results,
+    best: results[0]!,
+    fastRange: { min: fastMin, max: fastMax },
+    slowRange: { min: slowMin, max: slowMax },
+    feeRate,
+  }
+}
+
+/**
+ * 布林带突破策略：收盘价上穿上轨买入；下穿中轨（SMA）或止损/止盈卖出。
+ * 信号 bar i 确认、i+1 收盘成交（无未来函数）。
+ */
+export function backtestBollingerBreakout(
+  close: readonly number[],
+  window: number,
+  multiplier: number,
+  feeRate: number,
+  stopLoss?: number,
+  takeProfit?: number,
+): BacktestOutput {
+  if (!Number.isInteger(window) || window < 1) throw new RangeError(`window must be a positive integer, got ${window}`)
+  if (!Number.isFinite(multiplier) || multiplier <= 0) throw new RangeError(`multiplier must be > 0, got ${multiplier}`)
+  if (!Number.isFinite(feeRate) || feeRate < 0) throw new RangeError(`feeRate must be >= 0, got ${feeRate}`)
+  if (stopLoss !== undefined && (!Number.isFinite(stopLoss) || stopLoss <= 0 || stopLoss >= 1)) {
+    throw new RangeError(`stopLoss must be in (0, 1), got ${stopLoss}`)
+  }
+  if (takeProfit !== undefined && (!Number.isFinite(takeProfit) || takeProfit <= 0)) {
+    throw new RangeError(`takeProfit must be > 0, got ${takeProfit}`)
+  }
+
+  const n = close.length
+  if (n === 0) {
+    return { totalReturnPct: 0, maxDrawdownPct: 0, sharpe: 0, position: [], equityCurve: [], trades: [], fast: 0, slow: window, feeRate }
+  }
+  const mid = smaArray(close, window)
+  const upper: (number | null)[] = new Array(n).fill(null)
+  const lower: (number | null)[] = new Array(n).fill(null)
+  for (let i = window - 1; i < n; i++) {
+    let sum = 0
+    let sumSq = 0
+    for (let j = i - window + 1; j <= i; j++) {
+      sum += close[j]!
+      sumSq += close[j]! * close[j]!
+    }
+    const mean = sum / window
+    const std = Math.sqrt(Math.max(sumSq / window - mean * mean, 0))
+    upper[i] = mean + multiplier * std
+    lower[i] = mean - multiplier * std
+  }
+
+  const position: (0 | 1)[] = new Array(n).fill(0)
+  const equityCurve: number[] = new Array(n).fill(1)
+  const trades: BacktestTrade[] = []
+  let cash = 1
+  let holding = false
+  let entryIndex: number | null = null
+  let entryPrice = 0
+  let pendingEntry = false
+  let pendingExit = false
+
+  for (let i = 0; i < n; i++) {
+    if (pendingEntry && !holding) {
+      holding = true
+      entryIndex = i
+      entryPrice = close[i]!
+      cash *= 1 - feeRate
+    }
+    if (pendingExit && holding) {
+      const exitPrice = close[i]!
+      cash *= 1 - feeRate
+      trades.push({ entryIndex: entryIndex!, entryPrice, exitIndex: i, exitPrice, returnPct: exitPrice / entryPrice - 1, exitReason: 'signal' })
+      holding = false
+      entryIndex = null
+    }
+    if (holding) {
+      const reason = stopTargetReason(close, i, entryPrice, stopLoss, takeProfit)
+      if (reason !== undefined) {
+        const exitPrice = close[i]!
+        cash *= 1 - feeRate
+        trades.push({ entryIndex: entryIndex!, entryPrice, exitIndex: i, exitPrice, returnPct: exitPrice / entryPrice - 1, exitReason: reason })
+        holding = false
+        entryIndex = null
+      }
+    }
+    pendingEntry = false
+    pendingExit = false
+
+    const prevValid = i > 0 && upper[i - 1] !== null && mid[i - 1] !== null
+    const curValid = upper[i] !== null && mid[i] !== null
+    if (prevValid && curValid) {
+      const crossUp = close[i - 1]! <= upper[i - 1]! && close[i]! > upper[i]!
+      const crossDownMid = close[i - 1]! >= mid[i - 1]! && close[i]! < mid[i]!
+      if (crossUp && !holding) pendingEntry = true
+      else if (crossDownMid && holding) pendingExit = true
+    }
+
+    position[i] = holding ? 1 : 0
+    equityCurve[i] = holding ? cash * (close[i]! / entryPrice) : cash
+  }
+
+  if (holding) {
+    trades.push({ entryIndex: entryIndex!, entryPrice, exitIndex: null, exitPrice: null, returnPct: null })
+  }
+  const totalReturnPct = (equityCurve[n - 1]! - 1) * 100
+  const maxDrawdownPct = computeMaxDrawdown(equityCurve)
+  const sharpe = computeSharpe(equityCurve)
+  return { totalReturnPct, maxDrawdownPct, sharpe, position, equityCurve, trades, fast: 0, slow: window, feeRate }
+}
+
+/**
+ * RSI 均值回归策略：RSI 上穿 buyBelow 买入；RSI 下穿 sellAbove 卖出；止损/止盈可配。
+ * 信号 bar i 确认、i+1 收盘成交（无未来函数）。
+ */
+export function backtestRsiReversion(
+  close: readonly number[],
+  rsiWindow: number,
+  buyBelow: number,
+  sellAbove: number,
+  feeRate: number,
+  stopLoss?: number,
+  takeProfit?: number,
+): BacktestOutput {
+  if (!Number.isInteger(rsiWindow) || rsiWindow < 1) throw new RangeError(`rsiWindow must be a positive integer, got ${rsiWindow}`)
+  if (!Number.isFinite(buyBelow) || buyBelow <= 0 || buyBelow >= 100) throw new RangeError(`buyBelow must be in (0, 100), got ${buyBelow}`)
+  if (!Number.isFinite(sellAbove) || sellAbove <= 0 || sellAbove >= 100 || sellAbove <= buyBelow) {
+    throw new RangeError(`sellAbove must be in (buyBelow, 100), got ${sellAbove}`)
+  }
+  if (!Number.isFinite(feeRate) || feeRate < 0) throw new RangeError(`feeRate must be >= 0, got ${feeRate}`)
+  if (stopLoss !== undefined && (!Number.isFinite(stopLoss) || stopLoss <= 0 || stopLoss >= 1)) {
+    throw new RangeError(`stopLoss must be in (0, 1), got ${stopLoss}`)
+  }
+  if (takeProfit !== undefined && (!Number.isFinite(takeProfit) || takeProfit <= 0)) {
+    throw new RangeError(`takeProfit must be > 0, got ${takeProfit}`)
+  }
+
+  const n = close.length
+  if (n === 0) {
+    return { totalReturnPct: 0, maxDrawdownPct: 0, sharpe: 0, position: [], equityCurve: [], trades: [], fast: 0, slow: rsiWindow, feeRate }
+  }
+  // 本地 RSI（Wilder，与 indicators 一致语义）
+  const rsiArr = localRsi(close, rsiWindow)
+
+  const position: (0 | 1)[] = new Array(n).fill(0)
+  const equityCurve: number[] = new Array(n).fill(1)
+  const trades: BacktestTrade[] = []
+  let cash = 1
+  let holding = false
+  let entryIndex: number | null = null
+  let entryPrice = 0
+  let pendingEntry = false
+  let pendingExit = false
+
+  for (let i = 0; i < n; i++) {
+    if (pendingEntry && !holding) {
+      holding = true
+      entryIndex = i
+      entryPrice = close[i]!
+      cash *= 1 - feeRate
+    }
+    if (pendingExit && holding) {
+      const exitPrice = close[i]!
+      cash *= 1 - feeRate
+      trades.push({ entryIndex: entryIndex!, entryPrice, exitIndex: i, exitPrice, returnPct: exitPrice / entryPrice - 1, exitReason: 'signal' })
+      holding = false
+      entryIndex = null
+    }
+    if (holding) {
+      const reason = stopTargetReason(close, i, entryPrice, stopLoss, takeProfit)
+      if (reason !== undefined) {
+        const exitPrice = close[i]!
+        cash *= 1 - feeRate
+        trades.push({ entryIndex: entryIndex!, entryPrice, exitIndex: i, exitPrice, returnPct: exitPrice / entryPrice - 1, exitReason: reason })
+        holding = false
+        entryIndex = null
+      }
+    }
+    pendingEntry = false
+    pendingExit = false
+
+    const prevValid = i > 0 && rsiArr[i - 1] !== null && rsiArr[i] !== null
+    if (prevValid) {
+      const crossUp = rsiArr[i - 1]! <= buyBelow && rsiArr[i]! > buyBelow
+      const crossDown = rsiArr[i - 1]! >= sellAbove && rsiArr[i]! < sellAbove
+      if (crossUp && !holding) pendingEntry = true
+      else if (crossDown && holding) pendingExit = true
+    }
+
+    position[i] = holding ? 1 : 0
+    equityCurve[i] = holding ? cash * (close[i]! / entryPrice) : cash
+  }
+
+  if (holding) {
+    trades.push({ entryIndex: entryIndex!, entryPrice, exitIndex: null, exitPrice: null, returnPct: null })
+  }
+  const totalReturnPct = (equityCurve[n - 1]! - 1) * 100
+  const maxDrawdownPct = computeMaxDrawdown(equityCurve)
+  const sharpe = computeSharpe(equityCurve)
+  return { totalReturnPct, maxDrawdownPct, sharpe, position, equityCurve, trades, fast: 0, slow: rsiWindow, feeRate }
+}
+
+/** 本地 Wilder RSI（避免跨文件依赖）。 */
+function localRsi(values: readonly number[], window: number): (number | null)[] {
+  const n = values.length
+  const out: (number | null)[] = new Array(n).fill(null)
+  if (n < window + 1) return out
+  const deltas: number[] = []
+  for (let i = 1; i < n; i++) deltas.push(values[i]! - values[i - 1]!)
+  let avgGain = 0
+  let avgLoss = 0
+  for (let i = 0; i < window; i++) {
+    const d = deltas[i]!
+    if (d >= 0) avgGain += d
+    else avgLoss -= d
+  }
+  avgGain /= window
+  avgLoss /= window
+  out[window] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss)
+  for (let i = window; i < deltas.length; i++) {
+    const d = deltas[i]!
+    avgGain = (avgGain * (window - 1) + Math.max(d, 0)) / window
+    avgLoss = (avgLoss * (window - 1) + Math.max(-d, 0)) / window
+    out[i + 1] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss)
+  }
+  return out
+}
+
+export interface PortfolioAsset {
+  name: string
+  close: readonly number[]
+}
+
+export interface BacktestPortfolioOutput {
+  totalReturnPct: number
+  maxDrawdownPct: number
+  sharpe: number
+  /** 归一化组合净值（初始 1） */
+  equityCurve: number[]
+  assetNames: string[]
+  /** 最终持仓权重（按市值） */
+  finalWeights: number[]
+  /** 执行的再平衡次数 */
+  rebalances: number
+  feeRate: number
+}
+
+/**
+ * 多资产组合回测：初始按权重建仓，可每 rebalanceEvery 根再平衡回目标权重。
+ * 初始建仓与每次再平衡按交易金额双边收取 feeRate。
+ */
+export function backtestPortfolio(
+  assets: readonly PortfolioAsset[],
+  weights: readonly number[] | undefined,
+  rebalanceEvery: number | undefined,
+  feeRate: number,
+): BacktestPortfolioOutput {
+  if (assets.length === 0) throw new RangeError('assets must not be empty')
+  const n = assets[0]!.close.length
+  for (const a of assets) {
+    if (a.close.length !== n) throw new RangeError(`asset ${a.name}: close length ${a.close.length} != ${n}`)
+  }
+  if (n === 0) {
+    return { totalReturnPct: 0, maxDrawdownPct: 0, sharpe: 0, equityCurve: [], assetNames: assets.map(a => a.name), finalWeights: [], rebalances: 0, feeRate }
+  }
+  const w = weights ?? assets.map(() => 1 / assets.length)
+  if (w.length !== assets.length) throw new RangeError(`weights length ${w.length} != assets ${assets.length}`)
+  const wSum = w.reduce((a, b) => a + b, 0)
+  if (Math.abs(wSum - 1) > 1e-9) throw new RangeError(`weights must sum to 1, got ${wSum}`)
+  for (const x of w) {
+    if (!Number.isFinite(x) || x < 0) throw new RangeError(`weight must be >= 0 finite, got ${x}`)
+  }
+  if (rebalanceEvery !== undefined && (!Number.isInteger(rebalanceEvery) || rebalanceEvery < 1)) {
+    throw new RangeError(`rebalanceEvery must be a positive integer, got ${rebalanceEvery}`)
+  }
+  if (!Number.isFinite(feeRate) || feeRate < 0) throw new RangeError(`feeRate must be >= 0, got ${feeRate}`)
+
+  const equityCurve: number[] = new Array(n).fill(1)
+  // 归一化现金建仓：总资金 1
+  let cash = 1
+  // shares[i] = 持有 i 资产股数
+  const shares: number[] = new Array(assets.length).fill(0)
+  let rebalances = 0
+
+  const portfolioValue = (i: number): number => {
+    let v = 0
+    for (let k = 0; k < assets.length; k++) v += shares[k]! * assets[k]!.close[i]!
+    return v + cash
+  }
+  const rebalance = (i: number): void => {
+    const total = portfolioValue(i)
+    // 两遍：先全部卖出回笼现金，再全部买入（顺序无关；费用从净值扣除，允许短暂负现金）
+    for (let k = 0; k < assets.length; k++) {
+      const target = total * w[k]!
+      const current = shares[k]! * assets[k]!.close[i]!
+      const delta = target - current
+      if (delta < 0) {
+        shares[k] += delta / assets[k]!.close[i]!
+        cash -= delta * (1 - feeRate)
+      }
+    }
+    for (let k = 0; k < assets.length; k++) {
+      const target = total * w[k]!
+      const current = shares[k]! * assets[k]!.close[i]!
+      const delta = target - current
+      if (delta > 0) {
+        shares[k] += delta / assets[k]!.close[i]!
+        cash -= delta * (1 + feeRate)
+      }
+    }
+    rebalances++
+  }
+
+  // 初始建仓（第 0 根）：投资额预扣手续费，总花费恰为 1
+  for (let k = 0; k < assets.length; k++) {
+    const invest = w[k]! / (1 + feeRate)
+    shares[k] = invest / assets[k]!.close[0]!
+    cash -= w[k]!
+  }
+  for (let i = 0; i < n; i++) {
+    if (i > 0 && rebalanceEvery !== undefined && i % rebalanceEvery === 0) {
+      rebalance(i)
+    }
+    equityCurve[i] = portfolioValue(i)
+  }
+  const totalReturnPct = (equityCurve[n - 1]! - 1) * 100
+  const maxDrawdownPct = computeMaxDrawdown(equityCurve)
+  const sharpe = computeSharpe(equityCurve)
+  const finalTotal = equityCurve[n - 1]!
+  const finalWeights = assets.map((a, k) => (finalTotal === 0 ? 0 : (shares[k]! * a.close[n - 1]!) / finalTotal))
+  return { totalReturnPct, maxDrawdownPct, sharpe, equityCurve, assetNames: assets.map(a => a.name), finalWeights, rebalances, feeRate }
+}

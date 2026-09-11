@@ -1,0 +1,99 @@
+name: Bug report
+description: Something in the harness, an organ, or a regression script did not behave as documented.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please paste **real output** — a bug report without a reproduction is a guess,
+        and this project treats evidence as the minimum bar.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      description: Output of `git rev-parse --short HEAD`, or the release tag.
+      placeholder: "0.1.0 / 9aee9caa"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it happen?
+      options:
+        - Host (the harness itself, app/)
+        - Organ (a plugin under workspace/plugins/)
+        - Web GUI
+        - Regression script / CI
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: organ
+    attributes:
+      label: Which organ?
+      description: e.g. dsh-organism, dsh-cortex, dsh-web-crawl. Leave empty if not organ-specific.
+      placeholder: "dsh-organism"
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Paste the actual output, including any error text.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Exact commands or GUI actions, in order. Minimal is better.
+      placeholder: |
+        1. launch `npm run start:web`
+        2. call `body_status`
+        3. ...
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: vitals
+    attributes:
+      label: Vital signs (optional)
+      description: Output of `body_status` and, if relevant, `body_heal` — it usually answers the question faster than a description.
+      render: shell
+    validations:
+      required: false
+
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: OS build, Node version, and whether anything is running in a sandbox.
+      placeholder: "Windows 11 26200 · Node 24.19.0 · PowerShell 7.6.5"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for the same symptom.
+          required: true
+        - label: I removed credentials and personal data from everything pasted above.
+          required: true

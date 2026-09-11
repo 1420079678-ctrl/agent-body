@@ -1,0 +1,48 @@
+name: repo-check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repo-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: repository health check (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      # Dependency-free: structure, JSON validity, README links, secret hygiene,
+      # and the presence of an offline regression for every organ.
+      - name: Repository health check
+        run: node scripts/verify-repo.mjs
+
+      # The organ regressions load their built lib/, which imports the host runtime
+      # (@deepseek-ai/dsh-*, schemastery). Those resolve only inside an installed
+      # install, so they run from the manual workflow: .github/workflows/organ-regressions.yml
+      - name: Confirm regression suites are present
+        shell: bash
+        run: |
+          set -e
+          found=0
+          for f in workspace/plugins/*/scripts/smoke-test.mjs workspace/plugins/*/scripts/selftest_local.py; do
+            [ -f "$f" ] && found=$((found+1))
+          done
+          echo "offline regression suites present: $found"
+          [ "$found" -ge 4 ]

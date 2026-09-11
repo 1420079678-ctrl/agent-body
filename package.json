@@ -1,0 +1,38 @@
+{
+  "name": "agent-body",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent-Body — an organ-based plugin layer for DeepSeek Harness: organs, nerve impulses, a heartbeat, reflex arcs, long-term memory and closed-loop self-healing.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1420079678-ctrl/agent-body.git"
+  },
+  "homepage": "https://github.com/1420079678-ctrl/agent-body#readme",
+  "bugs": {
+    "url": "https://github.com/1420079678-ctrl/agent-body/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "agent-framework",
+    "plugin-system",
+    "organs",
+    "self-healing",
+    "long-term-memory",
+    "multi-agent"
+  ],
+  "scripts": {
+    "verify": "node scripts/verify-repo.mjs",
+    "verify:organs": "node scripts/run-organ-regressions.mjs",
+    "verify:organism": "node workspace/plugins/dsh-organism/scripts/smoke-test.mjs",
+    "verify:cortex": "node workspace/plugins/dsh-cortex/scripts/smoke-test.mjs",
+    "verify:zero-residence": "node workspace/plugins/dsh-zero-residence/scripts/smoke-test.mjs",
+    "verify:war-bridge": "node workspace/plugins/dsh-war-bridge/scripts/smoke-test.mjs",
+    "verify:web-crawl": "python workspace/plugins/dsh-web-crawl/scripts/selftest_local.py"
+  }
+}

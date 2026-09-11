@@ -1,0 +1,87 @@
+# ================= 敏感数据（绝不上传） =================
+data/
+.credentials.yaml
+*.bak-ldo
+*.bak
+
+# ================= workspace（仅放行 plugins 插件源码） =================
+workspace/*
+!workspace/plugins/
+!workspace/plugins/
+
+# ================= 依赖与包缓存 =================
+node_modules/
+.pnpm-store/
+**/node_modules/
+**/.pnpm-store/
+vendor/
+**/dist/
+**/.turbo/
+**/__pycache__/
+**/.venv/
+**/*.pyc
+
+# ================= 本地运行/状态数据 =================
+logs/
+tmp/
+backup/
+kernels/
+profiles/
+sec-lab/
+verification/
+browser-profile/
+.playwright-cli/
+.dsh-browser/
+.dsh-funnel/
+.dsh-tmp/
+.dsh-uploads/
+**/.dsh-browser/
+**/.dsh-funnel/
+**/.dsh-tmp/
+**/.dsh-uploads/
+.agent-teams/
+.agent-teams-demo/
+.agent-teams-fix-verify/
+**/.agent-teams/
+**/.agent-teams-demo/
+**/.agent-teams-fix-verify/
+
+# ================= 日志与构建缓存 =================
+*.log
+*.tsbuildinfo
+
+# ================= 根目录临时调试产物 =================
+*.diff
+fix_temp.py
+do_fix.py
+settings_fixed.yaml
+VERIFICATION.txt
+verification-modified-result.txt
+verification-history-after.json
+verification-history-diagnostic.json
+verification-session-list.json
+billing-projection.diff
+projection-contract-fix.diff
+ROLLBACK.sh
+
+# ================= 升级临时产物（2026-08-26 宿主升级）=================
+tmp-upstream-rc2/
+.codebuddy_tmp_*.ps1
+workspace/backup-*/
+
+# ================= 本地大型工具与安装目录（不随仓库分发）=================
+# IDA Pro 9.3 本地安装（1.3 GB+，商业软件，绝不上传）
+IDA PRO/
+# 本地二进制/安装包
+*.exe
+*.msi
+*.iso
+*.zip
+
+# ================= 运行时零字节临时残留 =================
+_tmp_*
+*.tmp
+.env
+
+# ================= 本地备份/回滚快照（不进仓库）=================
+dsh-backups/

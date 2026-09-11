@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - name: Type check gate
+        run: npx tsc --noEmit
+      - name: Benchmark smoke
+        run: npm run bench
+      - name: Coverage gate
+        run: |
+          npm run test:cov 2>&1 | tee /tmp/cov.txt
+          LINE_COV=$(grep "all files" /tmp/cov.txt | awk '{print $5}' | tr -d ' ')
+          echo "line coverage: ${LINE_COV}%"
+          python3 -c "import sys; cov=float('${LINE_COV}'.rstrip('%')); print('coverage OK' if cov >= 85 else f'COVERAGE FAIL: {cov}% < 85%'); sys.exit(0 if cov >= 85 else 1)"
+      - name: Consumer test (packed package)
+        run: bash scripts/consumer-test.sh

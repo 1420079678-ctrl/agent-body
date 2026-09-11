@@ -1,0 +1,27 @@
+{
+  "name": "@dsh-external/dsh-organism",
+  "version": "0.1.0",
+  "description": "器官化插件内核：把每个插件升格为「器官」——统一 Agent 契约（感知/反射/效应/稳态），由事件总线做神经系统、ctx.tools.execute 做运动神经、LLM 做大脑，随拆随用",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

@@ -1,0 +1,74 @@
+name: organ-regressions
+
+# Manual only. These suites load each organ's built `lib/`, which imports the host runtime
+# (@deepseek-ai/dsh-*, schemastery, cordis). That runtime only resolves inside an installed
+# harness, so this job checks the public host out first. It is intentionally not part of push
+# CI — `repo-check` is the fast gate, this is the deep one.
+on:
+  workflow_dispatch:
+    inputs:
+      organs:
+        description: "Comma-separated organ list (empty = every organ with a regression)"
+        required: false
+        default: ""
+      host_ref:
+        description: "DeepSeek Harness ref to test against"
+        required: false
+        default: "main"
+
+permissions:
+  contents: read
+
+jobs:
+  regressions:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9
+
+      - name: Check out the DeepSeek Harness host (provides @deepseek-ai/dsh-* and schemastery)
+        uses: actions/checkout@v7
+        with:
+          repository: deepseek-ai/deepseek-harness
+          ref: ${{ github.event.inputs.host_ref }}
+          path: host
+
+      - name: Install the host
+        working-directory: host
+        run: pnpm install
+
+      - name: Link the host runtime into every organ
+        shell: pwsh
+        run: |
+          $hostModules = Join-Path $PWD 'host\node_modules'
+          if (-not (Test-Path $hostModules)) { throw "host node_modules missing" }
+          Get-ChildItem 'workspace\plugins' -Directory | ForEach-Object {
+            $target = Join-Path $_.FullName 'node_modules'
+            if (Test-Path $target) { return }
+            New-Item -ItemType Junction -Path $target -Target $hostModules | Out-Null
+            Write-Host "linked $($_.Name)"
+          }
+
+      - name: Run offline organ regressions
+        shell: pwsh
+        run: |
+          $filter = "${{ github.event.inputs.organs }}"
+          $selected = if ([string]::IsNullOrWhiteSpace($filter)) { $null } else { $filter -split ',' | ForEach-Object { $_.Trim() } }
+          $failed = 0
+          Get-ChildItem 'workspace\plugins' -Directory | ForEach-Object {
+            if ($selected -and ($selected -notcontains $_.Name)) { return }
+            $script = Join-Path $_.FullName 'scripts\smoke-test.mjs'
+            if (-not (Test-Path $script)) { return }
+            Write-Host "== $($_.Name)"
+            node $script
+            if ($LASTEXITCODE -ne 0) { $failed++ }
+          }
+          if ($failed -gt 0) { throw "$failed organ regression(s) failed" }

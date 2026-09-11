@@ -1,0 +1,26 @@
+{
+  "name": "@dsh-external/dsh-war-bridge",
+  "version": "0.1.0",
+  "description": "战友桥：把逆向（rev_/IDA MCP）、攻击（sec_）、编排（agi_）三条链拧成一股绳——IDA 直连、全链体检、跨库案件交接、三库记忆统一检索",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@dsh-external/dsh-reverse-skill",
+  "version": "0.1.0",
+  "description": "reverse-skill 精髓移植：44 条 PRIMARY 路由引擎 + ADF/BS 决策质量层 + Evidence→Finding→Path 案件链（hash 校验）+ field-journal 自进化 + 工具自举，为破解/攻击工具链提供方法论与证据纪律",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "smoke": "node smoke-test.mjs"
+  }
+}

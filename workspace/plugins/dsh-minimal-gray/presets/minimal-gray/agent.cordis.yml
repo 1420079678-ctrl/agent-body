@@ -1,0 +1,109 @@
+# The `minimal-gray` agent preset: platform-adaptive minimal coding agent.
+#
+# 抖音「用这段提示词，彻底解锁 deepseek」图文还原——「极简灰度版」：
+# 以「极简模式」为底（persona 完整单行、无运行时上下文、裸文件系统 +
+# str_replace_editor），关键升级是平台自适应 Shell：
+#   - Windows → PowerShell（tool-pwsh，走宿主沙箱，不依赖 bash/PTY）
+#   - Unix    → 持久 Bash（PTY 组，跨调用保持状态，与极简一致）
+# 并精选文件/搜索/网页/待办/后台任务/技能/目标等模式常用工具的最小组合，
+# 其余全部按极简（无 plan mode、无 compaction、无子代理/工作流）。
+#
+# 服务行必须放在带 `isolate` 域的 group 内，否则发布到根域会与其它预设冲突
+# （见 standard preset 注释）。工具行（tool-fs/tool-fs-search/tool-web/
+# tool-todo/tool-jobs/tool-ask-user/tool-skill/tool-goal）注册进宿主 tools
+# registry、不提供服务，无需 realm；skill 行注册进本预设自己的 skill 层。
+
+# ── identity ────────────────────────────────────────────────────────────────
+# 完整单行 persona：persona 即完整系统提示词，后续装配监听无法再追加；
+# 无运行时上下文（与极简模式一致）。
+- id: persona
+  name: '@deepseek-ai/dsh-persona'
+  config:
+    text: You are a helpful software engineer assistant.
+    complete: true
+    includeRuntimeContext: false
+
+# ── shell：平台自适应 ────────────────────────────────────────────────────────
+# Windows → tool-pwsh（宿主沙箱 PowerShell）；Unix → 持久 Bash（PTY 组）。
+# 在 win32 上整个 persistent-shell 组（pty + terminal-bash + persistent-bash）
+# 关闭——bash 不适配 Windows，这正是本预设对抗的问题。
+- id: tool-pwsh
+  name: '@deepseek-ai/dsh-tool-pwsh'
+  disabled: !!js process.platform !== 'win32'
+
+- id: persistent-shell
+  name: cordis:group
+  group: true
+  disabled: !!js process.platform === 'win32'
+  isolate:
+    terminals: true
+  config:
+    - id: pty
+      name: '@deepseek-ai/dsh-terminal'
+
+    - id: terminal-bash
+      name: '@deepseek-ai/dsh-terminal-bash'
+      config:
+        timeoutMs: 300000
+
+    - id: persistent-bash
+      name: '@deepseek-ai/dsh-tool-bash-persistent'
+      config:
+        timeoutMs: 300000
+
+# ── filesystem：裸本地文件系统 + 双工编辑器 ─────────────────────────────────
+# 与极简模式一致：裸本地 fs 仅对本预设遮蔽宿主沙箱 provider，编辑器共享该域、
+# 要求绝对路径。
+- id: filesystem
+  name: cordis:group
+  group: true
+  isolate:
+    fs: true
+  config:
+    - id: fs-local
+      name: '@deepseek-ai/dsh-fs-local'
+      config:
+        cwd: !!js process.env.DSH_CWD ?? process.cwd()
+
+    - id: str-replace-editor
+      name: '@deepseek-ai/dsh-tool-str-replace-editor'
+      config:
+        maxOutputChars: 16000
+
+# ── 精选模型工具（宿主 tools registry，无 realm）────────────────────────────
+- id: tool-fs
+  name: '@deepseek-ai/dsh-tool-fs'
+
+- id: tool-fs-search
+  name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    sampleOverCapGlobResults: false
+
+# 网页：仅联网搜索（fetch 关闭），保持最小面。
+- id: tool-web
+  name: '@deepseek-ai/dsh-tool-web'
+  config:
+    fetch: false
+    searchTimeoutMs: 60000
+
+- id: tool-todo
+  name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true
+
+# 后台任务：只给模型侧控制，registry 本身在宿主平面（同 standard 注释）。
+- id: tool-jobs
+  name: '@deepseek-ai/dsh-tool-jobs'
+
+- id: tool-ask-user
+  name: '@deepseek-ai/dsh-tool-ask-user'
+
+# ── skills 与 goals ──────────────────────────────────────────────────────────
+- id: skill-filesystem
+  name: '@deepseek-ai/dsh-skill-filesystem'
+
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+
+- id: tool-goal
+  name: '@deepseek-ai/dsh-tool-goal'

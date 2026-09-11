@@ -1,0 +1,21 @@
+version: 2
+
+updates:
+  # Keep the CI actions current. This is the only ecosystem Dependabot is allowed
+  # to touch: `app/` is a vendored upstream checkout and `data/` holds live state,
+  # neither of which should be rewritten by an automated dependency PR.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - "dependencies"
+      - "ci"
+    groups:
+      actions:
+        patterns:
+          - "*"

@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "DeepSeek Harness — Agent-Body"
+abstract: >-
+  A plugin platform that behaves like a body: organs with senses and reflexes, a nervous system that
+  routes commands, a heartbeat that pumps state to every organ, reflexes that fire without a model call,
+  and a self-healing loop that attributes every failure before retrying it.
+type: software
+authors:
+  - alias: "1420079678-ctrl"
+    name: "1420079678-ctrl"
+repository-code: "https://github.com/1420079678-ctrl/agent-body"
+url: "https://github.com/1420079678-ctrl/agent-body"
+license: MIT
+keywords:
+  - agent-framework
+  - plugin-system
+  - deepseek-harness
+  - self-healing
+  - multi-agent
+version: "0.1.0"
+date-released: "2026-09-11"

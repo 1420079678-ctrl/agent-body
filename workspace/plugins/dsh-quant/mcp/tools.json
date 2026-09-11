@@ -1,0 +1,1852 @@
+{
+  "generator": "scripts/gen-tools-json.ts",
+  "package": "dsh-quant",
+  "generatedAt": "2026-08-17T03:18:02.345Z",
+  "toolCount": 46,
+  "note": "Model-visible schemas extracted from ctx.tools.schemas() at runtime — always matches the shipped code.",
+  "tools": [
+    {
+      "name": "quant_sma",
+      "description": "Compute the simple moving average (SMA) of a price series over a window. Returns values aligned to the input length; the first window-1 positions are null.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Price series, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1)"
+          }
+        },
+        "required": [
+          "values",
+          "window"
+        ]
+      }
+    },
+    {
+      "name": "quant_ema",
+      "description": "Compute the exponential moving average (EMA) of a price series over a window (alpha = 2/(window+1), seed = mean of the first window). Returns values aligned to the input length; the first window-1 positions are null.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Price series, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1)"
+          }
+        },
+        "required": [
+          "values",
+          "window"
+        ]
+      }
+    },
+    {
+      "name": "quant_rsi",
+      "description": "Compute the Relative Strength Index (RSI, Wilder smoothing) of a price series. Returns values aligned to the input length; the first window positions are null (the first valid value needs window+1 inputs).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Price series, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1), default 14"
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    },
+    {
+      "name": "quant_macd",
+      "description": "Compute the MACD oscillator (fast/slow EMAs, signal EMA of the MACD line, histogram). All three arrays are aligned to the input length: macd has slow-1 leading nulls, signal and histogram have slow+signal-2 leading nulls.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Price series, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "fast": {
+            "type": "integer",
+            "description": "Fast EMA window, default 12"
+          },
+          "slow": {
+            "type": "integer",
+            "description": "Slow EMA window, default 26"
+          },
+          "signal": {
+            "type": "integer",
+            "description": "Signal EMA window, default 9"
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    },
+    {
+      "name": "quant_bollinger",
+      "description": "Compute Bollinger Bands (middle = SMA, bands = multiplier * population standard deviation). Returns upper/middle/lower aligned to the input length; the first window-1 positions are null.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Price series, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1), default 20"
+          },
+          "multiplier": {
+            "type": "number",
+            "description": "Standard-deviation multiplier, default 2"
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    },
+    {
+      "name": "quant_atr",
+      "description": "Compute the Average True Range (ATR, Wilder smoothing) from high/low/close arrays. Returns values aligned to the input length; the first window positions are null (the first valid value needs window+1 inputs).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "array",
+            "description": "High prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "low": {
+            "type": "array",
+            "description": "Low prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1), default 14"
+          }
+        },
+        "required": [
+          "high",
+          "low",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_market_fetch",
+      "description": "Fetch OHLCV candles for a symbol from free public APIs (no credentials). Returns structured candles (openTime in Unix ms, open/high/low/close/volume). Crypto providers binance/okx/bybit use symbols like BTCUSDT; A-share providers sina/tencent use sh/sz/bj + 6 digits (e.g. sh600000, tencent qfq adjusted); yahoo serves US/global daily klines (AAPL, ^GSPC, 0700.HK). Feed the close values into quant_sma / quant_ema / quant_rsi / quant_macd / quant_bollinger / quant_atr for indicators.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Trading pair (BTCUSDT), A-share code (sh600000), HK (hk00700), US (usAAPL / AAPL)"
+          },
+          "interval": {
+            "type": "string",
+            "description": "Candle interval",
+            "enum": [
+              "1m",
+              "3m",
+              "5m",
+              "15m",
+              "30m",
+              "1h",
+              "2h",
+              "4h",
+              "6h",
+              "8h",
+              "12h",
+              "1d",
+              "3d",
+              "1w",
+              "1M"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of candles to fetch (1-1000), default 100"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Data provider: binance (default) / okx / bybit / sina / tencent / yahoo",
+            "enum": [
+              "binance",
+              "okx",
+              "bybit",
+              "sina",
+              "tencent",
+              "yahoo"
+            ]
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "quant_backtest",
+      "description": "Backtest a dual moving-average crossover strategy on a close series: buy all-in when the fast SMA crosses above the slow SMA, sell all-out when it crosses below. Signals confirm on bar i and execute at the next bar close (no look-ahead). Returns trades, position, normalized equity curve, total return, max drawdown and annualized Sharpe. Feed quant_market_fetch close values or your own series.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "fast": {
+            "type": "integer",
+            "description": "Fast SMA window, default 10"
+          },
+          "slow": {
+            "type": "integer",
+            "description": "Slow SMA window, default 30"
+          },
+          "feeRate": {
+            "type": "number",
+            "description": "Round-trip fee rate applied per side, default 0.001"
+          },
+          "stopLoss": {
+            "type": "number",
+            "description": "Optional stop-loss as a fraction of entry price, e.g. 0.05 = 5% below entry"
+          },
+          "takeProfit": {
+            "type": "number",
+            "description": "Optional take-profit as a fraction of entry price, e.g. 0.10 = 10% above entry"
+          }
+        },
+        "required": [
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_backtest_grid",
+      "description": "Grid-search the fast/slow windows of the dual-MA crossover strategy: run quant_backtest for every (fast, slow) pair in the given ranges and return results sorted by total return with the best combo. Pairs where fast >= slow are skipped. Use to find promising parameters before deeper analysis.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "fastMin": {
+            "type": "integer",
+            "description": "Fast window lower bound, default 3"
+          },
+          "fastMax": {
+            "type": "integer",
+            "description": "Fast window upper bound, default 10"
+          },
+          "slowMin": {
+            "type": "integer",
+            "description": "Slow window lower bound, default 10"
+          },
+          "slowMax": {
+            "type": "integer",
+            "description": "Slow window upper bound, default 30"
+          },
+          "feeRate": {
+            "type": "number",
+            "description": "Round-trip fee rate applied per side, default 0.001"
+          }
+        },
+        "required": [
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_kdj",
+      "description": "Compute the KDJ stochastic oscillator (RSV method, K/D seeded at 50): K = (2*K_prev + RSV)/3, D = (2*D_prev + K)/3, J = 3K - 2D over a rolling high/low window. Returns k/d/j arrays aligned to the input length; the first window-1 positions are null.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "array",
+            "description": "High prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "low": {
+            "type": "array",
+            "description": "Low prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1), default 9"
+          }
+        },
+        "required": [
+          "high",
+          "low",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_williams_r",
+      "description": "Compute the Williams %R oscillator: (highest high - close) / (highest high - lowest low) * -100 over a rolling window, range -100..0 (-20 and above = overbought, -80 and below = oversold). Returns values aligned to the input length; the first window-1 positions are null.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "array",
+            "description": "High prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "low": {
+            "type": "array",
+            "description": "Low prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1), default 14"
+          }
+        },
+        "required": [
+          "high",
+          "low",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_cci",
+      "description": "Compute the Commodity Channel Index (CCI): (typical price - SMA of typical price) / (0.015 * mean absolute deviation). Readings above +100 suggest overbought, below -100 oversold. Returns values aligned to the input length; the first window-1 positions are null.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "array",
+            "description": "High prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "low": {
+            "type": "array",
+            "description": "Low prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1), default 20"
+          }
+        },
+        "required": [
+          "high",
+          "low",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_obv",
+      "description": "Compute On-Balance Volume (OBV): a cumulative line that adds volume on up days and subtracts it on down days. Returns values aligned to the input length (first value 0, no nulls). Feed with volume from quant_market_fetch candles.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "volume": {
+            "type": "array",
+            "description": "Volumes, aligned with close",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "close",
+          "volume"
+        ]
+      }
+    },
+    {
+      "name": "quant_adx",
+      "description": "Compute the Average Directional Index (ADX) with +DI and -DI (Wilder smoothing). ADX above 25 signals a trending market; +DI above -DI signals upward trend. plusDi/minusDi start at index window; adx starts at index 2*window-1 (earlier positions are null).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "array",
+            "description": "High prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "low": {
+            "type": "array",
+            "description": "Low prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Window size (>= 1), default 14"
+          }
+        },
+        "required": [
+          "high",
+          "low",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_roc",
+      "description": "Compute the Rate of Change (ROC): (close - close n bars ago) / close n bars ago * 100. Positive = upward momentum, negative = downward. Returns values aligned to the input length; the first window positions are null.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Price series, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Lookback window (>= 1), default 12"
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    },
+    {
+      "name": "quant_backtest_bollinger",
+      "description": "Backtest a Bollinger-band breakout strategy: buy when close crosses above the upper band, sell when close crosses below the middle band (SMA), with optional stop-loss/take-profit. Signals confirm on bar i and execute at bar i+1 close (no look-ahead). Returns trades (with exitReason), position, equity curve, total return, max drawdown and Sharpe.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "description": "Bollinger window, default 20"
+          },
+          "multiplier": {
+            "type": "number",
+            "description": "Band standard-deviation multiplier, default 2"
+          },
+          "feeRate": {
+            "type": "number",
+            "description": "Round-trip fee rate applied per side, default 0.001"
+          },
+          "stopLoss": {
+            "type": "number",
+            "description": "Optional stop-loss fraction of entry price, e.g. 0.05"
+          },
+          "takeProfit": {
+            "type": "number",
+            "description": "Optional take-profit fraction of entry price, e.g. 0.10"
+          }
+        },
+        "required": [
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_backtest_rsi",
+      "description": "Backtest an RSI mean-reversion strategy: buy when RSI crosses above buyBelow (default 30), sell when RSI crosses below sellAbove (default 70), with optional stop-loss/take-profit. Signals confirm on bar i and execute at bar i+1 close (no look-ahead). Returns trades (with exitReason), position, equity curve, total return, max drawdown and Sharpe.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "rsiWindow": {
+            "type": "integer",
+            "description": "RSI window, default 14"
+          },
+          "buyBelow": {
+            "type": "number",
+            "description": "Buy threshold (RSI crosses above), default 30"
+          },
+          "sellAbove": {
+            "type": "number",
+            "description": "Sell threshold (RSI crosses below), default 70"
+          },
+          "feeRate": {
+            "type": "number",
+            "description": "Round-trip fee rate applied per side, default 0.001"
+          },
+          "stopLoss": {
+            "type": "number",
+            "description": "Optional stop-loss fraction of entry price, e.g. 0.05"
+          },
+          "takeProfit": {
+            "type": "number",
+            "description": "Optional take-profit fraction of entry price, e.g. 0.10"
+          }
+        },
+        "required": [
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_backtest_portfolio",
+      "description": "Backtest a multi-asset portfolio: initial allocation by weights, optional periodic rebalancing back to target weights every rebalanceEvery bars, two-sided fees on all trades. Returns normalized equity curve, total return, max drawdown, Sharpe, final weights and rebalance count.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "Assets with equal-length close series, e.g. from quant_market_fetch per symbol",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "close": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "close"
+              ]
+            }
+          },
+          "weights": {
+            "type": "array",
+            "description": "Optional target weights summing to 1; defaults to equal weight",
+            "items": {
+              "type": "number"
+            }
+          },
+          "rebalanceEvery": {
+            "type": "integer",
+            "description": "Optional rebalance period in bars; omit for buy-and-hold"
+          },
+          "feeRate": {
+            "type": "number",
+            "description": "Round-trip fee rate applied per side, default 0.001"
+          }
+        },
+        "required": [
+          "assets"
+        ]
+      }
+    },
+    {
+      "name": "quant_data_guide",
+      "description": "Guide to China A-share / financial data channels: query by channel name (akshare, baostock, tushare, wind, ifind, sse, szse, csindex) or by data type (行情/财务/宏观/期货/指数/基金…). Returns structured channel info: url, cost, data types, setup steps, tutorials, best-for. This plugin ships channel knowledge, not data APIs — users bring their own credentials and budgets.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Channel name or data type to search, e.g. \"tushare\", \"日线行情\", \"财务\" (omit when channel is given)"
+          },
+          "channel": {
+            "type": "string",
+            "description": "Exact channel name to fetch one detailed record (takes precedence over query)"
+          }
+        }
+      }
+    },
+    {
+      "name": "quant_data_compare",
+      "description": "Compare A-share data channels for one data type (e.g. 日线行情, 财务, 宏观, 期货): returns every channel with whether it covers the type, its cost/tier and best-for. Channels that cover the type come first. Pair with quant_data_guide for full channel details.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "dataType": {
+            "type": "string",
+            "description": "Data type to compare, e.g. \"日线行情\", \"财务\", \"宏观\""
+          }
+        },
+        "required": [
+          "dataType"
+        ]
+      }
+    },
+    {
+      "name": "quant_data_advice",
+      "description": "Recommend A-share data channels for a need: data type + budget (free/low/institutional) + purpose (research/backtest/official). Returns a ranked list with reasons. This is channel navigation, not data provisioning — users bring their own credentials and budgets.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "dataType": {
+            "type": "string",
+            "description": "Data type needed, e.g. \"日线行情\", \"财务\""
+          },
+          "budget": {
+            "type": "string",
+            "description": "Budget tier: free (默认) / low (可小额付费如 tushare 积分) / institutional (有机构账号)",
+            "enum": [
+              "free",
+              "low",
+              "institutional"
+            ]
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Purpose: research (默认) / backtest / official (权威合规)",
+            "enum": [
+              "research",
+              "backtest",
+              "official"
+            ]
+          }
+        },
+        "required": [
+          "dataType"
+        ]
+      }
+    },
+    {
+      "name": "quant_series_stats",
+      "description": "Descriptive statistics for a numeric series: count, mean, std, min/max, median, skewness, excess kurtosis, lag-1 autocorrelation, annualized volatility (sqrt(365) of period returns) and total return %. Run this first after fetching data to understand the series before applying indicators or backtests.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Numeric series (e.g. closes), oldest first",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    },
+    {
+      "name": "quant_data_quality",
+      "description": "Check OHLCV candle health before analysis: high<low violations, non-positive prices, non-increasing timestamps, time gaps (uneven intervals), and extreme moves (>50% close change). Returns counts per issue plus a healthy flag. Feed quant_market_fetch candles directly.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "candles": {
+            "type": "array",
+            "description": "OHLCV candles as returned by quant_market_fetch",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "openTime": {
+                  "type": "integer"
+                },
+                "open": {
+                  "type": "number"
+                },
+                "high": {
+                  "type": "number"
+                },
+                "low": {
+                  "type": "number"
+                },
+                "close": {
+                  "type": "number"
+                },
+                "volume": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "openTime",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume"
+              ]
+            }
+          }
+        },
+        "required": [
+          "candles"
+        ]
+      }
+    },
+    {
+      "name": "quant_series_quality",
+      "description": "Quality check for a raw numeric series: missing (non-finite) values, z-score outliers (>3σ), jumps (adjacent change above threshold, default 20%), and frozen runs (consecutive identical values >= 3). Returns counts plus a healthy flag. Use before indicators/backtests; pair with quant_data_annotate for point-level labels.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Numeric series to check",
+            "items": {
+              "type": "number"
+            }
+          },
+          "jumpThreshold": {
+            "type": "number",
+            "description": "Adjacent-change threshold as fraction, default 0.2"
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    },
+    {
+      "name": "quant_data_annotate",
+      "description": "Annotate a numeric series point by point: labels every issue as missing / z_outlier / jump_up / jump_down / frozen with index, severity (1 hint, 2 clear, 3 needs human review) and a detail string. Inspired by the Scale AI data-labeling philosophy: quality is not one verdict but locatable, reviewable, governable per-point labels. Welcome PRs for more annotation dimensions.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "Numeric series to annotate",
+            "items": {
+              "type": "number"
+            }
+          },
+          "jumpThreshold": {
+            "type": "number",
+            "description": "Adjacent-change threshold as fraction, default 0.2"
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    },
+    {
+      "name": "quant_factor_evaluate",
+      "description": "Evaluate a predictive factor against forward returns (alphalens-style): IC (Pearson of factor vs next-period return), RankIC (Spearman rank correlation), IC decay across horizons, ICIR (rolling-IC stability), quantile bucket returns (default 5 groups by factor value), long-short spread, turnover (group-change frequency) and factor autocorrelation. Pass single-asset time series (factor[i] predicts forwardReturns[i+1]) or flattened cross-sections. This plugin ships methods, not data — adapt your own series.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "factorValues": {
+            "type": "array",
+            "description": "Factor values over time, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "forwardReturns": {
+            "type": "array",
+            "description": "Next-period returns aligned so factor[i] predicts forwardReturns[i+1]",
+            "items": {
+              "type": "number"
+            }
+          },
+          "quantiles": {
+            "type": "integer",
+            "description": "Number of quantile buckets, default 5"
+          },
+          "window": {
+            "type": "integer",
+            "description": "Rolling-IC window, default 20"
+          },
+          "decayHorizons": {
+            "type": "integer",
+            "description": "IC decay horizons, default 5"
+          }
+        },
+        "required": [
+          "factorValues",
+          "forwardReturns"
+        ]
+      }
+    },
+    {
+      "name": "quant_factor_combine",
+      "description": "Combine multiple factors into one signal: z-score standardize each factor, weighted-sum (default equal weight), then cross-sectional rank-normalize to 0..1 (higher = better). Pass factor arrays of equal length. Use quant_factor_evaluate on the combined signal to validate it.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "factors": {
+            "type": "array",
+            "description": "Factor series of equal length, e.g. [[momentum...], [reversal...]]",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "weights": {
+            "type": "array",
+            "description": "Optional weights summing to 1; defaults to equal weight",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "factors"
+        ]
+      }
+    },
+    {
+      "name": "quant_chart",
+      "description": "Build structured chart data (dsh-chart protocol) for a frontend renderer: kind candles (K-lines + overlay series like SMA + entry/exit/stop/target markers), kind series (equity curves, IC series), or kind annotations (series + point-level labels with severity 1/2/3). Feed it quant_market_fetch candles, indicator outputs, backtest trades, or quant_data_annotate results. The chart data is renderer-neutral — dsh-quant-ui consumes it.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "Chart kind",
+            "enum": [
+              "candles",
+              "series",
+              "annotations"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Chart title"
+          },
+          "candles": {
+            "type": "array",
+            "description": "For kind candles: OHLCV candles from quant_market_fetch",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "openTime": {
+                  "type": "integer"
+                },
+                "open": {
+                  "type": "number"
+                },
+                "high": {
+                  "type": "number"
+                },
+                "low": {
+                  "type": "number"
+                },
+                "close": {
+                  "type": "number"
+                },
+                "volume": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "openTime",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume"
+              ]
+            }
+          },
+          "overlays": {
+            "type": "array",
+            "description": "For kind candles: overlay series (e.g. SMA/EMA aligned to candles)",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "values"
+              ]
+            }
+          },
+          "markers": {
+            "type": "array",
+            "description": "For kind candles: trade markers at candle indices",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "index": {
+                  "type": "integer"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "entry",
+                    "exit",
+                    "stop",
+                    "target"
+                  ]
+                }
+              },
+              "required": [
+                "index",
+                "kind"
+              ]
+            }
+          },
+          "series": {
+            "type": "array",
+            "description": "For kind series: named series (e.g. equity curve)",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "values"
+              ]
+            }
+          },
+          "values": {
+            "type": "array",
+            "description": "For kind annotations: the base series",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "annotations": {
+            "type": "array",
+            "description": "For kind annotations: point-level labels (from quant_data_annotate)",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "index": {
+                  "type": "integer"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "severity": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    2,
+                    3
+                  ]
+                }
+              },
+              "required": [
+                "index",
+                "label",
+                "severity"
+              ]
+            }
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      }
+    },
+    {
+      "name": "quant_metrics",
+      "description": "Compute the full backtest metric suite from an equity curve and optional trades: total return, max drawdown, Sharpe, annualized volatility, Calmar, Sortino, win rate, profit factor, avg period return (required trio: return/drawdown/sharpe; the rest are optional extensions). Trade-level metrics (trade count, trade win rate, avg trade return, avg holding periods) are computed when trades are given. UI surfaces can pick which metrics to display via METRIC_CATALOG.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "equityCurve": {
+            "type": "array",
+            "description": "Normalized equity curve (initial value 1)",
+            "items": {
+              "type": "number"
+            }
+          },
+          "trades": {
+            "type": "array",
+            "description": "Optional trades from quant_backtest* (extra fields accepted)",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "entryIndex": {
+                  "type": "integer"
+                },
+                "exitIndex": {
+                  "oneOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "returnPct": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "entryIndex",
+                "exitIndex",
+                "returnPct"
+              ]
+            }
+          }
+        },
+        "required": [
+          "equityCurve"
+        ]
+      }
+    },
+    {
+      "name": "quant_fund",
+      "description": "Simulate a quantitative hedge fund around a strategy equity curve: start with initialCapital (default 100,000,000) at NAV 1.00, accrue annual management fee daily (default 2%), charge performance fee above the high-water mark (default 20%), and report final NAV, final AUM, peak NAV/AUM, gross vs net return, total fees, and the net-NAV series for charting. The foundation for a quant-fund simulation game.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "equityCurve": {
+            "type": "array",
+            "description": "Strategy equity curve (initial value 1)",
+            "items": {
+              "type": "number"
+            }
+          },
+          "initialCapital": {
+            "type": "number",
+            "description": "Initial capital, default 100000000 (1 亿)"
+          },
+          "managementFeeRate": {
+            "type": "number",
+            "description": "Annual management fee rate, default 0.02"
+          },
+          "performanceFeeRate": {
+            "type": "number",
+            "description": "Performance fee above high-water mark, default 0.2"
+          }
+        },
+        "required": [
+          "equityCurve"
+        ]
+      }
+    },
+    {
+      "name": "quant_risk",
+      "description": "Risk metrics for a return series (with optional benchmark): historical VaR and CVaR/Expected Shortfall at a confidence level (default 95%), downside deviation, max drawdown, Beta, Jensen alpha, information ratio and tracking error against the benchmark. Feed period returns as decimals (0.01 = 1%), e.g. derived from close prices. Core module for quant research risk analysis.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "returns": {
+            "type": "array",
+            "description": "Period returns as decimals (0.01 = 1%), oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "benchmarkReturns": {
+            "type": "array",
+            "description": "Optional benchmark returns aligned with returns (for beta/alpha/IR)",
+            "items": {
+              "type": "number"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "description": "VaR confidence level, default 0.95"
+          }
+        },
+        "required": [
+          "returns"
+        ]
+      }
+    },
+    {
+      "name": "quant_var_backtest",
+      "description": "Kupiec POF test: backtest a VaR series against realized returns — counts failures (losses exceeding VaR), compares against the expected count, computes the likelihood-ratio statistic and approximate p-value, and reports whether the VaR model passes at 95% (LR <= 3.841). Too-few failures (overly conservative VaR) also fail. Feed returns and the matching per-period VaR series (positive loss values).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "returns": {
+            "type": "array",
+            "description": "Realized returns as decimals",
+            "items": {
+              "type": "number"
+            }
+          },
+          "varSeries": {
+            "type": "array",
+            "description": "VaR per period (positive loss), aligned with returns",
+            "items": {
+              "type": "number"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "description": "VaR confidence level, default 0.95"
+          }
+        },
+        "required": [
+          "returns",
+          "varSeries"
+        ]
+      }
+    },
+    {
+      "name": "quant_resample",
+      "description": "Resample OHLCV candles to a coarser period by fixed bar buckets: week = 7 bars, month = 30 bars (designed for 24/7 crypto markets; for A-share trading calendars pass pre-bucketed data). Each bucket aggregates open/high/low/close/volume plus the bar count.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "candles": {
+            "type": "array",
+            "description": "OHLCV candles from quant_market_fetch",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "openTime": {
+                  "type": "integer"
+                },
+                "open": {
+                  "type": "number"
+                },
+                "high": {
+                  "type": "number"
+                },
+                "low": {
+                  "type": "number"
+                },
+                "close": {
+                  "type": "number"
+                },
+                "volume": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "openTime",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume"
+              ]
+            }
+          },
+          "period": {
+            "type": "string",
+            "description": "Target period",
+            "enum": [
+              "week",
+              "month"
+            ]
+          }
+        },
+        "required": [
+          "candles",
+          "period"
+        ]
+      }
+    },
+    {
+      "name": "quant_report",
+      "description": "Generate a Markdown research report from dsh-quant module outputs: strategy, performance metrics, risk metrics, factor evaluation and fund simulation. Pass the results of quant_metrics / quant_risk / quant_factor_evaluate / quant_fund to assemble one readable conclusion document.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "strategy": {
+            "type": "string",
+            "description": "Strategy description"
+          },
+          "metrics": {
+            "type": "object",
+            "description": "quant_metrics output",
+            "additionalProperties": true
+          },
+          "risk": {
+            "type": "object",
+            "description": "quant_risk output",
+            "additionalProperties": true
+          },
+          "factor": {
+            "type": "object",
+            "description": "quant_factor_evaluate output",
+            "additionalProperties": true
+          },
+          "fund": {
+            "type": "object",
+            "description": "quant_fund output",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "quant_repo_stats",
+      "description": "Fetch live GitHub ecosystem stats for a public repository (no credentials required): stars, forks, watchers, open issues, open pull requests, topics, language, license and latest release. Uses the GITHUB_TOKEN environment variable automatically when present (higher rate limit); unauthenticated requests are limited to 60 per hour per IP. Feed the numbers into quant_oss_pulse to score open-source influence.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "description": "GitHub owner (user or org), e.g. pengpengyi92"
+          },
+          "repo": {
+            "type": "string",
+            "description": "Repository name, e.g. dsh-quant"
+          }
+        },
+        "required": [
+          "owner",
+          "repo"
+        ]
+      }
+    },
+    {
+      "name": "quant_npm_stats",
+      "description": "Fetch live npm ecosystem stats for a published package (no credentials): latest version, last-week and last-month downloads, description and homepage. Feed weeklyDownloads into quant_oss_pulse to score open-source influence.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "pkg": {
+            "type": "string",
+            "description": "npm package name, e.g. dsh-quant"
+          }
+        },
+        "required": [
+          "pkg"
+        ]
+      }
+    },
+    {
+      "name": "quant_oss_pulse",
+      "description": "Score open-source ecosystem influence on a 0-100 pulse with an A/B/C/D grade and concrete action suggestions. Components: stars base (20%), weekly npm downloads (15%), star momentum vs a previous snapshot (25%), community health = open issue+PR backlog vs stars (20%), release freshness (20%). Missing optional inputs score neutral 50. Feed quant_repo_stats and quant_npm_stats outputs, and snapshot stars weekly to supply starsPrevious.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "stars": {
+            "type": "number",
+            "description": "Current star count (>= 0)"
+          },
+          "downloadsWeekly": {
+            "type": "number",
+            "description": "npm downloads in the last 7 days"
+          },
+          "starsPrevious": {
+            "type": "number",
+            "description": "Star count at the previous snapshot (e.g. 7 days ago)"
+          },
+          "openIssues": {
+            "type": "number",
+            "description": "Open issues (excluding PRs)"
+          },
+          "openPullRequests": {
+            "type": "number",
+            "description": "Open pull requests"
+          },
+          "daysSinceRelease": {
+            "type": "number",
+            "description": "Days since the latest release"
+          }
+        },
+        "required": [
+          "stars"
+        ]
+      }
+    },
+    {
+      "name": "quant_factor_neutralize",
+      "description": "Neutralize a factor: strip group or style exposures and z-score standardize (mean 0, std 1). Method is inferred from inputs — styleFactors → ols regression residual, groups → within-group z-score (simple industry neutralization), otherwise plain cross-sectional z-score. groups/styleFactors must align with the factor array. This plugin ships methods, not data.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "factorValues": {
+            "type": "array",
+            "description": "Factor values over time or cross-section",
+            "items": {
+              "type": "number"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "description": "Optional group labels (e.g. industry codes) aligned with factorValues",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "styleFactors": {
+            "type": "array",
+            "description": "Optional style factors (e.g. market cap) to regress out; each aligned with factorValues",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "method": {
+            "type": "string",
+            "description": "Optional explicit method; inferred when omitted",
+            "enum": [
+              "group",
+              "ols",
+              "zscore"
+            ]
+          }
+        },
+        "required": [
+          "factorValues"
+        ]
+      }
+    },
+    {
+      "name": "quant_walk_forward",
+      "description": "Walk-forward training and evaluation: rolling linear regression (intercept + features) trained only on past data, predicting the next-period return out-of-sample. features[t] predicts returns[t+1]. Returns out-of-sample predictions (null in train regions), OOS IC/RankIC and per-window model weights — the minimal honest ML workflow (no look-ahead). This plugin ships methods, not data.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "returns": {
+            "type": "array",
+            "description": "Period returns, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "features": {
+            "type": "array",
+            "description": "Feature series, each equal to returns length; features[t] predicts returns[t+1]",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "trainWindow": {
+            "type": "integer",
+            "description": "Training window length (>= 2)"
+          },
+          "testWindow": {
+            "type": "integer",
+            "description": "Out-of-sample window length (>= 1)"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Advance per walk step, default = testWindow"
+          }
+        },
+        "required": [
+          "returns",
+          "features",
+          "trainWindow",
+          "testWindow"
+        ]
+      }
+    },
+    {
+      "name": "quant_drawdown",
+      "description": "Drawdown analysis of an equity curve: underwater series (aligned, 0 at new highs, negative in drawdown), max drawdown, current drawdown, and one period per new high (peak, trough, recovery, depth, duration). Recovery means the curve returns to the previous high. Feed backtest equity curves or fund NAV series.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "equity": {
+            "type": "array",
+            "description": "Positive equity/NAV series, oldest first",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "equity"
+        ]
+      }
+    },
+    {
+      "name": "quant_execute_sim",
+      "description": "Simulate order execution on a close series (no live trading): orders fill at the close of the bar after the signal (plus optional latency), with optional slippage (bps) and per-side fee rate. Long-only spot semantics — sells are capped by current position. Sizing by quantity or by fraction of current equity. Returns fills, normalized equity curve, total fees and slippage cost. Feed backtest signals to add realism.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "array",
+            "description": "Close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "orders": {
+            "type": "array",
+            "description": "Orders with signal bar index; fills happen at index+1+latencyBars close",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "index": {
+                  "type": "integer"
+                },
+                "side": {
+                  "type": "string",
+                  "enum": [
+                    "buy",
+                    "sell"
+                  ]
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "Exact quantity (alternative to valueFraction)"
+                },
+                "valueFraction": {
+                  "type": "number",
+                  "description": "Fraction of current equity (0-1) (alternative to quantity)"
+                }
+              },
+              "required": [
+                "index",
+                "side"
+              ]
+            }
+          },
+          "initialCash": {
+            "type": "number",
+            "description": "Initial cash, default 1"
+          },
+          "feeRate": {
+            "type": "number",
+            "description": "Fee rate per side, default 0.001"
+          },
+          "slippageBps": {
+            "type": "number",
+            "description": "Slippage in basis points, default 0"
+          },
+          "latencyBars": {
+            "type": "integer",
+            "description": "Fill latency in bars, default 0"
+          }
+        },
+        "required": [
+          "close",
+          "orders"
+        ]
+      }
+    },
+    {
+      "name": "quant_bond",
+      "description": "Fixed-income analytics (FICC methods, no positions): bond pricing from yield (or yield from price via bisection), Macaulay duration, modified duration, convexity and DV01. Textbook cash-flow discounting at paymentsPerYear periods — day-count and curve conventions are out of scope. Provide exactly one of ytm or price. Public methods only; positions and execution support stay internal.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "faceValue": {
+            "type": "number",
+            "description": "Face value, default 100"
+          },
+          "couponRate": {
+            "type": "number",
+            "description": "Annual coupon rate as a decimal, e.g. 0.03"
+          },
+          "periodsToMaturity": {
+            "type": "number",
+            "description": "Years to maturity (> 0)"
+          },
+          "paymentsPerYear": {
+            "type": "integer",
+            "description": "Coupon payments per year 1/2/4/12, default 2"
+          },
+          "ytm": {
+            "type": "number",
+            "description": "Yield to maturity as a decimal (alternative to price)"
+          },
+          "price": {
+            "type": "number",
+            "description": "Full price (alternative to ytm)"
+          }
+        },
+        "required": [
+          "couponRate",
+          "periodsToMaturity"
+        ]
+      }
+    },
+    {
+      "name": "quant_option",
+      "description": "European option analytics inspired by Optiver-style pricing practice: Black-Scholes price from volatility (or implied volatility from market price via bisection) plus the five greeks — delta, gamma, vega (per 1% vol), theta (per year), rho (per 1% rate). Provide exactly one of volatility or price. Public pricing methods only; market-making execution and inventory stay internal.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "spot": {
+            "type": "number",
+            "description": "Underlying spot price (> 0)"
+          },
+          "strike": {
+            "type": "number",
+            "description": "Strike price (> 0)"
+          },
+          "timeToMaturity": {
+            "type": "number",
+            "description": "Years to expiry (> 0)"
+          },
+          "riskFreeRate": {
+            "type": "number",
+            "description": "Annual risk-free rate as a decimal (>= 0)"
+          },
+          "volatility": {
+            "type": "number",
+            "description": "Annual volatility as a decimal (alternative to price)"
+          },
+          "price": {
+            "type": "number",
+            "description": "Market option price (alternative to volatility, solves IV)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Option type",
+            "enum": [
+              "call",
+              "put"
+            ]
+          }
+        },
+        "required": [
+          "spot",
+          "strike",
+          "timeToMaturity",
+          "riskFreeRate",
+          "type"
+        ]
+      }
+    },
+    {
+      "name": "quant_volatility",
+      "description": "Realized volatility of a close series: population standard deviation of log returns, annualized (default 252 trading days). Complements quant_option implied volatility — the RV-vs-IV gap is the volatility-risk-premium research entry. Returns the aligned log-return series too.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "array",
+            "description": "Positive close prices, oldest first",
+            "items": {
+              "type": "number"
+            }
+          },
+          "annualization": {
+            "type": "integer",
+            "description": "Annualization factor, default 252"
+          }
+        },
+        "required": [
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "quant_linear_model",
+      "description": "Fit a linear model (OLS, or Ridge with lambda > 0 penalizing feature weights) on samples × features: y ≈ intercept + Σ w·x. Returns coefficients, train R2, and — when predictX is passed — out-of-sample predictions plus test R2/IC against optional yTest. The minimal explainable ML building block; use quant_walk_forward for rolling out-of-sample validation. This plugin ships methods, not data.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "X": {
+            "type": "array",
+            "description": "Training samples × features (each row is one sample)",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "y": {
+            "type": "array",
+            "description": "Training targets, aligned with X",
+            "items": {
+              "type": "number"
+            }
+          },
+          "lambda": {
+            "type": "number",
+            "description": "Ridge penalty on feature weights, default 0 (OLS)"
+          },
+          "predictX": {
+            "type": "array",
+            "description": "Optional samples to predict",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "yTest": {
+            "type": "array",
+            "description": "Optional actual values for predictX (enables test R2/IC)",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "X",
+          "y"
+        ]
+      }
+    },
+    {
+      "name": "quant_research_pipeline",
+      "description": "Run the full PDAT→PET research chain in one call: fetch candles (or pass them) → data quality → stats → SMA overlay → dual-MA backtest → performance metrics → risk metrics → drawdown → fund simulation (1e8 capital, NAV 1.00, 2% mgmt + 20% HWM performance fee) → momentum factor evaluation → Markdown report → chart data. Crypto symbols like BTCUSDT; A-share codes like sh600000 (sina/tencent). Returns one bundle ready for research notes or UI rendering.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Symbol, default BTCUSDT"
+          },
+          "interval": {
+            "type": "string",
+            "description": "Candle interval, default 1d",
+            "enum": [
+              "1m",
+              "3m",
+              "5m",
+              "15m",
+              "30m",
+              "1h",
+              "2h",
+              "4h",
+              "6h",
+              "8h",
+              "12h",
+              "1d",
+              "3d",
+              "1w",
+              "1M"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Candles to fetch (>= 30), default 120"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider, default binance (crypto falls back across binance/okx/bybit)",
+            "enum": [
+              "binance",
+              "okx",
+              "bybit",
+              "sina",
+              "tencent",
+              "yahoo"
+            ]
+          },
+          "candles": {
+            "type": "array",
+            "description": "Optional candle array (>= 30) to skip network fetch",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "openTime": {
+                  "type": "integer"
+                },
+                "open": {
+                  "type": "number"
+                },
+                "high": {
+                  "type": "number"
+                },
+                "low": {
+                  "type": "number"
+                },
+                "close": {
+                  "type": "number"
+                },
+                "volume": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "openTime",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume"
+              ]
+            }
+          },
+          "fast": {
+            "type": "integer",
+            "description": "Fast MA, default 5"
+          },
+          "slow": {
+            "type": "integer",
+            "description": "Slow MA, default 20"
+          },
+          "feeRate": {
+            "type": "number",
+            "description": "Backtest fee rate per side, default 0.001"
+          },
+          "stopLoss": {
+            "type": "number",
+            "description": "Optional stop-loss fraction (e.g. 0.05)"
+          },
+          "takeProfit": {
+            "type": "number",
+            "description": "Optional take-profit fraction (e.g. 0.15)"
+          },
+          "factorWindow": {
+            "type": "integer",
+            "description": "Factor-eval rolling window, default 20"
+          },
+          "initialCapital": {
+            "type": "number",
+            "description": "Fund initial capital, default 100000000"
+          }
+        }
+      }
+    }
+  ]
+}

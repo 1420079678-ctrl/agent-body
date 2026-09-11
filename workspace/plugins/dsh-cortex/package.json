@@ -1,0 +1,27 @@
+{
+  "name": "@dsh-external/dsh-cortex",
+  "version": "0.1.0",
+  "description": "皮层（睡眠·记忆·巩固）：给器官化身体装上时间维度与记忆维度——静默即入睡、睡中巩固、醒来出报告；跨会话长期记忆与命令级主动召回；稳态告警去重收敛与幽灵器官识别",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

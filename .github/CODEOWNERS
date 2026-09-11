@@ -1,0 +1,7 @@
+# Default owner for everything in this repository.
+* @1420079678-ctrl
+
+# Architecture and the organ contract: changes here affect every organ.
+/ARCHITECTURE.md                   @1420079678-ctrl
+/workspace/plugins/dsh-organism/   @1420079678-ctrl
+/workspace/plugins/dsh-cortex/     @1420079678-ctrl

@@ -1,0 +1,30 @@
+{
+  "name": "@dsh-external/dsh-zero-residence",
+  "version": "0.1.0",
+  "description": "零驻留协议引擎：以确定性无损指针压缩替换有损 LLM 摘要，并把工具执行延迟压到地板（零驻留 + 异步效应器 + 前缀稳态审计）",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-agent": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-compaction": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-compaction-basic": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

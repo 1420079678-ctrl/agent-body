@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability (private)
+    url: https://github.com/1420079678-ctrl/agent-body/security/advisories/new
+    about: Never open a public issue for a vulnerability — use private reporting.
+  - name: Architecture and the organ contract
+    url: https://github.com/1420079678-ctrl/agent-body/blob/master/ARCHITECTURE.md
+    about: Read this before proposing a change to the kernels or the organ contract.
+  - name: Contributing guide
+    url: https://github.com/1420079678-ctrl/agent-body/blob/master/CONTRIBUTING.md
+    about: How organs are structured, verified, and added.

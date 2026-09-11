@@ -1,0 +1,32 @@
+{
+  "name": "@dsh-external/dsh-sec-workbench",
+  "version": "0.0.1",
+  "description": "网络安全渗透分析工作台：攻击知识库、授权门禁、HTTP安全基线分析、Kill Chain/ATT&CK映射、8步渗透测试流程编排与报告生成",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@types/ssh2": "^1.15.5",
+    "ssh2": "^1.17.0",
+    "tedious": "^20.0.0"
+  }
+}

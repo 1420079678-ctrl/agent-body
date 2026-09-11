@@ -1,0 +1,56 @@
+name: Feature request
+description: Propose a new organ, a new capability, or a change to the organ contract.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project is a body, not a tool list. The strongest proposals name the **organ** (or the new organ),
+        the **signal** it should sense, and the **reflex or effect** it should produce.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of change is this?
+      options:
+        - New organ (a new plugin)
+        - New capability on an existing organ
+        - Change to the organ contract / kernels (affects every organ)
+        - Host behaviour (app/)
+        - Documentation / tooling
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the situation where the body currently fails, forgets, or does the wrong thing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed shape
+      description: |
+        Which system does it belong to — executive / nervous / immune / sensory / motor / memory / metabolic / endocrine?
+        What signals does it sense, what does it do, and how would we know it worked?
+    validations:
+      required: true
+
+  - type: textarea
+    id: verify
+    attributes:
+      label: How could this be verified offline?
+      description: Every organ ships a deterministic, offline regression. What would this one assert?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered (optional)
+    validations:
+      required: false

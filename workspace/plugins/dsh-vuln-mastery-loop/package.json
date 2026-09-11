@@ -1,0 +1,27 @@
+{
+  "name": "@dsh-external/dsh-vuln-mastery-loop",
+  "version": "0.0.1",
+  "description": "漏洞挖掘·每日实战提升守护循环：每天 10:00/18:00 触发，实战(sec_*/vuln_*)+LLM分析闭环，只打授权目标，输出日报并更新台账",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

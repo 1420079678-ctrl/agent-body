@@ -1,0 +1,30 @@
+{
+  "name": "@dsh-external/dsh-browser-ultimate",
+  "version": "0.0.1",
+  "description": "无敌浏览器控制：bb-browser 真实浏览器引擎（登录态/反爬免疫/CDP 控制）+ crawl4ai 式内容提取（正文净化/深爬/结构化）二合一",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "cordis": ">=4.0.0-rc <5",
+    "schemastery": "^3.18.0"
+  },
+  "dependencies": {
+    "bb-browser": "0.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

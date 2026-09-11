@@ -1,0 +1,36 @@
+{
+  "name": "@dsh-external/dsh-web-crawl",
+  "version": "0.1.0",
+  "description": "2026 多引擎网页抓取工具包 — trafilatura 正文抽取 + Patchright 反检测渲染 + Jina Reader 兜底 + markitdown 文档解析（取代 crawl4ai）",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/types/index.d.ts",
+  "files": ["lib"],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0-rc <5",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-web": ">=0.0.1-rc <2",
+    "schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "runtime": "python313",
+    "requiresPythonPackages": []
+  }
+}
