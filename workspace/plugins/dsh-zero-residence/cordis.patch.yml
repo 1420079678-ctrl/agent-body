@@ -1,0 +1,9 @@
+# Agent-Body organ: zero-residence context engine (metabolic system).
+#
+# Evicts oversized tool payloads from the live context, keeps a pointer plus a
+# narrative head, and rebuilds any evicted payload verbatim from the durable
+# session log when it is asked for. Every field in the plugin's Config schema
+# has a default, so an entry with no `config:` block is a valid install.
+- insert:
+    - id: dsh-zero-residence
+      name: '@dsh-external/dsh-zero-residence'

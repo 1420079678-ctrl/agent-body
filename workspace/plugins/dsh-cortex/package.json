@@ -1,20 +1,57 @@
 {
   "name": "@dsh-external/dsh-cortex",
   "version": "0.1.0",
-  "description": "皮层（睡眠·记忆·巩固）：给器官化身体装上时间维度与记忆维度——静默即入睡、睡中巩固、醒来出报告；跨会话长期记忆与命令级主动召回；稳态告警去重收敛与幽灵器官识别",
-  "private": true,
+  "description": "Sleep, long-term memory and consolidation for DeepSeek Harness: wakefulness driven by conversation progress, deterministic consolidation into memory cards (pitfall / playbook / hotspot / unresolved), and homeostasis alert de-noising.",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/types/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "cordis.patch.yml"
   ],
   "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1420079678-ctrl/agent-body.git",
+    "directory": "workspace/plugins/dsh-cortex"
+  },
+  "homepage": "https://github.com/1420079678-ctrl/agent-body#organ-catalog",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "memory",
+    "consolidation",
+    "agent-memory"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "peerDependencies": {
-    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
-    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
     "cordis": ">=4.0.0-rc <5",
     "schemastery": "^3.18.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "cordis": {
+      "optional": true
+    },
+    "schemastery": {
+      "optional": true
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

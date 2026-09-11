@@ -1,23 +1,69 @@
 {
   "name": "@dsh-external/dsh-zero-residence",
   "version": "0.1.0",
-  "description": "零驻留协议引擎：以确定性无损指针压缩替换有损 LLM 摘要，并把工具执行延迟压到地板（零驻留 + 异步效应器 + 前缀稳态审计）",
-  "private": true,
+  "description": "Zero-residence context engine for DeepSeek Harness: evicts large tool payloads from the live context into a queryable store, keeps only pointers, and reconstructs any of them verbatim on demand — so per-turn prompt tokens stop growing with the transcript.",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/types/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "cordis.patch.yml"
   ],
   "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1420079678-ctrl/agent-body.git",
+    "directory": "workspace/plugins/dsh-zero-residence"
+  },
+  "homepage": "https://github.com/1420079678-ctrl/agent-body#token-economy",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "context-engineering",
+    "token-economy",
+    "compaction"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "peerDependencies": {
-    "@deepseek-ai/dsh-agent": ">=0.0.1-rc <2",
-    "@deepseek-ai/dsh-compaction": ">=0.0.1-rc <2",
-    "@deepseek-ai/dsh-compaction-basic": ">=0.0.1-rc <2",
-    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
-    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-agent": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
+    "@deepseek-ai/dsh-compaction": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
+    "@deepseek-ai/dsh-compaction-basic": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
     "cordis": ">=4.0.0-rc <5",
     "schemastery": "^3.18.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-agent": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-compaction": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-compaction-basic": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "cordis": {
+      "optional": true
+    },
+    "schemastery": {
+      "optional": true
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

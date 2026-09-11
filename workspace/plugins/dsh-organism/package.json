@@ -1,20 +1,58 @@
 {
   "name": "@dsh-external/dsh-organism",
   "version": "0.1.0",
-  "description": "器官化插件内核：把每个插件升格为「器官」——统一 Agent 契约（感知/反射/效应/稳态），由事件总线做神经系统、ctx.tools.execute 做运动神经、LLM 做大脑，随拆随用",
-  "private": true,
+  "description": "Organism kernel for DeepSeek Harness: promotes every plugin to an organ with one contract (sense / reflex / effect / homeostasis), adds a nerve bus, a heartbeat, reflex arcs, a self-healing ledger and on-demand tool-schema gating.",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/types/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "cordis.patch.yml"
   ],
   "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1420079678-ctrl/agent-body.git",
+    "directory": "workspace/plugins/dsh-organism"
+  },
+  "homepage": "https://github.com/1420079678-ctrl/agent-body#organ-catalog",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "agent",
+    "organ",
+    "plugin-system",
+    "self-healing"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "peerDependencies": {
-    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
-    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
     "cordis": ">=4.0.0-rc <5",
     "schemastery": "^3.18.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "cordis": {
+      "optional": true
+    },
+    "schemastery": {
+      "optional": true
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

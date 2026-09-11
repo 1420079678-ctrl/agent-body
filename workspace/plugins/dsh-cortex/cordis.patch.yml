@@ -1,0 +1,9 @@
+# Agent-Body organ: cortex (memory system).
+#
+# Adds sleep phases timed by conversation progress, deterministic consolidation,
+# long-term memory cards with decay and archival, and alert de-noising. Every
+# field in the plugin's Config schema has a default, so an entry with no
+# `config:` block is a valid install.
+- insert:
+    - id: dsh-cortex
+      name: '@dsh-external/dsh-cortex'

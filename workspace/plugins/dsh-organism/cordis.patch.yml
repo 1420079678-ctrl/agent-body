@@ -1,0 +1,9 @@
+# Agent-Body organ: organism kernel (nervous + endocrine system).
+#
+# Mounts the body kernel: organ anatomy, vitals, the heartbeat pump, nerve
+# impulses, reflex arcs, the self-healing ledger and on-demand tool-schema
+# gating. Every field in the plugin's Config schema has a default, so an entry
+# with no `config:` block is a valid install.
+- insert:
+    - id: dsh-organism
+      name: '@dsh-external/dsh-organism'
