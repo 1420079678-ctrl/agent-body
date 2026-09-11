@@ -193,6 +193,24 @@ graph TD
 
 ## 快速开始
 
+### 一条命令装一个器官
+
+自带依赖的器官在 Release 页面上附了**预构建 tarball**——不用 clone、不用编译。包内声明了 `dsh.bundle`，所以安装时会自动把它加进 `dsh.profile.bundles`，下次启动即挂载：
+
+```powershell
+dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0/dsh-external-dsh-organism-0.1.0.tgz
+```
+
+目前已按这种方式发布的，是三个不依赖外部工具链的器官（把 URL 里的文件名换掉即可装另外两个）：
+
+| 器官 | 带来什么 | 包名 |
+| --- | --- | --- |
+| `dsh-organism` | 身体内核：解剖、体征、心跳泵、神经冲动、反射弧、自愈账本 | `@dsh-external/dsh-organism` |
+| `dsh-cortex` | 睡眠相位、确定性巩固、长期记忆、告警降噪 | `@dsh-external/dsh-cortex` |
+| `dsh-zero-residence` | 零驻留上下文：驱逐载荷、只留指针、需要时逐字重建 | `@dsh-external/dsh-zero-residence` |
+
+### 或者从源码开始
+
 本仓库是**器官层**——不打包宿主。两件事，都是公开的：
 
 ```powershell

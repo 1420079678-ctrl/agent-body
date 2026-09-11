@@ -228,6 +228,25 @@ Every entry below is a real plugin under `workspace/plugins/`. Five core organs 
 
 ## Quick start
 
+### Install an organ in one command
+
+The self‑contained organs ship a **prebuilt tarball** on the release page — no clone, no build step. The package declares
+`dsh.bundle`, so installing it also appends it to `dsh.profile.bundles` and the next start mounts it:
+
+```powershell
+dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0/dsh-external-dsh-organism-0.1.0.tgz
+```
+
+Available this way today — the three that need no external toolchain (swap the file name in the URL for the others):
+
+| organ | what it adds | package |
+| --- | --- | --- |
+| `dsh-organism` | the body kernel: anatomy, vitals, heartbeat pump, nerve impulses, reflex arcs, self-healing ledger | `@dsh-external/dsh-organism` |
+| `dsh-cortex` | sleep phases, deterministic consolidation, long-term memory, alert de-noising | `@dsh-external/dsh-cortex` |
+| `dsh-zero-residence` | zero-residence context: evict, keep a pointer, rebuild the payload verbatim on demand | `@dsh-external/dsh-zero-residence` |
+
+### Or work from source
+
 This repository is the **organ layer** — it does not vendor the host. Two pieces, both public:
 
 ```powershell
