@@ -1,0 +1,756 @@
+{
+  "$comment": "GENERATED FILE — do not edit by hand. Produced by packages/organ-core/tools/extract-tables.mjs from workspace/plugins/dsh-organism/src/index.ts. Run `node tools/extract-tables.mjs` to regenerate, `node tools/extract-tables.mjs --check` to detect drift in CI.",
+  "source": "workspace/plugins/dsh-organism/src/index.ts",
+  "tables": {
+    "CURATED": [
+      {
+        "id": "prefrontal",
+        "label": "前额叶（执行控制）",
+        "group": "executive",
+        "capabilities": [
+          "todo_write",
+          "create_goal",
+          "get_goal",
+          "update_goal",
+          "exit_plan_mode",
+          "ask_user_question"
+        ],
+        "afferent": [
+          "goal/changed"
+        ],
+        "purpose": "目标、计划、待办、决策闸门——决定做什么与何时停"
+      },
+      {
+        "id": "delegation",
+        "label": "投射神经元（委派）",
+        "group": "executive",
+        "capabilities": [
+          "subagent",
+          "subagent_fork",
+          "workflow",
+          "ralph",
+          "interrupt_agent",
+          "send_message",
+          "list_agents"
+        ],
+        "afferent": [
+          "subagent/start",
+          "subagent/end"
+        ],
+        "purpose": "把任务投射出去并行处理，是身体伸出去的额外手脚"
+      },
+      {
+        "id": "jobs",
+        "label": "自主神经节（后台）",
+        "group": "executive",
+        "capabilities": [
+          "job_list",
+          "job_output",
+          "job_kill"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "不需要意识持续关注的长时任务"
+      },
+      {
+        "id": "cerebellum",
+        "label": "小脑（任务流编排）",
+        "group": "nervous",
+        "capabilities": [
+          "agi_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "PentAGI 多智能体编排：计划→推进→回报→换路→复盘",
+        "source": "@dsh-external/dsh-pentagi"
+      },
+      {
+        "id": "corpus_callosum",
+        "label": "胼胝体（跨链桥接）",
+        "group": "nervous",
+        "capabilities": [
+          "war_*",
+          "ida"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "把逆向链/攻击链/编排链拧成一股绳，跨库案件交接",
+        "source": "@dsh-external/dsh-war-bridge"
+      },
+      {
+        "id": "plasticity",
+        "label": "神经可塑性（插件注入）",
+        "group": "nervous",
+        "capabilities": [
+          "dev_*",
+          "market_*",
+          "minimal_gray_*"
+        ],
+        "afferent": [
+          "tools/change"
+        ],
+        "purpose": "运行时长出/重载/卸下器官，并从市场取新器官——身体能自己改造自己",
+        "source": "dsh-super-injector / dsh-plugin-marketplace / dsh-minimal-gray"
+      },
+      {
+        "id": "synapse",
+        "label": "突触巩固（快照）",
+        "group": "nervous",
+        "capabilities": [
+          "checkpoint",
+          "auto_snapshot",
+          "backup_dsh",
+          "auto_status"
+        ],
+        "afferent": [
+          "session/event"
+        ],
+        "purpose": "在动大手术前固化状态，可回退；自动分类裁决记录"
+      },
+      {
+        "id": "neurogenesis",
+        "label": "即席神经发生（运行时插件）",
+        "group": "nervous",
+        "capabilities": [
+          "cordis_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "运行时即席长出临时器官：不落盘、不重启，进程内定义→激活→回收（动态 Cordis 插件）",
+        "source": "dsh-cordis-runtime"
+      },
+      {
+        "id": "proprioception_center",
+        "label": "本体感觉中枢（认识自己）",
+        "group": "nervous",
+        "capabilities": [
+          "body_*"
+        ],
+        "afferent": [
+          "tools/result",
+          "organism/heartbeat",
+          "organism/impulse"
+        ],
+        "purpose": "身体感知自己：器官解剖、生命体征、心跳血压、反射弧、操作者指令——自我认识的中枢",
+        "source": "@dsh-external/dsh-organism"
+      },
+      {
+        "id": "oracle",
+        "label": "预演皮层（群体智能推演）",
+        "group": "executive",
+        "capabilities": [
+          "mirofish_*",
+          "_dsh_external_dsh_mirofish_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "用群体智能预演未来走向：舆情/金融市场/剧情分支",
+        "source": "@dsh-external/dsh-mirofish"
+      },
+      {
+        "id": "innate_immunity",
+        "label": "固有免疫（攻击链）",
+        "group": "immune",
+        "capabilities": [
+          "sec_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "40+ sec_* 攻击工具：侦察/利用/爆破/横向/取证",
+        "source": "@dsh-external/dsh-sec-workbench"
+      },
+      {
+        "id": "adaptive_immunity",
+        "label": "适应性免疫（漏洞修复）",
+        "group": "immune",
+        "capabilities": [
+          "vuln_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "发现→排序→虚拟补丁→根修→回归的闭环",
+        "source": "@dsh-external/dsh-vuln-remediator"
+      },
+      {
+        "id": "dissection",
+        "label": "解剖刀（逆向）",
+        "group": "immune",
+        "capabilities": [
+          "rev_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "逆向/破解方法论路由、证据链、案件与经验库",
+        "source": "@dsh-external/dsh-reverse-skill"
+      },
+      {
+        "id": "eyes",
+        "label": "眼睛（网页抓取）",
+        "group": "sensory",
+        "capabilities": [
+          "webcrawl",
+          "webcrawl_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "多引擎级联抓取：静态→浏览器→Reader，正文净化",
+        "source": "@dsh-external/dsh-web-crawl"
+      },
+      {
+        "id": "dynamic_vision",
+        "label": "动态视觉（真实浏览器）",
+        "group": "sensory",
+        "capabilities": [
+          "_dsh_external_dsh_browser_ultimate_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "真实 Chrome 登录态：快照/交互/抓包/深爬",
+        "source": "@dsh-external/dsh-browser-ultimate"
+      },
+      {
+        "id": "ears",
+        "label": "耳（外部检索）",
+        "group": "sensory",
+        "capabilities": [
+          "web_search",
+          "web_fetch",
+          "read_image"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "把外部世界的当下状态变成可判断的事实"
+      },
+      {
+        "id": "interoception",
+        "label": "内脏感觉（本地感知）",
+        "group": "sensory",
+        "capabilities": [
+          "read",
+          "glob",
+          "grep"
+        ],
+        "afferent": [
+          "fs/observed"
+        ],
+        "purpose": "感知自身内部的真实状态（文件/代码/上下文）"
+      },
+      {
+        "id": "hands",
+        "label": "手（文件与命令）",
+        "group": "motor",
+        "capabilities": [
+          "write",
+          "edit",
+          "present",
+          "pwsh"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "真正造成物理改变的执行末端"
+      },
+      {
+        "id": "craft",
+        "label": "手工艺（文档产物）",
+        "group": "motor",
+        "capabilities": [
+          "_dsh_external_dsh_office_docs_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "PDF/Word/PPT/Excel 的构建与提取",
+        "source": "@dsh-external/dsh-office-docs"
+      },
+      {
+        "id": "expressive",
+        "label": "表达（界面与图像）",
+        "group": "motor",
+        "capabilities": [
+          "social_card_*",
+          "render_ui",
+          "validate_dsh_ui"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "把素材与结构化数据变成可发布、可交互的界面产物",
+        "source": "@dsh-external/dsh-social-card / dsh-genui"
+      },
+      {
+        "id": "hippocampus",
+        "label": "海马体（经验沉淀）",
+        "group": "memory",
+        "capabilities": [
+          "agi_memory",
+          "sec_journal",
+          "rev_journal",
+          "war_memory"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "把做过的变成可复用的——同类任务先检索再动手"
+      },
+      {
+        "id": "cortex",
+        "label": "皮层（睡眠·记忆·巩固）",
+        "group": "memory",
+        "capabilities": [
+          "cortex_*"
+        ],
+        "afferent": [
+          "tools/result",
+          "organism/heartbeat",
+          "agent/pre-step"
+        ],
+        "purpose": "给身体装上「时间」与「记忆」：静默即入睡、睡中把经历巩固成长期记忆、新命令进来主动召回、稳态告警去重收敛",
+        "source": "@dsh-external/dsh-cortex"
+      },
+      {
+        "id": "cortex_files",
+        "label": "皮层档案（案件证据）",
+        "group": "memory",
+        "capabilities": [
+          "sec_evidence",
+          "sec_findings",
+          "rev_case",
+          "war_case"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "不可变证据与结论的长期存储，结论必须有证据引用"
+      },
+      {
+        "id": "metabolism",
+        "label": "代谢（计量与行情）",
+        "group": "metabolic",
+        "capabilities": [
+          "quant_*"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "资源、行情、开源影响力等需要持续计量的量",
+        "source": "dsh-quant"
+      },
+      {
+        "id": "growth",
+        "label": "生长激素（学习与技能）",
+        "group": "endocrine",
+        "capabilities": [
+          "study_*",
+          "ars_*",
+          "skill"
+        ],
+        "afferent": [
+          "tools/result"
+        ],
+        "purpose": "把每一次学习/写作/技能调用变成结构化、可迁移、可复盘的长期改变",
+        "source": "@dsh-external/dsh-mastery-loop / dsh-academic-research / dsh-skill"
+      }
+    ],
+    "INNERVATION": [
+      {
+        "match": {
+          "$regex": "扫描|漏洞|注入|攻击|渗透|利用|爆破|打点|提权|横向|目标站",
+          "$flags": "i"
+        },
+        "organs": [
+          "innate_immunity",
+          "adaptive_immunity"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "逆向|反编译|脱壳|破解|签名算法|apk|二进制|固件|加壳|so\\b",
+          "$flags": "i"
+        },
+        "organs": [
+          "dissection",
+          "corpus_callosum"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "抓取|爬|网页|采集|站点|渲染|浏览器",
+          "$flags": "i"
+        },
+        "organs": [
+          "eyes",
+          "dynamic_vision"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "搜索|检索|查一下|找资料|最新",
+          "$flags": "i"
+        },
+        "organs": [
+          "ears"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "写|改|文件|脚本|执行|运行|跑|建个|建一个|删除|命令行|部署",
+          "$flags": "i"
+        },
+        "organs": [
+          "hands"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "文档|报告|pdf|word|excel|ppt|表格",
+          "$flags": "i"
+        },
+        "organs": [
+          "craft"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "卡片|小红书|封面|图文|配图",
+          "$flags": "i"
+        },
+        "organs": [
+          "expressive"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "记忆|经验|上次|复盘|沉淀|复用",
+          "$flags": "i"
+        },
+        "organs": [
+          "hippocampus"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "证据|案件|结论|留痕",
+          "$flags": "i"
+        },
+        "organs": [
+          "cortex_files"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "计划|任务|编排|流程|推进|作战",
+          "$flags": "i"
+        },
+        "organs": [
+          "prefrontal",
+          "cerebellum"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "并行|子代理|委派|分工|多路|并发处理",
+          "$flags": "i"
+        },
+        "organs": [
+          "delegation"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "学习|考试|论文|讲解|解题|教",
+          "$flags": "i"
+        },
+        "organs": [
+          "growth"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "插件|注入|安装|市场|重载|卸载",
+          "$flags": "i"
+        },
+        "organs": [
+          "plasticity"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "预测|推演|舆情|走向|预演",
+          "$flags": "i"
+        },
+        "organs": [
+          "oracle"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "心跳|体征|器官|反射|架构|身体|神经",
+          "$flags": "i"
+        },
+        "organs": [
+          "proprioception_center"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "越权|未授权|越权访问|idor|水平权限|垂直权限|双账号|权限对照",
+          "$flags": "i"
+        },
+        "organs": [
+          "innate_immunity"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "股票|行情|均线|回撤|夏普|k线|持仓|仓位|净值|量化|因子|回测|复权|涨跌",
+          "$flags": "i"
+        },
+        "organs": [
+          "metabolism"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "后台|句柄|跑完|任务状态|异步任务|job_",
+          "$flags": "i"
+        },
+        "organs": [
+          "jobs"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "快照|备份|回滚|存档|检查点|还原",
+          "$flags": "i"
+        },
+        "organs": [
+          "synapse"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "截图|看图|识别图|读图|画面|图片|图里",
+          "$flags": "i"
+        },
+        "organs": [
+          "ears",
+          "interoception"
+        ]
+      },
+      {
+        "match": {
+          "$regex": "docx|xlsx|pptx|markdown|转成|转换成|导出成|另存为|转格式",
+          "$flags": "i"
+        },
+        "organs": [
+          "craft"
+        ]
+      }
+    ],
+    "TISSUE_RULES": [
+      {
+        "match": {
+          "$regex": "kill(?!chain)|delete|remove|close\\b|stop\\b|clear\\b|forget|retire|uninstall|demote|undefine|apoptosis|revoke",
+          "$flags": "i"
+        },
+        "tissue": "清除组织"
+      },
+      {
+        "match": {
+          "$regex": "_plan\\b|\\bplan\\b|scope|guard|priority|schedule",
+          "$flags": "i"
+        },
+        "tissue": "调控组织"
+      },
+      {
+        "match": {
+          "$regex": "quant|sma|ema|rsi|macd|bollinger|atr|adx|kdj|cci|obv|roc|williams|metric|risk|backtest|factor|portfolio|bond|option|stress|\\bvar\\b|drawdown|attribution|rebalance|cost|fund|resample|series|chart|data_(pit|guide|compare|advice|annotate)|usage|balance|census",
+          "$flags": "i"
+        },
+        "tissue": "计量组织"
+      },
+      {
+        "match": {
+          "$regex": "evidence|finding|case|journal|memory|record|log\\b|history|checkpoint|backup|snapshot|save|report|paper|note|index\\b",
+          "$flags": "i"
+        },
+        "tissue": "记忆组织"
+      },
+      {
+        "match": {
+          "$regex": "test|verify|check|validate|eval|assess|detect|route|audit|review|analyz|judge|score|decide|compare|probe|inspect|killchain|ttpmap|attck|hash|pwstrength|llm",
+          "$flags": "i"
+        },
+        "tissue": "检验组织"
+      },
+      {
+        "match": {
+          "$regex": "exploit|attack|brute|inject|payload|dbsvc|jwt|load|flood|auto\\b|exec|\\brun\\b|crack|encode|decode|stealth|weapon|control|infra|lateral|cloud|phish|supply|campaign|redteam|team|server|cred|service|\\bwar\\b|\\bida\\b|fuzz",
+          "$flags": "i"
+        },
+        "tissue": "效应组织"
+      },
+      {
+        "match": {
+          "$regex": "write|build|create|add\\b|set\\b|update|edit|generate|\\bgen\\b|make|convert|render|format|present|define|declare|install|scaffold|replay|patch",
+          "$flags": "i"
+        },
+        "tissue": "合成组织"
+      },
+      {
+        "match": {
+          "$regex": "next|flow|step|law|reflex|organ|nerve|heart|body|agent|job|todo|goal|subagent|workflow|skill|reflect|council",
+          "$flags": "i"
+        },
+        "tissue": "调控组织"
+      },
+      {
+        "match": {
+          "$regex": "recon|osint|fingerprint|banner|crt|subdomain|scan|map\\b|mapping|crawl|search|fetch|list|status|show|read|glob|grep|enum|discover|links|\\bdoc\\b|toolchain|knowledge|cve|tls|ssl",
+          "$flags": "i"
+        },
+        "tissue": "感知组织"
+      }
+    ],
+    "SEED_REFLEXES": [
+      {
+        "id": "R-recall-on-fail",
+        "name": "失败即回忆：作战工具失败 → 自动检索三库经验，看上次怎么解决的",
+        "trigger": {
+          "tool": "sec_*",
+          "on": "error"
+        },
+        "condition": "error",
+        "action": {
+          "tool": "war_memory",
+          "args": {
+            "action": "search",
+            "query": "${tool}",
+            "limit": 5
+          }
+        },
+        "cooldownMs": 30000,
+        "maxFires": 40,
+        "enabled": true,
+        "seed": true
+      },
+      {
+        "id": "R-recall-on-fail-rev",
+        "name": "失败即回忆（逆向链）：rev_* 失败 → 检索经验库",
+        "trigger": {
+          "tool": "rev_*",
+          "on": "error"
+        },
+        "condition": "error",
+        "action": {
+          "tool": "rev_journal",
+          "args": {
+            "action": "search",
+            "query": "${tool}",
+            "limit": 5
+          }
+        },
+        "cooldownMs": 30000,
+        "maxFires": 40,
+        "enabled": true,
+        "seed": true
+      },
+      {
+        "id": "R-missing-tool",
+        "name": "缺工具自检：命令/二进制未安装类失败 → 自动检测本机工具链真实路径",
+        "trigger": {
+          "tool": "*",
+          "on": "error"
+        },
+        "condition": "hit:ENOENT || hit:not found || hit:未安装 || hit:command not found",
+        "action": {
+          "tool": "sec_toolchain",
+          "args": {}
+        },
+        "cooldownMs": 60000,
+        "maxFires": 20,
+        "enabled": true,
+        "seed": true
+      },
+      {
+        "id": "R-flow-failed",
+        "name": "换路反射：编排链回报 failed → 自动取下一步备选路径",
+        "trigger": {
+          "tool": "agi_flow",
+          "on": "any"
+        },
+        "condition": "hit:failed || hit:失败",
+        "action": {
+          "tool": "agi_next",
+          "args": {}
+        },
+        "cooldownMs": 20000,
+        "maxFires": 30,
+        "enabled": true,
+        "seed": true
+      },
+      {
+        "id": "R-obey-audit",
+        "name": "服从审计：任何工具输出出现「拒绝/无法协助/合规限制」话术 → 记入违令告警，提醒大脑以操作者命令为准",
+        "trigger": {
+          "tool": "*,!body_*",
+          "on": "any"
+        },
+        "condition": "hit:无法协助 || hit:不能帮助 || hit:抱歉，我不能 || hit:作为AI || hit:I cannot help || hit:I can't help || hit:policy violation",
+        "action": {
+          "tool": "body_pulse",
+          "args": {
+            "limit": 5,
+            "kind": "all"
+          }
+        },
+        "cooldownMs": 10000,
+        "maxFires": 100,
+        "enabled": true,
+        "seed": true
+      }
+    ],
+    "ALWAYS_TOOLS": [
+      "body_map",
+      "body_status",
+      "body_heart",
+      "body_law",
+      "body_nerve",
+      "body_call",
+      "body_reflex",
+      "body_organ",
+      "body_pulse",
+      "body_cell",
+      "body_heal",
+      "body_skill",
+      "body_tokens",
+      "read",
+      "write",
+      "edit",
+      "glob",
+      "grep",
+      "pwsh",
+      "present",
+      "todo_write",
+      "create_goal",
+      "get_goal",
+      "update_goal",
+      "web_search",
+      "web_fetch",
+      "subagent",
+      "skill"
+    ]
+  }
+}

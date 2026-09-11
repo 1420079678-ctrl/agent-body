@@ -46,3 +46,44 @@ jobs:
           done
           echo "offline regression suites present: $found"
           [ "$found" -ge 4 ]
+
+      # The kernel constant tables (CURATED / INNERVATION / TISSUE_RULES / SEED_REFLEXES /
+      # ALWAYS_TOOLS) are extracted from the real kernel source. If someone edits the kernel and
+      # forgets to re-extract, the zero-dependency core silently drifts from the thing that runs.
+      - name: Kernel constant tables are in sync
+        run: node packages/organ-core/tools/extract-tables.mjs --check
+
+      # Same argument for the organ catalog: it is the authority on tiers and permissions, so it
+      # must be generated, not hand-edited.
+      - name: Organ catalog is in sync
+        run: node catalog/build.mjs --check
+
+      # Unit tests + the parity suite that compares the ported core against the real kernel.
+      # Parity SKIPs (loudly) when no kernel build is on disk; a bare clone has none, so this
+      # job does not pretend the port is verified — it just runs what it can.
+      - name: Unit and parity tests
+        run: node scripts/run-tests.mjs
+
+      # The headline number is a claim. This is the step that keeps it honest: if the gating
+      # behaviour, the corpus, or the task set changes the result, the build fails until someone
+      # consciously re-baselines and explains why.
+      - name: Benchmark matches the committed baseline
+        run: node benchmarks/run.mjs --check
+
+      # The five-minute demo is the front door. If it breaks, nothing else matters.
+      - name: Five-minute demo still runs
+        run: node examples/quickstart/run.mjs
+
+      # README.md is deterministic; make sure regenerating it left the tree clean, so a
+      # contributor can tell "the report changed" apart from "someone ran the bench".
+      - name: Working tree stays clean after regeneration
+        shell: bash
+        run: |
+          set -e
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::working tree is dirty after regeneration — commit the regenerated artifacts"
+            git status --porcelain
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "clean"

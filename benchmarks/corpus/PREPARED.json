@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-09-11T14:06:09.517Z",
+  "steps": [
+    {
+      "from": "captured-all-tools.json",
+      "step": "tools.json",
+      "tools": 256
+    },
+    {
+      "note": "活体快照：不可离线复现，仅作对照与估算器校验",
+      "step": "trace-live-gate.json",
+      "visibleTools": 64
+    },
+    {
+      "step": "trace-healings.json",
+      "wounds": 30
+    },
+    {
+      "reflexes": 5,
+      "step": "trace-reflex-stats.json"
+    },
+    {
+      "step": "trace-synapses.json",
+      "synapses": 6
+    },
+    {
+      "skills": 1,
+      "step": "trace-skills.json"
+    }
+  ]
+}

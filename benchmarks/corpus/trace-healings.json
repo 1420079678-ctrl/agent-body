@@ -1,0 +1,249 @@
+{
+  "$comment": "真实运行中的自愈账本（一次伤口 = 一次失败 → 归因 → 处置 → 复检）。消融实验用它回放：关掉自愈时这些伤口不会闭合。已脱敏：本机路径→<REPO_PATH>，用户名→<user>。",
+  "healings": [
+    {
+      "attempts": 1,
+      "cause": "arg_error",
+      "error": "invalid arguments: \"args\" must be a string",
+      "organ": "proprioception_center",
+      "status": "healed",
+      "tool": "body_call"
+    },
+    {
+      "attempts": 1,
+      "cause": "arg_error",
+      "error": "invalid arguments: \"args\" must be a string",
+      "organ": "proprioception_center",
+      "status": "healed",
+      "tool": "body_call"
+    },
+    {
+      "attempts": 1,
+      "cause": "arg_error",
+      "error": "invalid arguments: \"args\" must be a string",
+      "organ": "proprioception_center",
+      "status": "healed",
+      "tool": "body_call"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "cannot modify \"<REPO_PATH>\": file has not been read — read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "cannot modify \"<REPO_PATH>\": file has not been read — read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "cannot modify \"<REPO_PATH>\": file has not been read — read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "old_string was not found in \"<REPO_PATH>\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 4,
+      "cause": "unknown",
+      "error": "cannot edit \"<REPO_PATH>\": file changed since it was read — re-read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 4,
+      "cause": "unknown",
+      "error": "cannot edit \"<REPO_PATH>\": file changed since it was read — re-read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "old_string was not found in \"<REPO_PATH>\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "cannot modify \"<REPO_PATH>\": file has not been read — read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "cannot modify \"<REPO_PATH>\": file has not been read — read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "old_string was not found in \"<REPO_PATH>\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 4,
+      "cause": "unknown",
+      "error": "cannot modify \"<REPO_PATH>\": file has not been read — read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 4,
+      "cause": "unknown",
+      "error": "cannot modify \"<REPO_PATH>\": file has not been read — read the file, then retry",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "old_string was not found in \"<REPO_PATH>\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "edit"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "tool \"market_installed\" returned invalid output: \"value.plugins[16].description\" must be a string; \"value.plugins[19].version\" must be a string",
+      "organ": "plasticity",
+      "status": "healed",
+      "tool": "market_installed"
+    },
+    {
+      "attempts": 6,
+      "cause": "unknown",
+      "error": "periodsToMaturity must be > 0, got -5",
+      "organ": "metabolism",
+      "status": "healed",
+      "tool": "quant_bond"
+    },
+    {
+      "attempts": 10,
+      "cause": "unknown",
+      "error": "periodsToMaturity must be > 0, got -5",
+      "organ": "metabolism",
+      "status": "healed",
+      "tool": "quant_bond"
+    },
+    {
+      "attempts": 1,
+      "cause": "arg_error",
+      "error": "invalid arguments: missing required property \"file_path\"",
+      "organ": "interoception",
+      "status": "healed",
+      "tool": "read"
+    },
+    {
+      "attempts": 2,
+      "cause": "unknown",
+      "error": "cannot read \"<REPO_PATH>\": not found",
+      "organ": "interoception",
+      "status": "healed",
+      "tool": "read"
+    },
+    {
+      "attempts": 6,
+      "cause": "unknown",
+      "error": "cannot read \"<REPO_PATH>\": not found",
+      "organ": "interoception",
+      "status": "healed",
+      "tool": "read"
+    },
+    {
+      "attempts": 12,
+      "cause": "unknown",
+      "error": "cannot read \"<REPO_PATH>\": not found",
+      "organ": "interoception",
+      "status": "healed",
+      "tool": "read"
+    },
+    {
+      "attempts": 1,
+      "cause": "conflict",
+      "error": "complete and blocked require a direct human turn or the current goal round",
+      "organ": "prefrontal",
+      "status": "healed",
+      "tool": "update_goal"
+    },
+    {
+      "attempts": 1,
+      "cause": "network",
+      "error": "web fetch failed: TypeError: fetch failed",
+      "organ": "ears",
+      "status": "healed",
+      "tool": "web_fetch"
+    },
+    {
+      "attempts": 2,
+      "cause": "timeout",
+      "error": "tool call timed out after 30000ms",
+      "organ": "ears",
+      "status": "healed",
+      "tool": "web_fetch"
+    },
+    {
+      "attempts": 6,
+      "cause": "arg_error",
+      "error": "invalid arguments: missing required property \"file_path\"; missing required property \"content\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "write"
+    },
+    {
+      "attempts": 6,
+      "cause": "arg_error",
+      "error": "invalid arguments: missing required property \"file_path\"; missing required property \"content\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "write"
+    },
+    {
+      "attempts": 1,
+      "cause": "arg_error",
+      "error": "invalid arguments: missing required property \"file_path\"; missing required property \"content\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "write"
+    },
+    {
+      "attempts": 1,
+      "cause": "arg_error",
+      "error": "invalid arguments: missing required property \"file_path\"; missing required property \"content\"",
+      "organ": "hands",
+      "status": "healed",
+      "tool": "write"
+    }
+  ],
+  "provenance": {
+    "from": "dsh-organism/healings.json",
+    "sanitized": true
+  }
+}

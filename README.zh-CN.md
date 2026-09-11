@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src=".github/assets/banner.svg" alt="Agent-Body — 插件即是器官：23 个器官、8 大系统、一颗心脏，省下 82% 提示词 token，0 个慢性伤口" width="100%">
+<img src=".github/assets/banner.svg" alt="Agent-Body — 插件即是器官：25 个策展器官、8 大系统、一颗心脏，门控掉 84.7% 的 tool schema token，0 个慢性伤口" width="100%">
 
 # Agent‑Body
 
@@ -8,13 +8,14 @@
 
 *这里的插件不是一份工具清单，而是一具活着的身体里的器官。*
 
-[![Organs](https://img.shields.io/badge/organs-23-ff69b4)](#器官目录)
-[![Schema gating](https://img.shields.io/badge/schema%20gating-节省%2082%25%20token-2ecc71)](#token-经济)
+[![Organs](https://img.shields.io/badge/organs-25-ff69b4)](#器官目录)
+[![Schema gating](https://img.shields.io/badge/schema%20gating-门控掉%2084.7%25%20tool--schema%20token-2ecc71)](#token-经济)
+[![Benchmark](https://img.shields.io/badge/benchmark-仓库内可复现-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/离线回归-200%2B%20断言-informational)](#自己验证)
 [![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#快速开始)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[架构文档](ARCHITECTURE.md) · [器官目录](#器官目录) · [自己验证](#自己验证) · [**English**](README.md)
+[架构文档](ARCHITECTURE.md) · [器官目录](catalog/organs.json) · [基准报告](benchmarks/results/REPORT.md) · [路线图](ROADMAP.md) · [**English**](README.md)
 
 </div>
 
@@ -117,9 +118,32 @@ ctx.on('organism/heartbeat', (blood) => { /* 你的器官从此有了脉搏 */ }
 
 ### 📉 把 token 经济当成一等公民
 
-工具 schema 按需显影，由「这一轮到底在干什么」决定：
+工具 schema 按需显影，由「这一轮到底在干什么」决定。
 
-> **每次请求只暴露 256 项能力中的 49 项**——`10,173` token 而不是 `55,154`，**省下约 82%**，其余能力离一次 `body_call` 之遥。
+**下面每个数字的口径：只算提示词里的 tool schema 块**——每个工具定义的 `name` + `description` + JSON schema。
+不含系统提示正文、不含对话历史、不含工具结果。
+
+> **84.7% 的 tool schema token 被门控掉**——48 条代表性命令上，`55,154` → 均值 `8,433`
+> （中位 85.7%，最差 75.2%），分母是 **256 项能力定义**。其余能力离一次 `body_call` 之遥。
+
+这个数字由仓库内的基准产出，**在你机器上可复现**：
+
+```bash
+npm run bench          # 重新生成 benchmarks/results/REPORT.md
+npm run bench:check    # 与提交的基线不一致就非零退出
+```
+
+两点如实说明，因为这个标题数字很容易被过度解读：
+
+- **冷启动口径**。上面的数字假设身体没有近期活动——只由当前命令决定显影哪些能力。带真实运行历史时，
+  近期用过的器官与高信任器官会保持「热」，显影集变大、省下的变少：本仓库固化在
+  `benchmarks/corpus/trace-live-gate.json` 的活体快照是 **74%**（256 项中显影 64 项）。
+  历史版本的 README 写过 **82%**——那是介于两者之间的某一次活体快照。两个极端都真实，
+  **引用时必须带上口径**。
+- **48 条命令里有 10 条需要第二次跳转**。单器官显影上限 10 项，意味着大型器官（攻击链有 49 项）会被截断，
+  另有一些意图没有路由到拥有该能力的器官。这些都能经 `body_call` 取回，但**不是免费的**。
+  基准把每一条漏显影归因为 *缺陷 / 被截断 / 未路由* 三类并逐条列在
+  [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md)。
 
 ---
 
@@ -129,7 +153,7 @@ ctx.on('organism/heartbeat', (blood) => { /* 你的器官从此有了脉搏 */ }
 | --- | --- | --- |
 | **个体** | 这具身体（正在运行的那套安装） | 1 |
 | **系统** | 人体八大系统：执行 / 神经 / 免疫 / 感官 / 运动 / 记忆 / 代谢 / 内分泌 | 8 |
-| **器官** | 一个插件，遵守同一份契约：感知 → 反射 → 效应 → 稳态 | 本仓库 **23** 个 |
+| **器官** | 一个插件，遵守同一份契约：感知 → 反射 → 效应 → 稳态 | 策展 **25** 个（见 [`catalog/organs.json`](catalog/organs.json)），其中 **23** 个是可安装的插件包 |
 | **组织** | 器官内部的功能细分：感知 / 检验 / 效应 / 合成 / 记忆 / 调控 / 清除 / 计量 / 基质 | 9 类 |
 | **细胞** | 单个能力单元（一个工具） | 运行时统计 |
 
@@ -192,6 +216,20 @@ graph TD
 ---
 
 ## 快速开始
+
+### 先看它跑起来——不装依赖、不需要宿主、不需要 API key
+
+```bash
+git clone https://github.com/1420079678-ctrl/agent-body && cd agent-body
+npm run demo      # 命令 → 冲动 → 支配 → 执行 → 失败归因 → 反射开火
+npm run check     # 常量表 + 器官目录 + 29 项测试 + 基准比对，全部离线
+```
+
+**没有任何东西需要安装。** 核心包不 import Node 内置模块以外的任何东西，所以刚 clone 下来就能对着
+仓库里真实的 256 项能力语料跑通一条完整链路。
+
+然后看 [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) 了解那个 token 数字是怎么测出来的，
+看 [`ROADMAP.md`](ROADMAP.md) 了解接下来**故意不做**什么。
 
 ### 一条命令装一个器官
 
@@ -261,20 +299,45 @@ body_nerve action=send text="<你的命令>"   # 先看这条命令该由谁办�
 
 ## 自己验证
 
-每个器官都带**离线、确定性**的回归测试——不联网、不调模型，随时可以重跑。
+下面每条都是**离线、确定性**的——不联网、不调模型、不需要安装任何东西。
 
-```powershell
+```bash
+npm run check     # CI 跑的那道闸：常量表 + 器官目录 + 全部测试 + 基准比对
+npm run demo      # 五分钟端到端
+npm run bench     # 重新生成 token 基准（写出 benchmarks/results/REPORT.md）
+```
+
+`npm run check` 是最诚实的那条。以下任一情况它就失败：零依赖内核与真实内核的常量表漂移、器官目录与源码不一致、
+任一测试失败、基准偏离已提交的基线。
+
+每个器官也各自带离线回归：
+
+```bash
 npm run verify          # 仓库体检（结构、JSON、链接、密钥卫生）
 npm run verify:organs   # 跑遍所有器官的离线回归
 ```
 
 | 器官 | 命令 | 结果（实测） |
 | --- | --- | --- |
-| `dsh-organism` | `node scripts/smoke-test.mjs` | **79 通过 / 0 失败**（familyOf、evalCondition、衰减、修剪、token 估算、显影契约） |
+| `dsh-organism` | `node scripts/smoke-test.mjs` | **179 通过 / 0 失败**（familyOf、evalCondition、衰减、修剪、token 估算、显影契约） |
 | `dsh-cortex` | `node scripts/smoke-test.mjs` | **58 通过 / 0 失败**（分词、记忆卡提炼、降噪） |
-| `dsh-war-bridge` | `node scripts/smoke-test.mjs` | 24 项断言，含 IDA 全链路与幂等交接 |
+| `dsh-zero-residence` | `node scripts/smoke-test.mjs` | **16 通过 / 0 失败**（指针清单、账本计算、精确 id 召回） |
+| `dsh-war-bridge` | `node scripts/smoke-test.mjs` | **17 通过 / 0 失败 / 1 跳过**（无样本 PE 时 IDA 链路跳过） |
 | `dsh-web-crawl` | `python scripts/selftest_local.py` | 46 项离线断言（抽取、魔数路由、级联） |
-| `dsh-zero-residence` | `node scripts/smoke-test.mjs` | 指针压缩 + 召回完整性 |
+
+**这些套件需要宿主运行时**（`@deepseek-ai/dsh-*`），所以干净 clone 上 `npm run verify:organs` 会报
+**SKIP 并说明原因**（`缺少宿主运行时 @deepseek-ai/dsh-tools`），而不是静默通过；在已装 harness 的环境里才会真跑出上表数字。
+
+其中两个器官最初是**红的**，而且失败是真的：
+
+- `dsh-zero-residence` 报 **13 通过 / 3 失败**。根因：会话查找按**子串**匹配、返回文件系统先给到的那个目录，
+  于是 `computeLedger('session-a')` 可能读到 `session-a-extra` 的日志，把请求数从 2 报成 0。已改为精确优先解析。
+- `dsh-war-bridge` 在没有样本 PE 时一律报 FAIL——因为「跳过」被记成了失败断言；且 `process.exit()` 与在途
+  `AbortSignal.timeout` 相撞会触发 libuv 断言，把一次全绿跑成退出码 1。两处都已修，跳过现在就是跳过。
+
+核心包本身由 `npm test` 覆盖：**29 项断言，0 失败**，其中含一套**一致性（parity）测试**——把零依赖移植版与真实内核
+逐项比对：`familyOf`/`tissueOf` 覆盖全部 256 个工具名、`innervate` 覆盖 5 条命令、`evalCondition` 覆盖 27 种组合、
+`attributeFailure` 覆盖 8 类错误串，全部精确一致。本机没有内核构建时，一致性测试会**大声跳过**，而不是悄悄通过。
 
 运行时状态同样可观测——体征、伤口、突触、脉冲流都是一等公民数据：
 

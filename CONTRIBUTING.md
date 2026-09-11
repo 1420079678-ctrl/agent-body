@@ -7,11 +7,45 @@ workspace + organs), not a library, so the workflow is a little different from a
 
 ```powershell
 node --version          # ^22.19.0 || >=24.0.0
-npm run verify          # repository health check — must be green before you push
+npm run check           # the gate CI runs — must be green before you push
 ```
 
-`npm run verify` is dependency-free and safe to run anywhere. It checks structure, JSON validity,
-README links, secret-hygiene rules in `.gitignore`, and that every organ's regression suite exists.
+`npm run check` is dependency-free and runs entirely offline: constant-table drift, organ-catalog drift, the unit and
+parity test suites, and the token benchmark against its committed baseline. `npm run verify` is the broader repository
+health check (structure, JSON validity, README links, secret hygiene, regression presence) — run both.
+
+**Nothing here needs `npm install`.** The core packages import nothing outside Node built-ins, and that is a rule, not
+an accident: `packages/organ-core` and `packages/organ-sdk` must stay dependency-free so a fresh clone can run the
+tests and the demo with no network.
+
+## Writing an organ
+
+The full authoring guide is [`docs/ORGAN_SDK.md`](docs/ORGAN_SDK.md). The short version:
+
+```js
+import { defineOrgan } from '@agent-body/organ-sdk'
+
+export default defineOrgan({
+  id: 'paper_reader', label: '论文阅读（文献）', tier: 'professional', group: 'memory',
+  purpose: '把一篇论文拆成可检索的卡片',
+  capabilities: ['paper_fetch', 'paper_digest'],
+  permissions: ['net:http'],
+  sdkVersion: '^0.1.0',
+  hooks: { async onToolResult(ctx, e) { /* ... */ } },
+})
+```
+
+`defineOrgan()` validates at authoring time and throws `OrganContractError` with a field path. Four rules that get
+PRs sent back:
+
+- **Capabilities use `organClaims`-style matching**, including `prefix*` wildcards. Never hand-roll `startsWith`.
+- **Declare only the permissions you actually use.** An unused `net:http` turns install confirmation into noise.
+- **`handles` names the failure causes you own.** Everything else goes to the kernel's remedy table. `arg_error` is
+  never auto-retried — that is a caller bug, and retrying amplifies it.
+- **A reflex must be deterministic** (no `eval`, no model call) and must not be able to trigger itself.
+
+See [`docs/host-adapter.md`](docs/host-adapter.md) before touching anything host-specific. Organs must not import a
+host SDK directly — that boundary is the project's main risk mitigation.
 
 ## Organs (plugins)
 
@@ -32,17 +66,30 @@ in review — it is the only way the project can claim "measurably better with u
 ### Adding an organ
 
 1. Scaffold the package (follow an existing organ; `dsh-organism` is the reference implementation).
-2. Declare the organ: id, label, system group, capabilities, purpose.
-3. Write `scripts/smoke-test.mjs` — pure functions, zero network, deterministic output, exit code 1 on failure.
-4. Add a replay script under `scripts/replay-<organ>.ps1` that links, compiles, runs the regression and injects.
-5. Register it in `data/profiles/web/package.json` (profile bundles) so it loads with the harness.
-6. Update the organ catalog table in `README.md` **and** `README.zh-CN.md`.
+2. Declare the organ with `defineOrgan()`: id, label, tier, system group, capabilities, permissions, purpose.
+3. Run `npm run catalog` so `catalog/organs.json` picks it up — CI fails if the catalog drifts from source.
+4. Write `scripts/smoke-test.mjs` — pure functions, zero network, deterministic output, exit code 1 on failure.
+5. Add a replay script under `scripts/replay-<organ>.ps1` that links, compiles, runs the regression and injects.
+6. Register it in `data/profiles/web/package.json` (profile bundles) so it loads with the harness.
+7. Update the organ catalog table in `README.md` **and** `README.zh-CN.md`.
 
 ### Changing an organ contract
 
-The organ contract (sense → reflex → effect → homeostasis) is shared by all 26 organs. Changing how
+The organ contract (sense → reflex → effect → homeostasis) is shared by all 25 curated organs. Changing how
 organs are discovered, how impulses are routed, or how wounds close affects every organ at once —
 open an issue first, and update `ARCHITECTURE.md` in the same pull request.
+
+## Numbers, claims, and the benchmark
+
+Anything that looks like a measurement has to survive `npm run bench:check`. Two rules:
+
+- **State the scope with the number.** "84.7% of tool-schema tokens" and "84.7% of the prompt" are different claims;
+  only the first one is true. The scopes are defined in [`benchmarks/README.md`](benchmarks/README.md).
+- **If a number moves, either explain why or re-baseline.** `npm run bench:baseline` is a deliberate act: the PR must
+  say what changed and why the new value is correct. Re-baselining to make CI pass is not a fix.
+
+`benchmarks/results/REPORT.md` is a **deterministic** artifact — no timestamps, no platform names — so it can be
+diffed and so CI can assert the working tree stays clean after regeneration. Do not add volatile fields to it.
 
 ## House rules
 

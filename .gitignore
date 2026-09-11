@@ -85,3 +85,8 @@ _tmp_*
 
 # ================= 本地备份/回滚快照（不进仓库）=================
 dsh-backups/
+
+# ================= 基准机器产物 =================
+# REPORT.md 是确定性产物，入库（供 diff 与阅读）；
+# result.json 每次运行带生成时间戳，不入库——CI 的比对基准是 benchmarks/baselines/expected.json。
+benchmarks/results/result.json

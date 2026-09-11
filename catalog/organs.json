@@ -1,0 +1,672 @@
+{
+  "$comment": "器官目录：分级 + 权限声明 + 失败处置承诺。由 node catalog/build.mjs 从内核源码与 catalog/organs.mjs 生成，请勿手改。",
+  "schemaVersion": "0.1.0",
+  "tiers": [
+    {
+      "id": "core",
+      "label": "核心",
+      "defaultInstall": true,
+      "description": "身体之所以是身体：器官解剖、意图路由、心跳、自愈、记忆、token 门控。默认安装，接口冻结优先级最高。",
+      "risk": "low"
+    },
+    {
+      "id": "general",
+      "label": "通用",
+      "defaultInstall": true,
+      "description": "任何项目都用得上：文件、终端、网页搜索/抓取。默认安装。",
+      "risk": "low"
+    },
+    {
+      "id": "professional",
+      "label": "专业",
+      "defaultInstall": false,
+      "description": "面向特定领域的高能力器官（安全测试、逆向、二进制分析、量化…）。能力大、副作用大，需显式授权后才装。",
+      "risk": "high"
+    },
+    {
+      "id": "experimental",
+      "label": "实验",
+      "defaultInstall": false,
+      "description": "接口未定、随时会变的器官。装了就要接受破坏性变更。",
+      "risk": "medium"
+    }
+  ],
+  "organs": [
+    {
+      "id": "adaptive_immunity",
+      "label": "适应性免疫（漏洞修复）",
+      "tier": "professional",
+      "group": "immune",
+      "purpose": "发现→排序→虚拟补丁→根修→回归的闭环",
+      "capabilities": [
+        "vuln_*"
+      ],
+      "permissions": [
+        "net:http",
+        "fs:read"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result",
+        "organism/impulse"
+      ],
+      "handles": [
+        "not_found"
+      ],
+      "fallback": [
+        "innate_immunity"
+      ]
+    },
+    {
+      "id": "cerebellum",
+      "label": "小脑（任务流编排）",
+      "tier": "experimental",
+      "group": "nervous",
+      "purpose": "PentAGI 多智能体编排：计划→推进→回报→换路→复盘",
+      "capabilities": [
+        "agi_*"
+      ],
+      "permissions": [],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": []
+    },
+    {
+      "id": "corpus_callosum",
+      "label": "胼胝体（跨链桥接）",
+      "tier": "general",
+      "group": "nervous",
+      "purpose": "把逆向链/攻击链/编排链拧成一股绳，跨库案件交接",
+      "capabilities": [
+        "war_*",
+        "ida"
+      ],
+      "permissions": [],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": []
+    },
+    {
+      "id": "cortex",
+      "label": "皮层（睡眠·记忆·巩固）",
+      "tier": "core",
+      "group": "memory",
+      "purpose": "给身体装上「时间」与「记忆」：静默即入睡、睡中把经历巩固成长期记忆、新命令进来主动召回、稳态告警去重收敛",
+      "capabilities": [
+        "cortex_*"
+      ],
+      "permissions": [
+        "fs:read",
+        "fs:write"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "agent/pre-step",
+        "organism/heartbeat"
+      ],
+      "handles": [],
+      "fallback": []
+    },
+    {
+      "id": "cortex_files",
+      "label": "皮层档案（案件证据）",
+      "tier": "core",
+      "group": "memory",
+      "purpose": "不可变证据与结论的长期存储，结论必须有证据引用",
+      "capabilities": [
+        "sec_evidence",
+        "sec_findings",
+        "rev_case",
+        "war_case"
+      ],
+      "permissions": [
+        "fs:read",
+        "fs:write"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": [
+        "hippocampus"
+      ]
+    },
+    {
+      "id": "craft",
+      "label": "手工艺（文档产物）",
+      "tier": "professional",
+      "group": "motor",
+      "purpose": "PDF/Word/PPT/Excel 的构建与提取",
+      "capabilities": [
+        "_dsh_external_dsh_office_docs_*"
+      ],
+      "permissions": [
+        "fs:read",
+        "fs:write",
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "not_found"
+      ],
+      "fallback": [
+        "hands"
+      ]
+    },
+    {
+      "id": "delegation",
+      "label": "投射神经元（委派）",
+      "tier": "general",
+      "group": "executive",
+      "purpose": "把任务投射出去并行处理，是身体伸出去的额外手脚",
+      "capabilities": [
+        "subagent",
+        "subagent_fork",
+        "workflow",
+        "ralph",
+        "interrupt_agent",
+        "send_message",
+        "list_agents"
+      ],
+      "permissions": [
+        "llm:call"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": [
+        "prefrontal"
+      ]
+    },
+    {
+      "id": "dissection",
+      "label": "解剖刀（逆向）",
+      "tier": "professional",
+      "group": "immune",
+      "purpose": "逆向/破解方法论路由、证据链、案件与经验库",
+      "capabilities": [
+        "rev_*"
+      ],
+      "permissions": [
+        "fs:read",
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "tool_missing",
+        "not_found"
+      ],
+      "fallback": [
+        "innate_immunity"
+      ]
+    },
+    {
+      "id": "dynamic_vision",
+      "label": "动态视觉（真实浏览器）",
+      "tier": "professional",
+      "group": "sensory",
+      "purpose": "真实 Chrome 登录态：快照/交互/抓包/深爬",
+      "capabilities": [
+        "_dsh_external_dsh_browser_ultimate_*"
+      ],
+      "permissions": [
+        "net:http",
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "timeout",
+        "network"
+      ],
+      "fallback": [
+        "eyes"
+      ]
+    },
+    {
+      "id": "ears",
+      "label": "耳（外部检索）",
+      "tier": "general",
+      "group": "sensory",
+      "purpose": "把外部世界的当下状态变成可判断的事实",
+      "capabilities": [
+        "web_search",
+        "web_fetch",
+        "read_image"
+      ],
+      "permissions": [
+        "net:http"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "network",
+        "timeout"
+      ],
+      "fallback": [
+        "eyes"
+      ]
+    },
+    {
+      "id": "expressive",
+      "label": "表达（界面与图像）",
+      "tier": "professional",
+      "group": "motor",
+      "purpose": "把素材与结构化数据变成可发布、可交互的界面产物",
+      "capabilities": [
+        "social_card_*",
+        "render_ui",
+        "validate_dsh_ui"
+      ],
+      "permissions": [
+        "fs:write",
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "not_found"
+      ],
+      "fallback": [
+        "craft"
+      ]
+    },
+    {
+      "id": "eyes",
+      "label": "眼睛（网页抓取）",
+      "tier": "general",
+      "group": "sensory",
+      "purpose": "多引擎级联抓取：静态→浏览器→Reader，正文净化",
+      "capabilities": [
+        "webcrawl",
+        "webcrawl_*"
+      ],
+      "permissions": [
+        "net:http",
+        "fs:write"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "network",
+        "timeout"
+      ],
+      "fallback": [
+        "ears"
+      ]
+    },
+    {
+      "id": "growth",
+      "label": "生长激素（学习与技能）",
+      "tier": "core",
+      "group": "endocrine",
+      "purpose": "把每一次学习/写作/技能调用变成结构化、可迁移、可复盘的长期改变",
+      "capabilities": [
+        "study_*",
+        "ars_*",
+        "skill"
+      ],
+      "permissions": [],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": []
+    },
+    {
+      "id": "hands",
+      "label": "手（文件与命令）",
+      "tier": "general",
+      "group": "motor",
+      "purpose": "真正造成物理改变的执行末端",
+      "capabilities": [
+        "write",
+        "edit",
+        "present",
+        "pwsh"
+      ],
+      "permissions": [
+        "fs:read",
+        "fs:write",
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "permission",
+        "not_found"
+      ],
+      "fallback": [
+        "innate_immunity"
+      ]
+    },
+    {
+      "id": "hippocampus",
+      "label": "海马体（经验沉淀）",
+      "tier": "core",
+      "group": "memory",
+      "purpose": "把做过的变成可复用的——同类任务先检索再动手",
+      "capabilities": [
+        "agi_memory",
+        "sec_journal",
+        "rev_journal",
+        "war_memory"
+      ],
+      "permissions": [
+        "fs:read",
+        "fs:write"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": [
+        "cortex_files"
+      ]
+    },
+    {
+      "id": "innate_immunity",
+      "label": "固有免疫（攻击链）",
+      "tier": "professional",
+      "group": "immune",
+      "purpose": "40+ sec_* 攻击工具：侦察/利用/爆破/横向/取证",
+      "capabilities": [
+        "sec_*"
+      ],
+      "permissions": [
+        "net:http",
+        "net:listen",
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result",
+        "organism/impulse"
+      ],
+      "handles": [
+        "network",
+        "timeout",
+        "not_found",
+        "permission"
+      ],
+      "fallback": [
+        "adaptive_immunity",
+        "dissection"
+      ]
+    },
+    {
+      "id": "interoception",
+      "label": "内脏感觉（本地感知）",
+      "tier": "general",
+      "group": "sensory",
+      "purpose": "感知自身内部的真实状态（文件/代码/上下文）",
+      "capabilities": [
+        "read",
+        "glob",
+        "grep"
+      ],
+      "permissions": [
+        "fs:read"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": []
+    },
+    {
+      "id": "jobs",
+      "label": "自主神经节（后台）",
+      "tier": "general",
+      "group": "executive",
+      "purpose": "不需要意识持续关注的长时任务",
+      "capabilities": [
+        "job_list",
+        "job_output",
+        "job_kill"
+      ],
+      "permissions": [
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "timeout"
+      ],
+      "fallback": [
+        "hands"
+      ]
+    },
+    {
+      "id": "metabolism",
+      "label": "代谢（计量与行情）",
+      "tier": "professional",
+      "group": "metabolic",
+      "purpose": "资源、行情、开源影响力等需要持续计量的量",
+      "capabilities": [
+        "quant_*"
+      ],
+      "permissions": [
+        "net:http"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "network",
+        "timeout"
+      ],
+      "fallback": []
+    },
+    {
+      "id": "neurogenesis",
+      "label": "即席神经发生（运行时插件）",
+      "tier": "experimental",
+      "group": "nervous",
+      "purpose": "运行时即席长出临时器官：不落盘、不重启，进程内定义→激活→回收（动态 Cordis 插件）",
+      "capabilities": [
+        "cordis_*"
+      ],
+      "permissions": [
+        "host:inject"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/change"
+      ],
+      "handles": [
+        "conflict"
+      ],
+      "fallback": [
+        "plasticity"
+      ]
+    },
+    {
+      "id": "oracle",
+      "label": "预演皮层（群体智能推演）",
+      "tier": "experimental",
+      "group": "executive",
+      "purpose": "用群体智能预演未来走向：舆情/金融市场/剧情分支",
+      "capabilities": [
+        "mirofish_*",
+        "_dsh_external_dsh_mirofish_*"
+      ],
+      "permissions": [
+        "net:http",
+        "llm:call"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [
+        "network",
+        "timeout"
+      ],
+      "fallback": [
+        "prefrontal"
+      ]
+    },
+    {
+      "id": "plasticity",
+      "label": "神经可塑性（插件注入）",
+      "tier": "professional",
+      "group": "nervous",
+      "purpose": "运行时长出/重载/卸下器官，并从市场取新器官——身体能自己改造自己",
+      "capabilities": [
+        "dev_*",
+        "market_*",
+        "minimal_gray_*"
+      ],
+      "permissions": [
+        "host:inject",
+        "exec:process"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/change"
+      ],
+      "handles": [
+        "tool_missing",
+        "conflict"
+      ],
+      "fallback": [
+        "neurogenesis"
+      ]
+    },
+    {
+      "id": "prefrontal",
+      "label": "前额叶（执行控制）",
+      "tier": "core",
+      "group": "executive",
+      "purpose": "目标、计划、待办、决策闸门——决定做什么与何时停",
+      "capabilities": [
+        "todo_write",
+        "create_goal",
+        "get_goal",
+        "update_goal",
+        "exit_plan_mode",
+        "ask_user_question"
+      ],
+      "permissions": [],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "agent/pre-step",
+        "goal/changed"
+      ],
+      "handles": [],
+      "fallback": [
+        "delegation"
+      ]
+    },
+    {
+      "id": "proprioception_center",
+      "label": "本体感觉中枢（认识自己）",
+      "tier": "core",
+      "group": "nervous",
+      "purpose": "身体感知自己：器官解剖、生命体征、心跳血压、反射弧、操作者指令——自我认识的中枢",
+      "capabilities": [
+        "body_*"
+      ],
+      "permissions": [],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result",
+        "organism/heartbeat"
+      ],
+      "handles": [],
+      "fallback": []
+    },
+    {
+      "id": "synapse",
+      "label": "突触巩固（快照）",
+      "tier": "general",
+      "group": "nervous",
+      "purpose": "在动大手术前固化状态，可回退；自动分类裁决记录",
+      "capabilities": [
+        "checkpoint",
+        "auto_snapshot",
+        "backup_dsh",
+        "auto_status"
+      ],
+      "permissions": [
+        "fs:read",
+        "fs:write"
+      ],
+      "sdkVersion": "^0.1.0",
+      "signals": [
+        "tools/result"
+      ],
+      "handles": [],
+      "fallback": []
+    }
+  ],
+  "defaultInstall": [
+    "corpus_callosum",
+    "cortex",
+    "cortex_files",
+    "delegation",
+    "ears",
+    "eyes",
+    "growth",
+    "hands",
+    "hippocampus",
+    "interoception",
+    "jobs",
+    "prefrontal",
+    "proprioception_center",
+    "synapse"
+  ],
+  "stats": {
+    "organs": 25,
+    "capabilities": 63,
+    "byTier": {
+      "core": 6,
+      "general": 8,
+      "professional": 8,
+      "experimental": 3
+    },
+    "highRiskOrgans": [
+      "craft",
+      "dissection",
+      "dynamic_vision",
+      "expressive",
+      "hands",
+      "innate_immunity",
+      "jobs",
+      "neurogenesis",
+      "plasticity"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src=".github/assets/banner.svg" alt="Agent-Body — plugins as organs: 23 organs across 8 systems, one heartbeat, 82% prompt tokens saved, 0 chronic wounds" width="100%">
+<img src=".github/assets/banner.svg" alt="Agent-Body — plugins as organs: 25 curated organs across 8 systems, one heartbeat, 84.7% of tool-schema tokens gated away, 0 chronic wounds" width="100%">
 
 # Agent‑Body
 
@@ -8,13 +8,14 @@
 
 *Plugins here are not a tool list. They are organs in a living system.*
 
-[![Organs](https://img.shields.io/badge/organs-23-ff69b4)](#organ-catalog)
-[![Schema gating](https://img.shields.io/badge/schema%20gating-82%25%20tokens%20saved-2ecc71)](#token-economy)
+[![Organs](https://img.shields.io/badge/organs-25-ff69b4)](#organ-catalog)
+[![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20tool--schema%20tokens%20gated-2ecc71)](#token-economy)
+[![Benchmark](https://img.shields.io/badge/benchmark-reproducible%20in--repo-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
 [![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#quick-start)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[Architecture](ARCHITECTURE.md) · [Organ Catalog](#organ-catalog) · [Verify](#verify-it-yourself) · [**中文文档**](README.zh-CN.md)
+[Architecture](ARCHITECTURE.md) · [Organ Catalog](catalog/organs.json) · [Benchmark](benchmarks/results/REPORT.md) · [Roadmap](ROADMAP.md) · [**中文文档**](README.zh-CN.md)
 
 </div>
 
@@ -147,10 +148,32 @@ warning storm from a phantom organ.
 
 ### 📉 Token economy as a first‑class concern
 
-Tool schemas are shown on demand, gated by what the current turn is actually about:
+Tool schemas are shown on demand, gated by what the current turn is actually about.
 
-> **49 of 256 capabilities exposed per request** — `10,173` tokens instead of `55,154`. **~82% saved**, with everything
-> else still one `body_call` away.
+**Scope of every number below: the tool‑schema block of the prompt only** — the `name` + `description` +
+JSON‑schema of every tool definition. Not the system prompt, not conversation history, not tool results.
+
+> **84.7% of tool‑schema tokens gated away** — `55,154` → `8,433` on average across 48 representative commands
+> (median 85.7%, worst case 75.2%), out of **256 capability definitions**. Everything else stays one `body_call` away.
+
+That number is produced by the benchmark in this repository and is **reproducible on your machine**:
+
+```bash
+npm run bench          # regenerate benchmarks/results/REPORT.md
+npm run bench:check    # exit non‑zero if it drifts from the committed baseline
+```
+
+Two honest caveats, because the headline is easy to over‑read:
+
+- **Cold‑start scope.** The figure above assumes the body has no recent activity — only the current command decides
+  what is revealed. On a body with real run history, recently‑used and high‑trust organs stay hot, the visible set
+  grows, and savings drop: **74%** in the live snapshot committed at `benchmarks/corpus/trace-live-gate.json`
+  (64 of 256 capabilities visible). Historical README revisions quoted **82%** — a single live snapshot between the
+  two. Both extremes are real; always quote the scope with the number.
+- **10 of 48 commands need a second hop.** A per‑organ cap of 10 capabilities means large organs (the attack organ
+  has 49) get truncated, and a few intents do not route to the organ that owns the capability. Those resolve through
+  `body_call`, but they are **not** free. The benchmark classifies every miss as *bug* / *capped* / *unrouted* and
+  lists them individually in [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md).
 
 ---
 
@@ -160,7 +183,7 @@ Tool schemas are shown on demand, gated by what the current turn is actually abo
 | --- | --- | --- |
 | **Individual** | this body (the running install) | 1 |
 | **System** | eight body systems: executive / nervous / immune / sensory / motor / memory / metabolic / endocrine | 8 |
-| **Organ** | a plugin, obeying one contract: sense → reflex → effect → homeostasis | **23** in this repository |
+| **Organ** | a plugin, obeying one contract: sense → reflex → effect → homeostasis | **25 curated** in [`catalog/organs.json`](catalog/organs.json), **23** shipped as installable packages |
 | **Tissue** | functional clustering inside an organ: sensing / inspection / effect / synthesis / memory / regulation / clearance / metering / matrix | 9 classes |
 | **Cell** | a single capability unit (one tool) | counted at runtime |
 
@@ -227,6 +250,20 @@ Every entry below is a real plugin under `workspace/plugins/`. Five core organs 
 ---
 
 ## Quick start
+
+### See it work first — no install, no host, no API key
+
+```bash
+git clone https://github.com/1420079678-ctrl/agent-body && cd agent-body
+npm run demo      # command → impulse → dispatch → execute → attribute → reflex fires
+npm run check     # constant tables + catalog + 29 tests + benchmark, all offline
+```
+
+There is nothing to install. The core packages import nothing outside Node built‑ins, so the demo runs a real
+end‑to‑end chain against the committed 256‑capability corpus on a fresh clone.
+
+Then read [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) to see how the token claim was measured, and
+[`ROADMAP.md`](ROADMAP.md) to see what is deliberately *not* being built next.
 
 ### Install an organ in one command
 
@@ -300,20 +337,56 @@ body_nerve action=send text="<your command>"   # route a command before executin
 
 ## Verify it yourself
 
-Every organ carries an **offline, deterministic** regression suite — no network, no model, safe to re-run anytime.
+Everything below runs offline and deterministically — **no network, no model, no API key, nothing installed**.
 
-```powershell
+```bash
+npm run check     # the gate CI runs: constant tables + catalog + tests + benchmark, all in one
+npm run demo      # five-minute end-to-end: command → impulse → dispatch → execute → attribute → reflex
+npm run bench     # regenerate the token benchmark (writes benchmarks/results/REPORT.md)
+```
+
+`npm run check` is the honest one. It fails if the zero-dependency core drifts from the real kernel's constant tables,
+if the organ catalog drifts from source, if any test fails, or if the benchmark moves off its committed baseline.
+**All of it runs on a fresh clone with no `npm install`.**
+
+### Organ regressions need the host runtime
+
+```bash
 npm run verify          # repository health check (structure, JSON, links, secret hygiene)
 npm run verify:organs   # run every organ's offline regression
 ```
 
+Each organ's suite loads its built `lib/`, which imports the host runtime (`@deepseek-ai/dsh-*`). On a bare clone that
+does not resolve, so the runner reports **SKIP with the reason** — never a silent pass:
+
+```
+SKIP  dsh-organism/smoke-test.mjs      缺少宿主运行时 @deepseek-ai/dsh-tools
+SKIP  dsh-web-crawl/selftest_local.py  缺少 Python 依赖 trafilatura
+```
+
+Inside an installed harness the same command runs them for real. Measured there:
+
 | Organ | Command | Result (measured) |
 | --- | --- | --- |
-| `dsh-organism` | `node scripts/smoke-test.mjs` | **79 passed / 0 failed** (familyOf, evalCondition, decay, pruning, token estimation, gating contract) |
+| `dsh-organism` | `node scripts/smoke-test.mjs` | **179 passed / 0 failed** (familyOf, evalCondition, decay, pruning, token estimation, gating contract) |
 | `dsh-cortex` | `node scripts/smoke-test.mjs` | **58 passed / 0 failed** (tokenization, card mining, noise reduction) |
-| `dsh-war-bridge` | `node scripts/smoke-test.mjs` | 24 assertions, incl. full IDA chain + idempotent handoff |
+| `dsh-zero-residence` | `node scripts/smoke-test.mjs` | **16 passed / 0 failed** (pointer manifest, ledger math, exact-ID recall) |
+| `dsh-war-bridge` | `node scripts/smoke-test.mjs` | **17 passed / 0 failed / 1 skipped** (the IDA chain skips without a sample PE) |
 | `dsh-web-crawl` | `python scripts/selftest_local.py` | 46 offline assertions (extraction, magic‑byte routing, cascade) |
-| `dsh-zero-residence` | `node scripts/smoke-test.mjs` | pointer compression + recall integrity |
+
+Two of these were red when this table was first written, and the failures were real:
+
+- `dsh-zero-residence` reported **13 passed / 3 failed**. Root cause: session lookup matched by *substring* and returned
+  whichever directory the filesystem happened to yield first, so `computeLedger('session-a')` could read
+  `session-a-extra`'s log and report `T = 0` instead of `T = 2`. Fixed with exact-match-first resolution.
+- `dsh-war-bridge` reported FAIL whenever no sample PE was present, because "skip" was recorded as a failed assertion —
+  and `process.exit()` racing an in-flight `AbortSignal.timeout` tripped a libuv assertion that turned a green run into
+  exit code 1. Both are fixed; a skip now says so.
+
+The core packages are covered by `npm test`: **29 assertions, 0 failures**, including a **parity suite** that compares
+the dependency-free port against the real kernel — exact agreement on `familyOf`/`tissueOf` across all 256 tool names,
+`innervate` across 5 commands, `evalCondition` across 27 combinations, and `attributeFailure` across 8 error strings.
+When no kernel build is present, parity **skips loudly** rather than passing quietly.
 
 Runtime state is observable too — vitals, wounds, synapses and the pulse stream are all first‑class data:
 
@@ -329,11 +402,19 @@ body_pulse       → last nerve impulses, reflex fires, homeostasis alerts
 
 ```
 agent-body/
+├─ packages/
+│  ├─ organ-core/   zero-dependency organ core: constant tables, gating, contract, host adapter
+│  └─ organ-sdk/    defineOrgan() / defineReflex() — the authoring surface
+├─ benchmarks/      reproducible token benchmark + frozen corpus + CI baseline
+├─ catalog/         organs.json — tiers, permissions, failure handling (generated, drift-checked)
+├─ examples/        the five-minute quickstart demo
+├─ docs/            organ SDK guide · host adapter guide
 ├─ workspace/
 │  └─ plugins/      the organs — one plugin per organ, each with src/ + lib/ + an offline regression
-├─ scripts/         verify-repo.mjs · run-organ-regressions.mjs
+├─ scripts/         verify-repo.mjs · run-organ-regressions.mjs · run-tests.mjs
 ├─ .github/         CI (repo-check on Windows + Linux) and issue templates
 ├─ ARCHITECTURE.md  full system architecture
+├─ ROADMAP.md       what the next six months are for
 └─ README.zh-CN.md  中文文档
 ```
 

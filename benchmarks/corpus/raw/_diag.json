@@ -1,0 +1,30 @@
+{
+  "executeType": "function",
+  "keys": [
+    "ctx",
+    "name",
+    "deferredContexts",
+    "concludingExecutions",
+    "cancellationStates",
+    "contentFinalizers",
+    "layers",
+    "defaultMode",
+    "maxParallelSubCalls",
+    "ptcTransport",
+    "canonicalResults"
+  ],
+  "body_map_err_withAgent": "cannot get property \"agent\" without inject",
+  "body_nerve_err_withAgent": "cannot get property \"agent\" without inject",
+  "body_tokens_err_withAgent": "cannot get property \"agent\" without inject",
+  "body_cell_err_withAgent": "cannot get property \"agent\" without inject",
+  "body_organ_err_withAgent": "cannot get property \"agent\" without inject",
+  "body_status_err_withAgent": "cannot get property \"agent\" without inject",
+  "written": {
+    "body-map-verbose.txt": "68:plain",
+    "nerve-map.txt": "68:plain",
+    "token-organs.txt": "68:plain",
+    "cell-census.txt": "68:plain",
+    "organ-list.txt": "68:plain",
+    "body-status.txt": "68:plain"
+  }
+}

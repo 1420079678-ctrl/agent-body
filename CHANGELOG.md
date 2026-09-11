@@ -5,9 +5,59 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Reproducible token benchmark** (`benchmarks/`) — a frozen 256-capability corpus, a 48-command task set with
+  expected capabilities, an ablation table, and `npm run bench:check` comparing against a committed baseline. The
+  headline claim now states its scope (tool-schema tokens only) and its cold-start/live split
+  (84.71% / 74.25%). `benchmarks/README.md` defines the measurement.
+- **Organ SDK** (`packages/organ-sdk`) — `defineOrgan()` / `defineReflex()` as an authoring surface that validates at
+  declaration time and throws `OrganContractError` with a field path. See `docs/ORGAN_SDK.md`.
+- **Organ core** (`packages/organ-core`) — the dependency-free core: pre-extracted kernel constant tables, gating,
+  manifest contract, failure attribution, and a reference in-memory host. Imports nothing outside Node built-ins.
+- **Organ catalog** (`catalog/organs.json`) — 25 curated organs with tiers, permissions, risk levels, failure
+  handling and fallback organs. Generated from source, drift-checked in CI.
+- **Five-minute demo** (`examples/quickstart/run.mjs`) — `npm run demo` runs command → impulse → dispatch → execute →
+  failure attribution → reflex fire against the real corpus, with nothing installed.
+- **`ROADMAP.md`** — six months, six milestones, each with an exit criterion that a command can check.
+- **`COMPATIBILITY.md`** and **`docs/host-adapter.md`** — the support matrix and the host-independence boundary,
+  including what is tested versus merely asserted.
+- **CI gate** — `repo-check` now runs constant-table drift, catalog drift, the unit and parity suites, the benchmark
+  baseline, the demo, and a clean-working-tree assertion.
+
+### Fixed
+
+- **`dsh-zero-residence`: session lookup by substring returned the wrong session.** With both `session-a` and
+  `session-a-extra` present, which one won depended on filesystem ordering, so `computeLedger('session-a')` could read
+  the wrong log and report `T = 0` instead of `T = 2`. Resolution is now exact-match first, then shortest-substring,
+  then most-recent. Its regression suite went from 13 passed / 3 failed to **16 / 0**.
+- **`dsh-war-bridge`: a skip was recorded as a failed assertion**, so a missing sample PE turned the whole suite red —
+  and `process.exit()` racing an in-flight `AbortSignal.timeout` tripped a libuv assertion
+  (`UV_HANDLE_CLOSING`) that turned a green run into exit code 1. Both fixed; the summary now reports skips separately.
+- **`run-organ-regressions.mjs` reported a useless skip reason** (the last line of a Node crash is always the version
+  banner). It now extracts the actual cause, and a missing Python dependency is a SKIP rather than a FAIL. A bare
+  clone reports `0 passed · 0 failed · 5 skipped` with reasons and exits 0.
+- **`host-adapter.mjs`: `executeTool` leaked exceptions** to the organ and left the failure unattributed. It now
+  returns `{ ok: false, error: { message, cause } }` with deterministic attribution.
+- **`gating.mjs`: `measureGate` threw `TypeError` without an explicit counter**, despite documenting a default.
+- **`benchmarks/results/REPORT.md` was not deterministic** (embedded timestamp and platform), so `bench:check` dirtied
+  the working tree on every run and could never be a real CI diff.
+- **README numbers were wrong or unrunnable**: the organism regression was quoted as 79 (actually 179), and
+  `verify:organs` was presented as working on a bare clone when it cannot resolve the host runtime.
+
+### Changed
+
+- **Organ count is stated as 25 curated organs** (23 shipped as installable packages), matching `catalog/organs.json`
+  instead of the previously inconsistent badge/table values.
+- **`npm run check` is the single gate**; `Makefile` targets forward to it so there is only one definition of "green".
+- Reflex routing gained six intent rules (privilege-escalation, market data, background jobs, snapshots, image
+  reading, document conversion) driven by the benchmark's unrouted list.
+
 ### Planned
 
-- Publish the organ contract as a standalone SDK
+- Publish `organ-core` / `organ-sdk` to npm (they are vendored as relative imports today)
+- A second host adapter, so "host-independent" is verified rather than asserted
+- Relevance-ordered claim selection to close the 6 remaining capped-capability cases
 - Cross-body sync: export learned synapses / reflexes / skills into another install
 - Sleep-time reflex proposals instead of direct self-authoring
 - Web panel for the anatomy (organ map, wound ledger, pulse stream)

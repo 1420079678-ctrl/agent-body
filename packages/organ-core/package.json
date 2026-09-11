@@ -1,0 +1,39 @@
+{
+  "name": "@agent-body/organ-core",
+  "version": "0.1.0",
+  "description": "Dependency-free deterministic core of the Agent-Body organ kernel: intent routing, organ claims, reflex conditions, failure attribution, tissue classification, token accounting and schema gating. Runs anywhere — no host runtime, no network, no model calls.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./kernel": "./src/kernel.mjs",
+    "./tokens": "./src/tokens.mjs",
+    "./gating": "./src/gating.mjs",
+    "./manifest": "./src/manifest.mjs",
+    "./host-adapter": "./src/host-adapter.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/",
+    "tables:extract": "node tools/extract-tables.mjs",
+    "tables:check": "node tools/extract-tables.mjs --check"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "agent-body",
+    "organ",
+    "plugin-system",
+    "deterministic",
+    "token-economy"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1420079678-ctrl/agent-body.git",
+    "directory": "packages/organ-core"
+  }
+}

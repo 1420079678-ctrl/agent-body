@@ -1,0 +1,19 @@
+{
+  "$comment": "真实运行中固化的跨器官链路技能（成功路径）。消融实验用它判定该遗忘谁。",
+  "provenance": {
+    "from": "dsh-organism/skills.json",
+    "sanitized": true
+  },
+  "skills": [
+    {
+      "fail": 0,
+      "id": "S-mtwunu78",
+      "ok": 0,
+      "steps": [
+        "[object Object]",
+        "[object Object]",
+        "[object Object]"
+      ]
+    }
+  ]
+}

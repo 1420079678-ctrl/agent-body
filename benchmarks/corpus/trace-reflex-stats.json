@@ -1,0 +1,39 @@
+{
+  "$comment": "真实运行中的反射弧统计（开火次数 / 帮上忙次数 / 是否已停用）。消融实验用它判定该淘汰与该强化谁。",
+  "provenance": {
+    "from": "dsh-organism/reflex-stats.json",
+    "sanitized": true
+  },
+  "stats": [
+    {
+      "fires": 1,
+      "helped": 0,
+      "id": "R-auto-unknown-edit",
+      "retired": false
+    },
+    {
+      "fires": 3,
+      "helped": 1,
+      "id": "R-auto-unknown-read",
+      "retired": false
+    },
+    {
+      "fires": 6,
+      "helped": 1,
+      "id": "R-demo-useless",
+      "retired": true
+    },
+    {
+      "fires": 6,
+      "helped": 0,
+      "id": "R-demo2",
+      "retired": true
+    },
+    {
+      "fires": 7,
+      "helped": 3,
+      "id": "R-missing-tool",
+      "retired": false
+    }
+  ]
+}

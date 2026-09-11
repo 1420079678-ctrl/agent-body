@@ -33,6 +33,15 @@
     "verify:cortex": "node workspace/plugins/dsh-cortex/scripts/smoke-test.mjs",
     "verify:zero-residence": "node workspace/plugins/dsh-zero-residence/scripts/smoke-test.mjs",
     "verify:war-bridge": "node workspace/plugins/dsh-war-bridge/scripts/smoke-test.mjs",
-    "verify:web-crawl": "python workspace/plugins/dsh-web-crawl/scripts/selftest_local.py"
+    "verify:web-crawl": "python workspace/plugins/dsh-web-crawl/scripts/selftest_local.py",
+    "test": "node scripts/run-tests.mjs",
+    "bench": "node benchmarks/run.mjs",
+    "bench:check": "node benchmarks/run.mjs --check",
+    "bench:baseline": "node benchmarks/run.mjs --write-baseline",
+    "corpus": "node benchmarks/tools/prepare-corpus.mjs",
+    "check:tables": "node packages/organ-core/tools/extract-tables.mjs --check",
+    "check:catalog": "node catalog/build.mjs --check",
+    "check": "npm run check:tables && npm run check:catalog && npm run test && npm run bench:check",
+    "demo": "node examples/quickstart/run.mjs"
   }
 }

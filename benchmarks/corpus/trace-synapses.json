@@ -1,0 +1,51 @@
+{
+  "$comment": "真实运行中的突触表（命令类别 × 器官 的 Hebbian 权重）。消融实验用它判定衰减与修剪：关掉遗忘时没有任何突触会被剪掉。",
+  "provenance": {
+    "from": "dsh-organism/synapses.json",
+    "sanitized": true
+  },
+  "synapses": [
+    {
+      "failed": 0,
+      "organ": "corpus_callosum",
+      "paid": 1,
+      "rule": "1",
+      "weight": 0.5
+    },
+    {
+      "failed": 0,
+      "organ": "ears",
+      "paid": 1,
+      "rule": "3",
+      "weight": 1
+    },
+    {
+      "failed": 1,
+      "organ": "hands",
+      "paid": 84,
+      "rule": "4",
+      "weight": 10
+    },
+    {
+      "failed": 0,
+      "organ": "prefrontal",
+      "paid": 1,
+      "rule": "-1",
+      "weight": 0.063
+    },
+    {
+      "failed": 0,
+      "organ": "prefrontal",
+      "paid": 1,
+      "rule": "9",
+      "weight": 1
+    },
+    {
+      "failed": 0,
+      "organ": "proprioception_center",
+      "paid": 5,
+      "rule": "14",
+      "weight": 0.625
+    }
+  ]
+}

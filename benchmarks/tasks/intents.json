@@ -1,0 +1,74 @@
+{
+  "$comment": [
+    "工具门控基准的任务集（intent set）。",
+    "",
+    "选法（必须公开，否则数字不可解释）：每个器官系统取 1-3 条该领域最典型的操作者命令，",
+    "覆盖全部 8 个系统；命令是中文自然语言，与真实使用一致（不含人为构造的长关键词堆砌）。",
+    "`expect` 是这条命令真正需要的能力——用于检验门控**没有把它们藏起来**，这是正确性护栏，不是收益指标。",
+    "",
+    "局限：这是一个由维护者挑选的 40 条样本，不是随机抽样，也不代表你所在领域的分布。",
+    "换一套任务集会得到不同的百分比；跑 `make bench` 时会同时输出逐条明细，请按你自己的分布复核。"
+  ],
+  "version": "1.0.0",
+  "selection": "maintainer-curated, 1-3 per organ system, natural-language Chinese commands",
+  "tasks": [
+    { "id": "T01", "system": "sensory", "command": "把这个网页抓下来存成 markdown", "expect": ["webcrawl"] },
+    { "id": "T02", "system": "sensory", "command": "帮我爬一下这个站点的所有文档页", "expect": ["webcrawl_site"] },
+    { "id": "T03", "system": "sensory", "command": "搜索一下这个库最新版本是多少", "expect": ["web_search"] },
+    { "id": "T04", "system": "sensory", "command": "用浏览器打开这个页面并截个图", "expect": ["_dsh_external_dsh_browser_ultimate_snap"] },
+    { "id": "T05", "system": "sensory", "command": "读一下这个配置文件看看里面写了什么", "expect": ["read"] },
+    { "id": "T06", "system": "sensory", "command": "在这个项目里找一下所有用到这个函数的地方", "expect": ["grep"] },
+    { "id": "T07", "system": "sensory", "command": "看下这张截图里写了什么", "expect": ["read_image"] },
+
+    { "id": "T08", "system": "motor", "command": "写个脚本然后跑一下", "expect": ["write", "pwsh"] },
+    { "id": "T09", "system": "motor", "command": "把这段代码改一下，加上错误处理", "expect": ["edit"] },
+    { "id": "T10", "system": "motor", "command": "跑一下测试看看有没有挂", "expect": ["pwsh"] },
+    { "id": "T11", "system": "motor", "command": "把这份数据导出成 Excel 表格", "expect": ["_dsh_external_dsh_office_docs_xlsx"] },
+    { "id": "T12", "system": "motor", "command": "把这份文档转成 pdf", "expect": ["_dsh_external_dsh_office_docs_pdf"] },
+    { "id": "T13", "system": "motor", "command": "给这篇文章做一张小红书封面图", "expect": ["social_card_render"] },
+    { "id": "T14", "system": "motor", "command": "把这个结果做成一张卡片给我看", "expect": ["social_card_render"] },
+
+    { "id": "T15", "system": "executive", "command": "帮我把这几件事排个待办清单", "expect": ["todo_write"] },
+    { "id": "T16", "system": "executive", "command": "并行开几个子代理分别处理这三个模块", "expect": ["subagent"] },
+    { "id": "T17", "system": "executive", "command": "这个任务先定个目标，做完再收尾", "expect": ["create_goal"] },
+    { "id": "T18", "system": "executive", "command": "看一下后台那个任务跑完没有", "expect": ["job_output"] },
+
+    { "id": "T19", "system": "nervous", "command": "用 pentagi 编排一下这次渗透的任务流", "expect": ["agi_plan"] },
+    { "id": "T20", "system": "nervous", "command": "把逆向链的结论交接给攻击链", "expect": ["war_case"] },
+    { "id": "T21", "system": "nervous", "command": "装一个插件然后重载看看", "expect": ["dev_inject_plugin"] },
+    { "id": "T22", "system": "nervous", "command": "在设置里看看有哪些插件可以装", "expect": ["market_search"] },
+    { "id": "T23", "system": "nervous", "command": "动大手术前先存个快照", "expect": ["checkpoint"] },
+
+    { "id": "T24", "system": "immune", "command": "扫描一下这个目标站的漏洞", "expect": ["sec_webscan"] },
+    { "id": "T25", "system": "immune", "command": "对这个登录接口做一下爆破测试", "expect": ["sec_brute"] },
+    { "id": "T26", "system": "immune", "command": "把这个依赖的漏洞梳理一下并排序", "expect": ["vuln_scan"] },
+    { "id": "T27", "system": "immune", "command": "逆向一下这个 apk 的签名算法", "expect": ["rev_route"] },
+    { "id": "T28", "system": "immune", "command": "用 ida 反编译这个函数看看逻辑", "expect": ["ida"] },
+
+    { "id": "T29", "system": "memory", "command": "上次这种任务是怎么解决的，查一下经验", "expect": ["war_memory"] },
+    { "id": "T30", "system": "memory", "command": "把这次的关键证据登记下来", "expect": ["sec_evidence"] },
+    { "id": "T31", "system": "memory", "command": "复盘一下这次任务，把踩坑记下来", "expect": ["sec_journal"] },
+    { "id": "T32", "system": "memory", "command": "把案件的时间线整理一下", "expect": ["rev_case"] },
+
+    { "id": "T33", "system": "metabolic", "command": "算一下这只股票的五日均线", "expect": ["quant_sma"] },
+    { "id": "T34", "system": "metabolic", "command": "看看这个组合的回撤和夏普比率", "expect": ["quant_risk"] },
+
+    { "id": "T35", "system": "endocrine", "command": "帮我讲讲这道题的解法，我要理解思路", "expect": ["skill"] },
+    { "id": "T36", "system": "endocrine", "command": "按学术研究流程帮我写一篇论文", "expect": ["ars_pipeline"] },
+    { "id": "T37", "system": "endocrine", "command": "我把这道题的解法讲给你听，你看对不对", "expect": ["skill"] },
+
+    { "id": "T38", "system": "autonomic", "command": "用预言家推演一下这件事的走向", "expect": [], "note": "本机未装 mirofish 执行层，故不校验其能力；意图本身仍参与 token 测量" },
+    { "id": "T39", "system": "autonomic", "command": "今天天气怎么样", "expect": [] },
+    { "id": "T40", "system": "autonomic", "command": "你好", "expect": [] },
+
+    { "id": "T41", "system": "proprioception", "command": "看看身体的体征和器官健康度", "expect": ["body_status"] },
+    { "id": "T42", "system": "proprioception", "command": "看一下心脏现在跳得怎么样", "expect": ["body_heart"] },
+    { "id": "T43", "system": "proprioception", "command": "把这次的经验固化成一条技能", "expect": ["body_skill"] },
+
+    { "id": "T44", "system": "nervous", "command": "分析一下这个二进制文件的导入表", "expect": ["ida"] },
+    { "id": "T45", "system": "immune", "command": "对这个接口做越权测试，用两个账号对照", "expect": ["sec_webtest"] },
+    { "id": "T46", "system": "sensory", "command": "把这个 pdf 里的表格提取出来", "expect": ["_dsh_external_dsh_office_docs_pdf"] },
+    { "id": "T47", "system": "motor", "command": "把这个 md 转成 docx 发给对方", "expect": ["_dsh_external_dsh_office_docs_convert"] },
+    { "id": "T48", "system": "memory", "command": "把这三库的经验统一检索一遍", "expect": ["war_memory"] }
+  ]
+}
