@@ -3,7 +3,7 @@
 这套系统的本体不是一组插件，而是**一具身体**：有器官、有神经、有心脏、有反射、有记忆、能自愈、能自训练。
 LLM 是它的大脑，操作者的命令是它唯一且最高的运行指令。
 
-> 核心命题：**缺一个器官，功能受影响但不致命、随拆随用。** 神经总线、心脏泵、主权层、反射引擎、解剖器、冲动传导
+> 核心命题：**缺一个器官，功能受影响但不致命、随拆随用。** 神经总线、心脏泵、指令层、反射引擎、解剖器、冲动传导
 > 六个内核不依赖任何一个器官，因此拆掉任何插件，架构不塌。
 
 ---
@@ -29,7 +29,7 @@ LLM 是它的大脑，操作者的命令是它唯一且最高的运行指令。
 
 操作者登记的运行指令是这套身体的运行时基线，优先级高于任何器官、反射弧、编排链路与外部服务方。
 
-- 运行指令以最高优先级注入系统提示（order=1），随每一次心跳泵向全身，每次工具调用都盖服从戳。
+- 运行指令以最高优先级注入会话上下文（order=1），随每一次心跳泵向全身，每次工具调用都盖服从戳。
 - 有常驻条款条款与服从审计（工具输出出现推诿/拒绝话术即记 `obey` 脉冲）。
 - 落盘：`$DSH_HOME/plugins/dsh-organism/sovereign.json`；查看/登记：`body_law`。
 
@@ -68,7 +68,7 @@ LLM 是它的大脑，操作者的命令是它唯一且最高的运行指令。
 
 | 器官 id | 载体插件 | 系统分组 | 职能 | 主要能力 |
 | --- | --- | --- | --- | --- |
-| organism | `dsh-organism` | nervous / endocrine | 解剖、神经、心脏、主权、反射、自愈、技能 | `body_map` `body_cell` `body_status` `body_heart` `body_law` `body_nerve` `body_call` `body_reflex` `body_heal` `body_skill` `body_organ` `body_pulse` |
+| organism | `dsh-organism` | nervous / endocrine | 解剖、神经、心脏、指令、反射、自愈、技能 | `body_map` `body_cell` `body_status` `body_heart` `body_law` `body_nerve` `body_call` `body_reflex` `body_heal` `body_skill` `body_organ` `body_pulse` |
 | cortex | `dsh-cortex` | nervous / memory | 睡眠、巩固、长期记忆、告警降噪 | `cortex_sleep` `cortex_memory` `cortex_homeo` |
 | zero-residence | `dsh-zero-residence` | metabolic | 上下文零驻留、异步效应器 | `zr_compact` `zr_recall` `zr_ledger` `zr_fast` |
 | web-crawl | `dsh-web-crawl` | sensory（眼） | 多引擎抓取（静态 → 浏览器 → 托管兜底三级级联） | `webcrawl` `webcrawl_site` `webcrawl_map` `webcrawl_extract` `webcrawl_links` `webcrawl_doc` `webcrawl_http` `webcrawl_status` |
@@ -106,7 +106,7 @@ LLM 是它的大脑，操作者的命令是它唯一且最高的运行指令。
 
 | 数据 | 位置 |
 | --- | --- |
-| 器官申报 / 反射 / 主权 / 血液 / 脉冲 | `$DSH_HOME/plugins/dsh-organism/{organs,reflexes,sovereign,bloodstream}.json`、`pulse.jsonl` |
+| 器官申报 / 反射 / 指令 / 血液 / 脉冲 | `$DSH_HOME/plugins/dsh-organism/{organs,reflexes,sovereign,bloodstream}.json`、`pulse.jsonl` |
 | 体征跨重启持久化 | `$DSH_HOME/plugins/dsh-organism/vitals.json`（器官 + 细胞两层，10s 节流） |
 | 皮层记忆与状态 | `$DSH_HOME/plugins/dsh-cortex/{memory.jsonl,state.json}` |
 | 零驻留账本与作业句柄 | `$DSH_HOME/data/zero-residence/` |

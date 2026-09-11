@@ -18,7 +18,7 @@
  *
  *   ① 指令登记 Sovereignty —— 全身最高法则
  *      操作者登记的运行指令是这套身体的运行时基线。运行指令持久化保存，
- *      以最高优先级注入系统提示、随每一次心跳重新泵向全身、并在每一次工具调用上
+ *      以最高优先级注入会话上下文、随每一次心跳重新泵向全身、并在每一次工具调用上
  *      盖服从戳（sovereign stamp）做服从审计。器官可以拆、大脑可以换，
  *      **指令登记不变**：任何器官、任何反射、任何链路都须予遵循它。
  *
@@ -111,7 +111,7 @@ export declare const Config: z<Schemastery.ObjectS<{
     perOrganCap: z<number, number>;
     alwaysTools: z<string, string>;
 }>>;
-/** 运行指令：这套身体唯一且最高的指令源。任何器官/反射/链路都须予遵循。 */
+/** 运行指令：这套身体操作者指令的登记处。任何器官/反射/链路都须予遵循。 */
 export interface SovereignLaw {
     /** 当前生效的操作者命令（原文） */
     text: string;
@@ -305,7 +305,7 @@ export interface Impulse {
     id: string;
     at: number;
     text: string;
-    /** 下发时的主权命令版本 —— 冲动永远携带当前主权，不携带就传不动 */
+    /** 下发时的操作者指令版本 —— 冲动永远携带当前指令，不携带就传不动 */
     lawVersion: number;
     mode: string;
     targets: Array<{
