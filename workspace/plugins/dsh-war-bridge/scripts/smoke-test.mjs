@@ -22,6 +22,19 @@ function check(name, ok, extra = '') {
   console.log(`${ok ? '[OK]  ' : '[FAIL]'} ${name}${extra ? ` — ${extra}` : ''}`)
 }
 
+/**
+ * 跳过——**不是失败**。
+ *
+ * 以前这里用 `check(name, false, '跳过…')` 表达跳过：消息写着「跳过」，计数却记成失败，
+ * 于是「本机没装 IDA / 没有样本」会被报成 OVERALL: FAIL。跳过必须是跳过，
+ * 否则 CI 与读者都学不到任何东西——只学会忽略红色。
+ */
+const skipped = []
+function skip(name, why) {
+  skipped.push({ name, why })
+  console.log(`[SKIP] ${name} — ${why}`)
+}
+
 // ── 1. 用假 ctx 捕获工具 ──
 const captured = []
 const ctx = {
@@ -109,9 +122,16 @@ console.log('\n----- ida status -----\n' + idaStatus + '\n')
 if (online) {
   const work = join(ROOT, '.smoke-work')
   mkdirSync(work, { recursive: true })
-  const src = '<DSH_CHECKOUT>\\workspace\\samples\\notepad.exe'
+  // 样本位置：优先环境变量，其次仓库内常见位置，最后退回本机私有 checkout。
+  // 公开仓里没有 .exe（.gitignore 明确排除 *.exe），所以「找不到样本」是**预期情形**，不是缺陷。
+  const sampleCandidates = [
+    process.env.WAR_BRIDGE_SAMPLE,
+    join(ROOT, 'samples', 'notepad.exe'),
+    join(ROOT, '..', '..', 'workspace', 'samples', 'notepad.exe'),
+  ].filter(Boolean)
+  const src = sampleCandidates.find((p) => existsSync(p))
   const sample = join(work, 'smoke.exe')
-  if (existsSync(src)) {
+  if (src) {
     copyFileSync(src, sample)
     const open = await byName('ida').execute({ action: 'open', path: sample })
     check('ida open 成功', open.includes('✅'))
@@ -142,14 +162,21 @@ if (online) {
 
     rmSync(work, { recursive: true, force: true })
   } else {
-    check('样本存在（workspace\\samples\\notepad.exe）', false, '跳过 IDA 链路用例')
+    skip(
+      'IDA 全链路（open → funcs → imports → decompile → eval → save → close）',
+      '未找到样本 PE；设 WAR_BRIDGE_SAMPLE=<path> 或把样本放到 workspace/samples/notepad.exe 即可启用',
+    )
   }
 }
 
 // ── 汇总 ──
 const fail = results.filter((r) => !r.ok)
 console.log('\n=== WAR-BRIDGE SMOKE SUMMARY ===')
-console.log(`TOTAL=${results.length} PASS=${results.length - fail.length} FAIL=${fail.length}`)
+console.log(`TOTAL=${results.length} PASS=${results.length - fail.length} FAIL=${fail.length} SKIP=${skipped.length}`)
 if (fail.length) console.log('失败项：' + fail.map((f) => f.name).join(' | '))
-console.log(fail.length ? 'OVERALL: FAIL' : 'OVERALL: ALL PASS')
-process.exit(fail.length ? 1 : 0)
+if (skipped.length) console.log('跳过项：' + skipped.map((s) => s.name).join(' | '))
+console.log(fail.length ? 'OVERALL: FAIL' : skipped.length ? 'OVERALL: ALL PASS (with skips)' : 'OVERALL: ALL PASS')
+// 用 exitCode 而不是 process.exit()：IDA 探测留下的在途 fetch / AbortSignal 定时器
+// 如果在退出瞬间被强杀，Windows 上会触发 libuv 断言（UV_HANDLE_CLOSING）把进程打成
+// exit 1 —— 于是「全绿」的回归跑出失败退出码，正好是最误导人的那种。让事件循环自然排空。
+process.exitCode = fail.length ? 1 : 0
