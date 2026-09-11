@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src=".github/assets/banner.svg" alt="Agent-Body — 插件即是器官：25 个策展器官、8 大系统、一颗心脏，门控掉 84.7% 的 tool schema token，0 个慢性伤口" width="100%">
+<img src=".github/assets/banner.svg" alt="Agent-Body — 插件即是器官：26 个策展器官、8 大系统、一颗心脏，门控掉 84.7% 的 tool schema token，0 个慢性伤口" width="100%">
 
 # Agent‑Body
 
@@ -8,7 +8,7 @@
 
 *这里的插件不是一份工具清单，而是一具活着的身体里的器官。*
 
-[![Organs](https://img.shields.io/badge/organs-25-ff69b4)](#器官目录)
+[![Organs](https://img.shields.io/badge/organs-26-ff69b4)](#器官目录)
 [![Schema gating](https://img.shields.io/badge/schema%20gating-门控掉%2084.7%25%20tool--schema%20token-2ecc71)](#token-经济)
 [![Benchmark](https://img.shields.io/badge/benchmark-仓库内可复现-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/离线回归-200%2B%20断言-informational)](#自己验证)
@@ -153,7 +153,7 @@ npm run bench:check    # 与提交的基线不一致就非零退出
 | --- | --- | --- |
 | **个体** | 这具身体（正在运行的那套安装） | 1 |
 | **系统** | 人体八大系统：执行 / 神经 / 免疫 / 感官 / 运动 / 记忆 / 代谢 / 内分泌 | 8 |
-| **器官** | 一个插件，遵守同一份契约：感知 → 反射 → 效应 → 稳态 | 策展 **25** 个（见 [`catalog/organs.json`](catalog/organs.json)），其中 **23** 个是可安装的插件包 |
+| **器官** | 一个插件，遵守同一份契约：感知 → 反射 → 效应 → 稳态 | 策展 **26** 个（见 [`catalog/organs.json`](catalog/organs.json)），其中 **23** 个是可安装的插件包 |
 | **组织** | 器官内部的功能细分：感知 / 检验 / 效应 / 合成 / 记忆 / 调控 / 清除 / 计量 / 基质 | 9 类 |
 | **细胞** | 单个能力单元（一个工具） | 运行时统计 |
 

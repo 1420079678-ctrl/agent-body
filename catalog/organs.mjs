@@ -24,6 +24,13 @@ export const ORGAN_POLICY = {
   },
   proprioception_center: { tier: 'core', permissions: [], fallback: [] },
   cortex: { tier: 'core', permissions: ['fs:read', 'fs:write'], fallback: [] },
+  zero_residence: {
+    tier: 'general',
+    permissions: ['fs:read', 'exec:process'],
+    handles: ['not_found'],
+    fallback: [],
+    note: '只读会话日志（fs:read）；zr_fast 会起子进程执行命令（exec:process）——契约校验因此拒绝把它标为 core。',
+  },
   cortex_files: { tier: 'core', permissions: ['fs:read', 'fs:write'], fallback: ['hippocampus'] },
   hippocampus: { tier: 'core', permissions: ['fs:read', 'fs:write'], fallback: ['cortex_files'] },
   growth: { tier: 'core', permissions: [], fallback: [] },

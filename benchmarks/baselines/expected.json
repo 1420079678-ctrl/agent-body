@@ -1,6 +1,6 @@
 {
   "$comment": "CI 基线：benchmarks/run.mjs --check 会逐项比对这些指标。改动算法/语料/任务集导致数字变化时，重跑 --write-baseline 并在 CHANGELOG 说明原因——不要为了「让 CI 变绿」而直接覆盖它。",
-  "generatedAt": "2026-09-11T14:08:41.565Z",
+  "generatedAt": "2026-09-11T14:24:16.668Z",
   "kernelSource": "workspace/plugins/dsh-organism/src/index.ts",
   "tolerance": {
     "verdict": 0,
@@ -46,8 +46,8 @@
     "baseline.naiveMisses": 28,
     "baseline.agentBodySavedPct": 0.8471008449069877,
     "baseline.agentBodyMisses": 6,
-    "catalog.organs": 25,
-    "catalog.defaultInstall": 14,
+    "catalog.organs": 26,
+    "catalog.defaultInstall": 15,
     "live.kernelSavedPct": 0.74253,
     "live.recomputedVisibleTokens": 14206,
     "live.verdict": "consistent"

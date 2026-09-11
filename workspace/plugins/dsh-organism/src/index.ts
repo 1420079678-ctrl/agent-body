@@ -573,6 +573,7 @@ const CURATED: Organ[] = [
   { id: 'hippocampus', label: '海马体（经验沉淀）', group: 'memory', capabilities: ['agi_memory', 'sec_journal', 'rev_journal', 'war_memory'], afferent: ['tools/result'], purpose: '把做过的变成可复用的——同类任务先检索再动手' },
   { id: 'cortex', label: '皮层（睡眠·记忆·巩固）', group: 'memory', capabilities: ['cortex_*'], afferent: ['tools/result', 'organism/heartbeat', 'agent/pre-step'], purpose: '给身体装上「时间」与「记忆」：静默即入睡、睡中把经历巩固成长期记忆、新命令进来主动召回、稳态告警去重收敛', source: '@dsh-external/dsh-cortex' },
   { id: 'cortex_files', label: '皮层档案（案件证据）', group: 'memory', capabilities: ['sec_evidence', 'sec_findings', 'rev_case', 'war_case'], afferent: ['tools/result'], purpose: '不可变证据与结论的长期存储，结论必须有证据引用' },
+  { id: 'zero_residence', label: '零驻留（上下文压缩）', group: 'memory', capabilities: ['zr_*'], afferent: ['tools/result'], purpose: '把不再需要重发的上下文压成指针而非有损摘要——驱逐但可逐字重建，并给出注意力积分账本；附非阻塞命令执行', source: '@dsh-external/dsh-zero-residence' },
 
   // ── 代谢系统 ──
   { id: 'metabolism', label: '代谢（计量与行情）', group: 'metabolic', capabilities: ['quant_*'], afferent: ['tools/result'], purpose: '资源、行情、开源影响力等需要持续计量的量', source: 'dsh-quant' },

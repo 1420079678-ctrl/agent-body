@@ -29,7 +29,22 @@ test('buildAnatomy: 每个工具都被某个器官认领，不留游离能力', 
   }
   const unclaimed = tools.filter((t) => !claimed.has(t))
   assert.deepEqual(unclaimed, [], `未被认领的工具: ${unclaimed.join(', ')}`)
-  assert.ok(organs.some((o) => o.id.startsWith('auto:')), '应当存在自主升格的器官')
+  // 这里**不**断言「存在自主升格器官」：那是机制，不是语料快照。
+  // 语料里恰好没有游离能力时（策展目录覆盖完整），这条断言会假红——
+  // 它曾在把 zero_residence 纳入策展后误报。机制由下面那条合成用例负责。
+})
+
+test('buildAnatomy: 未被策展认领的能力自动升格为自主器官（合成输入，不依赖语料）', () => {
+  const tools = ['read', 'write', 'brand_new_thing_do_it', 'brand_new_thing_check_it']
+  const organs = buildAnatomy(tools)
+  const auto = organs.filter((o) => o.id.startsWith('auto:'))
+  assert.ok(auto.length > 0, '未被认领的能力应当升格出自主器官')
+  const claimedByAuto = auto.flatMap((o) => o.capabilities)
+  assert.deepEqual(
+    claimedByAuto.sort(),
+    ['brand_new_thing_check_it', 'brand_new_thing_do_it'],
+    '只有游离能力该进自主器官，已被策展认领的不得重复升格',
+  )
 })
 
 test('workingSet: 常驻集永不隐藏，意图决定显影', { skip: !corpus && 'corpus missing' }, () => {

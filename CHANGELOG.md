@@ -27,6 +27,11 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- **`zero_residence` was missing from the curated catalog**, so 4 shipped capabilities (`zr_compact`, `zr_fast`,
+  `zr_ledger`, `zr_recall`) showed up as unclaimed and the benchmark reported coverage of **252/256** — an unexplained
+  gap sitting next to a 256/256 claim elsewhere. The organ that reads your session logs and spawns subprocesses was
+  also, therefore, the one whose permissions nobody could look up. It is now curated like its siblings, with
+  `fs:read` + `exec:process` declared. Coverage is **256/256**.
 - **`dsh-zero-residence`: session lookup by substring returned the wrong session.** With both `session-a` and
   `session-a-extra` present, which one won depended on filesystem ordering, so `computeLedger('session-a')` could read
   the wrong log and report `T = 0` instead of `T = 2`. Resolution is now exact-match first, then shortest-substring,
@@ -47,8 +52,15 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
-- **Organ count is stated as 25 curated organs** (23 shipped as installable packages), matching `catalog/organs.json`
+- **Organ count is stated as 26 curated organs** (23 shipped as installable packages), matching `catalog/organs.json`
   instead of the previously inconsistent badge/table values.
+- **Benchmark baseline re-baselined** for two intentionally changed metrics: `catalog.organs` 25 → 26 and
+  `catalog.defaultInstall` 14 → 15, both consequences of curating `zero_residence`. The gating metrics are unchanged
+  (84.71% mean), which is the point of tracking them separately.
+- **The auto-promotion assertion became a mechanism test.** `buildAnatomy` was asserted to produce an `auto:` organ
+  against the real corpus, which made "the corpus happens to contain a free-floating capability" look like an
+  invariant — it went red the moment the catalog covered everything. The mechanism is now tested with synthetic
+  input, and the corpus test asserts only what it should: no unclaimed capabilities.
 - **`npm run check` is the single gate**; `Makefile` targets forward to it so there is only one definition of "green".
 - Reflex routing gained six intent rules (privilege-escalation, market data, background jobs, snapshots, image
   reading, document conversion) driven by the benchmark's unrouted list.

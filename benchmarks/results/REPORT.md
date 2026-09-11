@@ -22,7 +22,7 @@
 | 指标 | 值 |
 | --- | --- |
 | 工具总数 | 256 |
-| 器官数（策展 + 自主升格） | 26（25 + 1） |
+| 器官数（策展 + 自主升格） | 26（26 + 0） |
 | 任务集 | 48 |
 | 全量 schema token | 55154 |
 | 门控后 schema token（均值） | 8433 |
@@ -96,10 +96,10 @@
 
 ## 4. 器官目录分级
 
-- 器官数 25，默认安装 14 个（corpus_callosum, cortex, cortex_files, delegation, ears, eyes, growth, hands, hippocampus, interoception, jobs, prefrontal, proprioception_center, synapse）
-- 分级分布：core 6 · experimental 3 · general 8 · professional 8
-- 契约校验：25/25 通过
-- 语料覆盖：252/256 个工具被目录认领
+- 器官数 26，默认安装 15 个（corpus_callosum, cortex, cortex_files, delegation, ears, eyes, growth, hands, hippocampus, interoception, jobs, prefrontal, proprioception_center, synapse, zero_residence）
+- 分级分布：core 6 · experimental 3 · general 9 · professional 8
+- 契约校验：26/26 通过
+- 语料覆盖：256/256 个工具被目录认领
 
 ## 5. 活体快照交叉校验
 

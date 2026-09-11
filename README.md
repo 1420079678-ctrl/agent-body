@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src=".github/assets/banner.svg" alt="Agent-Body — plugins as organs: 25 curated organs across 8 systems, one heartbeat, 84.7% of tool-schema tokens gated away, 0 chronic wounds" width="100%">
+<img src=".github/assets/banner.svg" alt="Agent-Body — plugins as organs: 26 curated organs across 8 systems, one heartbeat, 84.7% of tool-schema tokens gated away, 0 chronic wounds" width="100%">
 
 # Agent‑Body
 
@@ -8,7 +8,7 @@
 
 *Plugins here are not a tool list. They are organs in a living system.*
 
-[![Organs](https://img.shields.io/badge/organs-25-ff69b4)](#organ-catalog)
+[![Organs](https://img.shields.io/badge/organs-26-ff69b4)](#organ-catalog)
 [![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20tool--schema%20tokens%20gated-2ecc71)](#token-economy)
 [![Benchmark](https://img.shields.io/badge/benchmark-reproducible%20in--repo-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
@@ -183,7 +183,7 @@ Two honest caveats, because the headline is easy to over‑read:
 | --- | --- | --- |
 | **Individual** | this body (the running install) | 1 |
 | **System** | eight body systems: executive / nervous / immune / sensory / motor / memory / metabolic / endocrine | 8 |
-| **Organ** | a plugin, obeying one contract: sense → reflex → effect → homeostasis | **25 curated** in [`catalog/organs.json`](catalog/organs.json), **23** shipped as installable packages |
+| **Organ** | a plugin, obeying one contract: sense → reflex → effect → homeostasis | **26 curated** in [`catalog/organs.json`](catalog/organs.json), **23** shipped as installable packages |
 | **Tissue** | functional clustering inside an organ: sensing / inspection / effect / synthesis / memory / regulation / clearance / metering / matrix | 9 classes |
 | **Cell** | a single capability unit (one tool) | counted at runtime |
 
