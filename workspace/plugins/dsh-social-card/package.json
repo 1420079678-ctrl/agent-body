@@ -1,32 +1,62 @@
 {
   "name": "@dsh-external/dsh-social-card",
   "version": "0.0.1",
-  "description": "Guizang Social Card Skill — 小红书图文/公众号封面对设计系统（种子模板渲染 + QA 校验 + 设计文档）",
-  "private": true,
+  "description": "Turns source material into social cards: Xiaohongshu image sets, 21:9 + 1:1 public-account cover pairs, and Live Photo plates.",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/types/index.d.ts",
   "files": [
     "lib",
-    "assets",
-    "references",
-    "validate-social-deck.mjs",
-    "scripts/build.ps1",
-    "README.md"
+    "cordis.patch.yml"
   ],
   "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1420079678-ctrl/agent-body.git",
+    "directory": "workspace/plugins/dsh-social-card"
+  },
+  "homepage": "https://github.com/1420079678-ctrl/agent-body#organ-catalog",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "ui"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "peerDependencies": {
-    "@deepseek-ai/dsh-llm": ">=0.0.1-rc <2",
-    "@deepseek-ai/dsh-tools": ">=0.0.1-rc <2",
+    "@deepseek-ai/dsh-llm": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0 || >=0.1.1-rc.1 <0.2.0-0",
     "cordis": ">=4.0.0-rc <5",
     "schemastery": "^3.18.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "cordis": {
+      "optional": true
+    },
+    "schemastery": {
+      "optional": true
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
     "typescript": "^5.9.0"
   },
   "scripts": {
-    "build": "pwsh -NoProfile -File scripts/build.ps1",
+    "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   }
 }

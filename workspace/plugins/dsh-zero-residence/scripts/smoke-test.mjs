@@ -1,90 +1,91 @@
-// 冒烟测试：用真实会话日志验证零驻留指针压缩的压缩比与无损重建能力
-import fs from 'node:fs';
-import path from 'node:path';
-import zlib from 'node:zlib';
-import { buildPointerManifest, computeLedger } from '../lib/index.js';
+// Offline regression: synthetic sessions only, never reads the operator's history.
+import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import zlib from 'node:zlib'
 
-const SESS = '<DSH_CHECKOUT>\\data\\sessions';
-const MAGIC = 0xFD2FB528;
-function scan(buf) {
-  const out = []; let o = 0;
-  while (o < buf.length) {
-    const s = o;
-    if (buf.length - o < 4 || buf.readUInt32LE(o) !== MAGIC) break;
-    o += 4; const d = buf.readUInt8(o); o += 1;
-    const cs = d >>> 6, ss = (d & 0x20) !== 0, ck = (d & 0x04) !== 0, df = d & 3;
-    const db = df === 3 ? 4 : df, cb = cs === 0 ? (ss ? 1 : 0) : 1 << cs;
-    o += (ss ? 0 : 1) + db + cb;
-    for (;;) {
-      if (buf.length - o < 3) return out;
-      const bh = buf.readUIntLE(o, 3); o += 3;
-      const last = (bh & 1) !== 0, bt = (bh >>> 1) & 3, bs = bh >>> 3;
-      if (bt === 3) return out;
-      const pb = bt === 1 ? 1 : bs;
-      if (buf.length - o < pb) return out;
-      o += pb; if (last) break;
-    }
-    if (ck) o += 4;
-    out.push([s, o]);
-  }
-  return out;
+const home = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-zr-test-'))
+const previousHome = process.env.DSH_HOME
+process.env.DSH_HOME = home
+let passed = 0
+let failed = 0
+async function check(label, fn) {
+  try { await fn(); passed++; console.log(`PASS ${label}`) }
+  catch (error) { failed++; console.error(`FAIL ${label}: ${error.message}`) }
 }
-function walk(d, out = []) {
-  for (const e of fs.readdirSync(d, { withFileTypes: true })) {
-    const p = path.join(d, e.name);
-    if (e.isDirectory()) walk(p, out); else if (e.name.startsWith('session.v3.jsonl')) out.push(p);
+try {
+  const { apply, buildPointerManifest, computeLedger } = await import('../lib/index.js')
+  const payload = 'synthetic payload 中文🙂\n'.repeat(500)
+  const result = (id, text) => ({ type: 'tool/result', seq: 2, data: {
+    message: { role: 'user', content: [{ type: 'tool-result', toolCallId: id, content: text }] },
+  } })
+  const events = [
+    { type: 'system/message', seq: 0, data: { text: 'fixture system' } },
+    { type: 'user/message', seq: 1, data: { message: { role: 'user', content: [{ type: 'text', text: 'fixture task' }] } } },
+    result('call-10', 'wrong prefix match'),
+    result('other-id', 'a narrative mention of call-1 is not its identity'),
+    result('call-1', payload),
+    { type: 'request/header', seq: 3, data: { header: { tools: [] } } },
+    { type: 'request/header', seq: 4, data: { header: { tools: [] } } },
+  ]
+  function session(id, items, compressed = false) {
+    const dir = path.join(home, 'sessions', '2026', id)
+    fs.mkdirSync(dir, { recursive: true })
+    const data = compressed
+      ? Buffer.concat(items.map(e => zlib.zstdCompressSync(Buffer.from(JSON.stringify(e) + '\n'))))
+      : items.map(e => JSON.stringify(e) + '\n').join('')
+    fs.writeFileSync(path.join(dir, 'session.v3.jsonl' + (compressed ? '.zstd' : '')), data)
   }
-  return out;
+  session('session-a', events)
+  session('session-b', [result('call-1', 'second session payload')])
+  session('session-a-extra', [result('call-1', 'similar session name payload')])
+  session('session-zstd', events, true)
+  const messages = events.flatMap(e => e.data?.message ? [e.data.message] : [])
+  const manifest = buildPointerManifest(messages, 120)
+  await check('pointer manifest retains all message entries', () => assert.equal(manifest.entries, messages.length))
+  await check('tool payloads use pointers', () => assert.equal(manifest.pointerOnly, 3))
+  await check('large payload compression exceeds 5x', () => assert.ok(manifest.shadowedTokens / manifest.manifestTokens > 5))
+  await check('manifest carries reconstruction key', () => assert.ok(manifest.text.includes('key=call-1')))
+  await check('manifest excludes full payload', () => assert.ok(!manifest.text.includes(payload)))
+  await check('empty input remains valid', () => assert.equal(buildPointerManifest([], 120).entries, 0))
+  await check('plain JSONL ledger counts requests', () => assert.match(computeLedger('session-a'), /T = 2/))
+  await check('concatenated zstd ledger matches plain ledger', () => {
+    assert.equal(computeLedger('session-zstd').replaceAll('session-zstd', 'session-a'), computeLedger('session-a'))
+  })
+  await check('missing session is explicit', () => assert.match(computeLedger('session-missing'), /未找到会话日志/))
+  const registered = new Map()
+  apply({ effect: fn => fn(), tools: { register: tool => { registered.set(tool.name, tool) } },
+    logger: { info() {}, warn() {} } },
+  { engine: false, narrativeHeadChars: 120, jobDir: '', thresholdRatio: 0.15, retainTokens: 40000 })
+  const recall = args => registered.get('zr_recall').execute(args)
+  await check('recall matches exact call ID and restores complete payload', async () => {
+    const text = await recall({ key: 'call-1', session: 'session-a', maxChars: 100000 })
+    assert.match(text, /来源: session-a\//)
+    assert.equal(JSON.parse(text.split('\n\n')[1]).message.content[0].content, payload)
+  })
+  await check('recall respects session selection', async () => {
+    assert.match(await recall({ key: 'call-1', session: 'session-b' }), /second session payload/)
+  })
+  await check('similar session names remain distinct', async () => {
+    assert.match(await recall({ key: 'call-1', session: 'session-a-extra' }), /similar session name payload/)
+  })
+  await check('missing scoped session never falls back to another session', async () => {
+    assert.match(await recall({ key: 'call-1', session: 'session-missing' }), /未在持久日志中找到/)
+  })
+  await check('recall does not match a partial call ID', async () => {
+    assert.match(await recall({ key: 'call-', session: 'session-a' }), /未在持久日志中找到/)
+  })
+  await check('recall rejects empty keys', async () => {
+    assert.match(await recall({ key: '', session: 'session-a' }), /未在持久日志中找到/)
+  })
+  await check('unscoped recall still works', async () => {
+    assert.match(await recall({ key: 'other-id' }), /narrative mention/)
+  })
+} finally {
+  if (previousHome === undefined) delete process.env.DSH_HOME
+  else process.env.DSH_HOME = previousHome
+  fs.rmSync(home, { recursive: true, force: true })
 }
-
-let pass = 0, fail = 0;
-const ok = (c, m) => { if (c) { pass++; console.log('  ✓ ' + m) } else { fail++; console.log('  ✗ ' + m) } };
-
-// ── 1. 从真实会话取一段被遮蔽区（tool/result + assistant），跑指针压缩 ──
-const files = walk(SESS).map(p => ({ p, s: fs.statSync(p).size })).sort((a, b) => b.s - a.s);
-console.log('# 零驻留引擎冒烟测试\n');
-console.log(`使用会话: ${path.basename(path.dirname(files[0].p))}`);
-
-const buf = fs.readFileSync(files[0].p);
-const text = scan(buf).map(([s, e]) => zlib.zstdDecompressSync(buf.subarray(s, e)).toString('utf8')).join('');
-const events = [];
-for (const l of text.split('\n')) { if (l.trim()) { try { events.push(JSON.parse(l)) } catch { } } }
-
-const messages = [];
-for (const ev of events) {
-  if (ev.type === 'tool/result' || ev.type === 'assistant/message' || ev.type === 'user/message') {
-    const m = ev.data?.message;
-    if (m) messages.push(m);
-  }
-  if (messages.length >= 600) break;
-}
-ok(messages.length > 100, `从持久日志还原出 ${messages.length} 条消息作为遮蔽样本`);
-
-const built = buildPointerManifest(messages, 120);
-const ratio = built.shadowedTokens / Math.max(1, built.manifestTokens);
-console.log('\n## 指针压缩结果');
-console.log(`  遮蔽原始   : ${built.shadowedTokens.toLocaleString('en-US')} token`);
-console.log(`  指针清单   : ${built.manifestTokens.toLocaleString('en-US')} token`);
-console.log(`  压缩比     : ${ratio.toFixed(1)}×  （节省 ${(100 - built.manifestTokens / built.shadowedTokens * 100).toFixed(1)}%）`);
-console.log(`  条目       : ${built.entries} 条，其中 ${built.pointerOnly} 条走纯指针（零驻留）`);
-console.log(`  LLM 调用   : 0 次`);
-
-ok(ratio > 5, `压缩比 ${ratio.toFixed(1)}× > 5×`);
-ok(built.manifestTokens < built.shadowedTokens, '清单显著小于原文');
-ok(built.pointerOnly > 0, `${built.pointerOnly} 条工具载荷被纯指针化`);
-ok(built.text.includes('重建索引'), '清单含重建索引段');
-ok(built.text.includes('key='), '清单含可重建 key');
-
-console.log('\n## 清单样本（前 12 行）');
-console.log(built.text.split('\n').slice(0, 12).map(l => '  ' + l).join('\n'));
-
-// ── 2. 账本 ──
-console.log('\n## 账本自检');
-const sid = path.basename(path.dirname(files[0].p));
-const led = computeLedger(sid);
-ok(led.includes('驻留账本'), 'computeLedger 返回结构化账本');
-ok(/A = Σ n_t = [\d,]+/.test(led), '账本含注意力积分 A');
-console.log(led.split('\n').map(l => '  ' + l).join('\n'));
-
-console.log(`\n结果: ${pass} 通过 / ${fail} 失败`);
-process.exit(fail === 0 ? 0 : 1);
+console.log(`\n${passed} passed / ${failed} failed (isolated synthetic sessions)`)
+process.exitCode = failed ? 1 : 0

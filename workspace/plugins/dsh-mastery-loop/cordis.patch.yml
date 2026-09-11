@@ -1,0 +1,7 @@
+# Agent-Body organ: dsh-mastery-loop.
+#
+# Every field in this plugin's Config schema has a default, so an entry with no
+# `config:` block is a valid install. Add one to tune it.
+- insert:
+    - id: dsh-mastery-loop
+      name: '@dsh-external/dsh-mastery-loop'

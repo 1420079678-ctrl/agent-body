@@ -331,14 +331,21 @@ function readTail(file, chars) {
     return text.length <= chars ? text : `…（已截断前 ${text.length - chars} 字符）\n${text.slice(-chars)}`;
 }
 /** 从会话日志里按调用 id 还原被遮蔽的工具原文。 */
-function recallByCallId(callId) {
-    for (const sessionId of listSessionIds()) {
+function recallByCallId(callId, session) {
+    if (callId.trim() === '')
+        return null;
+    const ids = listSessionIds().filter(id => session === undefined || session === '' || id === session);
+    for (const sessionId of ids) {
         for (const ev of readSessionEvents(sessionId, 40000)) {
             if (ev.type !== 'tool/result' && ev.type !== 'tool/call')
                 continue;
-            const serialized = JSON.stringify(ev.data ?? {});
-            if (!serialized.includes(callId))
+            const data = ev.data ?? {};
+            const message = data.message;
+            const blocks = Array.isArray(message?.content) ? message.content : [];
+            const matched = identify(data).callId === callId || blocks.some((block) => block !== null && typeof block === 'object' && identify(block).callId === callId);
+            if (!matched)
                 continue;
+            const serialized = JSON.stringify(data);
             return { text: serialized, source: `${sessionId}/${ev.type}#${ev.seq ?? '?'}` };
         }
     }
@@ -514,7 +521,7 @@ export function apply(ctx, config) {
         },
         output: outStr,
         async execute(args) {
-            const found = recallByCallId(args.key);
+            const found = recallByCallId(args.key, args.session);
             if (found === null)
                 return `未在持久日志中找到 key=${args.key} 的原始内容。`;
             const cap = args.maxChars ?? 6000;

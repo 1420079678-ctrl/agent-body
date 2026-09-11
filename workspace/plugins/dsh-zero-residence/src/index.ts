@@ -397,12 +397,19 @@ function readTail(file: string, chars: number): string {
 }
 
 /** 从会话日志里按调用 id 还原被遮蔽的工具原文。 */
-function recallByCallId(callId: string): { text: string; source: string } | null {
-  for (const sessionId of listSessionIds()) {
+function recallByCallId(callId: string, session?: string): { text: string; source: string } | null {
+  if (callId.trim() === '') return null
+  const ids = listSessionIds().filter(id => session === undefined || session === '' || id === session)
+  for (const sessionId of ids) {
     for (const ev of readSessionEvents(sessionId, 40000)) {
       if (ev.type !== 'tool/result' && ev.type !== 'tool/call') continue
-      const serialized = JSON.stringify(ev.data ?? {})
-      if (!serialized.includes(callId)) continue
+      const data = ev.data ?? {}
+      const message = data.message as { content?: unknown } | undefined
+      const blocks = Array.isArray(message?.content) ? message.content : []
+      const matched = identify(data).callId === callId || blocks.some((block: unknown) =>
+        block !== null && typeof block === 'object' && identify(block as Record<string, unknown>).callId === callId)
+      if (!matched) continue
+      const serialized = JSON.stringify(data)
       return { text: serialized, source: `${sessionId}/${ev.type}#${ev.seq ?? '?'}` }
     }
   }
@@ -561,7 +568,7 @@ export function apply(ctx: Context, config: Config): void {
     },
     output: outStr,
     async execute(args: { key: string; session?: string; maxChars?: number }) {
-      const found = recallByCallId(args.key)
+      const found = recallByCallId(args.key, args.session)
       if (found === null) return `未在持久日志中找到 key=${args.key} 的原始内容。`
       const cap = args.maxChars ?? 6000
       const body = found.text.length > cap ? `${found.text.slice(0, cap)}\n…（共 ${found.text.length} 字符，已截断）` : found.text

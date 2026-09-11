@@ -237,13 +237,31 @@ The self‑contained organs ship a **prebuilt tarball** on the release page — 
 dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0/dsh-external-dsh-organism-0.1.0.tgz
 ```
 
-Available this way today — the three that need no external toolchain (swap the file name in the URL for the others):
+Ten organs ship this way — the ones that need no external toolchain. Append the tarball name to the release URL:
 
-| organ | what it adds | package |
+| organ | tarball | what it adds |
 | --- | --- | --- |
-| `dsh-organism` | the body kernel: anatomy, vitals, heartbeat pump, nerve impulses, reflex arcs, self-healing ledger | `@dsh-external/dsh-organism` |
-| `dsh-cortex` | sleep phases, deterministic consolidation, long-term memory, alert de-noising | `@dsh-external/dsh-cortex` |
-| `dsh-zero-residence` | zero-residence context: evict, keep a pointer, rebuild the payload verbatim on demand | `@dsh-external/dsh-zero-residence` |
+| `dsh-organism` | `dsh-external-dsh-organism-0.1.0.tgz` | the body kernel: anatomy, vitals, heartbeat pump, nerve impulses, reflex arcs, self-healing ledger, on-demand schema gating |
+| `dsh-cortex` | `dsh-external-dsh-cortex-0.1.0.tgz` | sleep phases, deterministic consolidation, long-term memory, alert de-noising |
+| `dsh-zero-residence` | `dsh-external-dsh-zero-residence-0.1.0.tgz` | zero-residence context: evict, keep a pointer, rebuild the payload verbatim on demand |
+| `dsh-mastery-loop` | `dsh-external-dsh-mastery-loop-0.0.1.tgz` | subject-agnostic mastery tutor: orient → deconstruct → model → diagnose → transfer → review |
+| `dsh-social-card` | `dsh-external-dsh-social-card-0.0.1.tgz` | social cards: image sets, 21:9 + 1:1 cover pairs, Live Photo plates |
+| `dsh-academic-research` | `dsh-external-dsh-academic-research-0.0.1.tgz` | research pipeline: 10-stage state machine, five-seat review panel, integrity protocol |
+| `dsh-pentagi` | `dsh-external-dsh-pentagi-0.0.1.tgz` | multi-agent penetration brain: 13 roles, seven-phase flow, adviser re-routing, knowledge base |
+| `dsh-vuln-remediator` | `dsh-external-dsh-vuln-remediator-0.0.1.tgz` | vulnerability remediation: discovery, risk scoring, virtual patches, fix plans |
+| `dsh-reverse-skill` | `dsh-external-dsh-reverse-skill-0.1.0.tgz` | reverse-engineering workflow: routing, confidence bands, evidence chain, validated gate |
+| `dsh-office-docs` | `dsh-external-dsh-office-docs-0.0.1.tgz` | Office documents: build and extract PDF, DOCX, PPTX, XLSX; render pages; convert formats |
+
+Install the body kernel plus the memory organ:
+
+```powershell
+$rel = "https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0"
+dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.0.tgz"
+dsh plugin --profile web add "$rel/dsh-external-dsh-cortex-0.1.0.tgz"
+```
+
+The rest of the catalog needs a host-side toolchain (a compiler, a browser, or external binaries) and is installed with its
+replay script instead — see the catalog section below.
 
 ### Or work from source
 

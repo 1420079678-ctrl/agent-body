@@ -201,13 +201,30 @@ graph TD
 dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0/dsh-external-dsh-organism-0.1.0.tgz
 ```
 
-目前已按这种方式发布的，是三个不依赖外部工具链的器官（把 URL 里的文件名换掉即可装另外两个）：
+已按这种方式发布的共有十个器官——都是不需要外部工具链的。把 tarball 文件名接到 Release 地址后面即可：
 
-| 器官 | 带来什么 | 包名 |
+| 器官 | tarball | 带来什么 |
 | --- | --- | --- |
-| `dsh-organism` | 身体内核：解剖、体征、心跳泵、神经冲动、反射弧、自愈账本 | `@dsh-external/dsh-organism` |
-| `dsh-cortex` | 睡眠相位、确定性巩固、长期记忆、告警降噪 | `@dsh-external/dsh-cortex` |
-| `dsh-zero-residence` | 零驻留上下文：驱逐载荷、只留指针、需要时逐字重建 | `@dsh-external/dsh-zero-residence` |
+| `dsh-organism` | `dsh-external-dsh-organism-0.1.0.tgz` | 身体内核：解剖、体征、心跳泵、神经冲动、反射弧、自愈账本、按需显影的 schema 门控 |
+| `dsh-cortex` | `dsh-external-dsh-cortex-0.1.0.tgz` | 睡眠相位、确定性巩固、长期记忆、告警降噪 |
+| `dsh-zero-residence` | `dsh-external-dsh-zero-residence-0.1.0.tgz` | 零驻留上下文：驱逐载荷、只留指针、需要时逐字重建 |
+| `dsh-mastery-loop` | `dsh-external-dsh-mastery-loop-0.0.1.tgz` | 学科无关的精通导师：定位 → 拆解 → 建模 → 诊断 → 迁移 → 复盘 |
+| `dsh-social-card` | `dsh-external-dsh-social-card-0.0.1.tgz` | 社交卡：图文组、21:9 + 1:1 封面对、实况卡 |
+| `dsh-academic-research` | `dsh-external-dsh-academic-research-0.0.1.tgz` | 学术管线：10 阶段状态机、五席位评审、完整性核查协议 |
+| `dsh-pentagi` | `dsh-external-dsh-pentagi-0.0.1.tgz` | 多智能体渗透大脑：13 角色、七阶段任务流、失败换路、知识库 |
+| `dsh-vuln-remediator` | `dsh-external-dsh-vuln-remediator-0.0.1.tgz` | 漏洞修复：发现、风险排序、虚拟补丁、修复方案 |
+| `dsh-reverse-skill` | `dsh-external-dsh-reverse-skill-0.1.0.tgz` | 逆向工作流：确定性路由、置信带、证据链、validated 门槛 |
+| `dsh-office-docs` | `dsh-external-dsh-office-docs-0.0.1.tgz` | Office 文档：构建与提取 PDF/DOCX/PPTX/XLSX、渲染页面、格式互转 |
+
+装身体内核加记忆器官：
+
+```powershell
+$rel = "https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0"
+dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.0.tgz"
+dsh plugin --profile web add "$rel/dsh-external-dsh-cortex-0.1.0.tgz"
+```
+
+目录里其余的器官需要宿主侧工具链（编译器、浏览器或外部二进制），用各自的 replay 脚本安装——见下面的器官目录。
 
 ### 或者从源码开始
 
