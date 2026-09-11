@@ -88,12 +88,22 @@ function scanZstdFrames(buffer) {
     }
     return frames;
 }
-/** 定位某个会话的持久日志文件（不依赖任何 harness 内部服务）。 */
+/**
+ * 定位某个会话的持久日志文件（不依赖任何 harness 内部服务）。
+ *
+ * 匹配顺序**必须**是：① 目录名精确相等 → ② 子串匹配（取最短者）→ ③ sessionId 为空时取最近一个。
+ *
+ * 为什么强调这个顺序：早先的实现是「遍历时第一个 `dir.includes(sessionId)` 即返回」，
+ * 于是 `session-a` 与 `session-a-extra` 同时存在时，读到哪个**取决于文件系统的返回顺序**——
+ * 实测结果是把 `session-a` 的账本读成了 `session-a-extra` 的（请求数 T 由 2 变成 0）。
+ * 精确优先 + 确定性排序修掉的是这一类「看起来对、偶尔错」的解析。
+ */
 function findSessionLog(sessionId) {
     const root = join(dshHome(), 'sessions');
     if (!existsSync(root))
         return null;
     const stack = [root];
+    const candidates = [];
     while (stack.length > 0) {
         const dir = stack.pop();
         let entries;
@@ -118,11 +128,25 @@ function findSessionLog(sessionId) {
             }
             if (!e.startsWith('session.v') || !e.includes('jsonl'))
                 continue;
-            if (sessionId === '' || dir.includes(sessionId))
-                return p;
+            const parts = dir.split(/[\\/]/);
+            candidates.push({ name: parts[parts.length - 1] ?? '', file: p });
         }
     }
-    return null;
+    if (candidates.length === 0)
+        return null;
+    // ① 精确相等——唯一有资格直接胜出的匹配
+    const exact = candidates.find((c) => c.name === sessionId);
+    if (exact)
+        return exact.file;
+    // ③ 空 id：取字典序最大的目录名（session id 前缀含时间，最新者最大）
+    if (sessionId === '') {
+        return [...candidates].sort((a, b) => a.name.localeCompare(b.name))[candidates.length - 1].file;
+    }
+    // ② 子串：先取目录名最短的（最接近精确），同长取最新
+    const fuzzy = candidates
+        .filter((c) => c.name.includes(sessionId))
+        .sort((a, b) => a.name.length - b.name.length || b.name.localeCompare(a.name));
+    return fuzzy[0]?.file ?? null;
 }
 function readSessionEvents(sessionId, limit = 200000) {
     const file = findSessionLog(sessionId);
