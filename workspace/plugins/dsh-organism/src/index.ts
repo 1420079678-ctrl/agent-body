@@ -698,6 +698,15 @@ const INNERVATION: Array<{ match: RegExp; organs: string[] }> = [
   { match: /插件|注入|安装|市场|重载|卸载/i, organs: ['plasticity'] },
   { match: /预测|推演|舆情|走向|预演/i, organs: ['oracle'] },
   { match: /心跳|体征|器官|反射|架构|身体|神经/i, organs: ['proprioception_center'] },
+  // ↓ 以下 6 条由可复现基准的缺口明细驱动补入（benchmarks/results/REPORT.md 的「未路由」清单）：
+  //   越权类命令没路由到攻击链、行情类没路由到代谢、后台任务/快照/识图/文档转换各缺一条。
+  //   补规则会让显影集变大（省得少一点）——这是用一点 token 换「任务需要的能力首轮可见」。
+  { match: /越权|未授权|越权访问|idor|水平权限|垂直权限|双账号|权限对照/i, organs: ['innate_immunity'] },
+  { match: /股票|行情|均线|回撤|夏普|k线|持仓|仓位|净值|量化|因子|回测|复权|涨跌/i, organs: ['metabolism'] },
+  { match: /后台|句柄|跑完|任务状态|异步任务|job_/i, organs: ['jobs'] },
+  { match: /快照|备份|回滚|存档|检查点|还原/i, organs: ['synapse'] },
+  { match: /截图|看图|识别图|读图|画面|图片|图里/i, organs: ['ears', 'interoception'] },
+  { match: /docx|xlsx|pptx|markdown|转成|转换成|导出成|另存为|转格式/i, organs: ['craft'] },
 ]
 
 /** 从器官的能力/标识里提炼可匹配的职能词 */
