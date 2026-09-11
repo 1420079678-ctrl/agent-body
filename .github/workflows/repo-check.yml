@@ -2,7 +2,7 @@ name: repo-check
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -34,8 +34,8 @@ jobs:
         run: node scripts/verify-repo.mjs
 
       # The organ regressions load their built lib/, which imports the host runtime
-      # (@deepseek-ai/dsh-*, schemastery). Those resolve only inside an installed
-      # install, so they run from the manual workflow: .github/workflows/organ-regressions.yml
+      # (@deepseek-ai/dsh-*, schemastery). That runtime only resolves inside an installed
+      # harness, so they run from the manual workflow: .github/workflows/organ-regressions.yml
       - name: Confirm regression suites are present
         shell: bash
         run: |
