@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src=".github/assets/banner.svg" alt="Agent-Body — 插件即是器官：23 个器官、8 大系统、一颗心脏，省下 82% 提示词 token，0 个慢性伤口" width="100%">
+
 # Agent‑Body
 
 **DeepSeek Harness 的器官化插件层：器官、神经冲动、心跳、反射弧、长期记忆，以及闭环自愈。**

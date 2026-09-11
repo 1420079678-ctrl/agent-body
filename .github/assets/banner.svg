@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="Agent-Body — plugins as organs, 23 organs, one heartbeat">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="55%" stop-color="#111633"/>
+      <stop offset="100%" stop-color="#161129"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff6b9d" stop-opacity="0"/>
+      <stop offset="18%" stop-color="#ff6b9d"/>
+      <stop offset="50%" stop-color="#ffd166"/>
+      <stop offset="82%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff6b9d" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#ff6b9d" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- faint organ constellation -->
+  <g opacity="0.5">
+    <circle cx="129" cy="470" r="4.5" fill="#4ade80"/>
+    <circle cx="256" cy="522" r="4" fill="#38bdf8"/>
+    <circle cx="392" cy="470" r="4.5" fill="#a78bfa"/>
+    <circle cx="520" cy="528" r="4" fill="#fbbf24"/>
+    <circle cx="648" cy="468" r="4.5" fill="#fb7185"/>
+    <circle cx="776" cy="524" r="4" fill="#34d399"/>
+    <circle cx="904" cy="472" r="4.5" fill="#60a5fa"/>
+    <circle cx="1032" cy="526" r="4" fill="#f472b6"/>
+    <circle cx="1152" cy="468" r="4.5" fill="#facc15"/>
+    <path d="M129 470 L256 522 L392 470 L520 528 L648 468 L776 524 L904 472 L1032 526 L1152 468"
+          fill="none" stroke="#3b4472" stroke-width="1.1" stroke-dasharray="4 6"/>
+  </g>
+
+  <!-- heartbeat glow + ECG -->
+  <ellipse cx="640" cy="330" rx="300" ry="90" fill="url(#glow)" filter="url(#soft)" opacity="0.75"/>
+  <path d="M40 330 H250 l26 0 l16 -62 l22 124 l24 -150 l22 178 l20 -96 l16 6 H560 l26 0 l16 -62 l22 124 l24 -150 l22 178 l20 -96 l16 6 H1140"
+        fill="none" stroke="url(#pulse)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- header -->
+  <g transform="translate(72, 74)">
+    <circle cx="26" cy="26" r="25" fill="none" stroke="#ff6b9d" stroke-width="2.4"/>
+    <circle cx="26" cy="26" r="15" fill="none" stroke="#ff6b9d" stroke-width="1.4" opacity="0.65"/>
+    <circle cx="26" cy="26" r="5.5" fill="#ff6b9d"/>
+    <text x="70" y="24" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif"
+          font-size="20" font-weight="600" letter-spacing="3.4" fill="#8b95c9">AGENT · BODY</text>
+    <text x="70" y="52" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="15" fill="#5f6aa0">organ-based plugin layer for DeepSeek Harness</text>
+  </g>
+
+  <!-- headline -->
+  <text x="72" y="502" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif"
+        font-size="86" font-weight="800" fill="#f4f6ff" letter-spacing="-1.5">Plugins are organs.</text>
+  <text x="74" y="556" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif"
+        font-size="27" font-weight="400" fill="#a6b0e0">A heartbeat, nerve impulses, reflexes, sleep and closed-loop self-healing.</text>
+
+  <!-- stats -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif">
+    <g transform="translate(960, 96)">
+      <text x="0" y="0" font-size="58" font-weight="800" fill="#ff6b9d">23</text>
+      <text x="0" y="30" font-size="16" fill="#8b95c9" letter-spacing="1.6">ORGANS · 8 SYSTEMS</text>
+    </g>
+    <g transform="translate(960, 190)">
+      <text x="0" y="0" font-size="58" font-weight="800" fill="#4ade80">82%</text>
+      <text x="0" y="30" font-size="16" fill="#8b95c9" letter-spacing="1.6">PROMPT TOKENS SAVED</text>
+    </g>
+    <g transform="translate(960, 284)">
+      <text x="0" y="0" font-size="58" font-weight="800" fill="#ffd166">0</text>
+      <text x="0" y="30" font-size="16" fill="#8b95c9" letter-spacing="1.6">CHRONIC WOUNDS LEFT</text>
+    </g>
+  </g>
+</svg>

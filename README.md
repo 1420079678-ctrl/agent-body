@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src=".github/assets/banner.svg" alt="Agent-Body — plugins as organs: 23 organs across 8 systems, one heartbeat, 82% prompt tokens saved, 0 chronic wounds" width="100%">
+
 # Agent‑Body
 
 **An organ‑based plugin layer for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): organs, nerve impulses, a heartbeat, reflex arcs, long‑term memory, and closed‑loop self‑healing.**
