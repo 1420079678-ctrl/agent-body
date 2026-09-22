@@ -395,6 +395,8 @@ agent-body/
 ⭐ **如果这具身体对你有用，[给它一个 star](https://github.com/1420079678-ctrl/agent-body/stargazers)** —— 零成本，
 却是让更多人看到这个项目最简单的方式。
 
+**社区.** 本项目在 [LINUX DO](https://linux.do/) 社区发布与交流。
+
 <img src="https://api.star-history.com/svg?repos=1420079678-ctrl/agent-body&type=Date" alt="Star 增长曲线" width="100%">
 
 </div>
