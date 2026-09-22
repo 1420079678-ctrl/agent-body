@@ -457,6 +457,9 @@ If that's the kind of plugin platform you want, the architecture is all in [ARCH
 ⭐ **If this body has a pulse for you, [star this repo](https://github.com/1420079678-ctrl/agent-body/stargazers)** — it costs
 nothing and is the single easiest way to help others find the project.
 
+**Community.** Discussed in the [LINUX DO](https://linux.do/) community — a friendly Chinese-speaking
+developer forum where this project was shared and where questions get answered.
+
 <img src="https://api.star-history.com/svg?repos=1420079678-ctrl/agent-body&type=Date" alt="Star history chart" width="100%">
 
 </div>
