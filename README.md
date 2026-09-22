@@ -14,6 +14,8 @@
 [![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
 [![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#quick-start)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/1420079678-ctrl/agent-body?style=flat&logo=github&label=%E2%AD%90%20stars)](https://github.com/1420079678-ctrl/agent-body/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/1420079678-ctrl/agent-body)](https://github.com/1420079678-ctrl/agent-body/issues)
 
 [Architecture](ARCHITECTURE.md) · [Organ Catalog](catalog/organs.json) · [Benchmark](benchmarks/results/REPORT.md) · [Roadmap](ROADMAP.md) · [**中文文档**](README.zh-CN.md)
 
@@ -451,5 +453,10 @@ Runtime state (vitals, synapses, memory cards, pulse stream) lives in your harne
 **Six kernels. Twenty‑three organs. One heartbeat.**
 
 If that's the kind of plugin platform you want, the architecture is all in [ARCHITECTURE.md](ARCHITECTURE.md).
+
+⭐ **If this body has a pulse for you, [star this repo](https://github.com/1420079678-ctrl/agent-body/stargazers)** — it costs
+nothing and is the single easiest way to help others find the project.
+
+<img src="https://api.star-history.com/svg?repos=1420079678-ctrl/agent-body&type=Date" alt="Star history chart" width="100%">
 
 </div>

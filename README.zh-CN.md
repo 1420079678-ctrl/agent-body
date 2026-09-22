@@ -14,6 +14,8 @@
 [![Regressions](https://img.shields.io/badge/离线回归-200%2B%20断言-informational)](#自己验证)
 [![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#快速开始)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/1420079678-ctrl/agent-body?style=flat&logo=github&label=%E2%AD%90%20stars)](https://github.com/1420079678-ctrl/agent-body/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/1420079678-ctrl/agent-body)](https://github.com/1420079678-ctrl/agent-body/issues)
 
 [架构文档](ARCHITECTURE.md) · [器官目录](catalog/organs.json) · [基准报告](benchmarks/results/REPORT.md) · [路线图](ROADMAP.md) · [**English**](README.md)
 
@@ -389,5 +391,10 @@ agent-body/
 **六个内核，二十三个器官，一颗心脏。**
 
 如果你想要的就是这样的插件平台，完整架构都在 [ARCHITECTURE.md](ARCHITECTURE.md)。
+
+⭐ **如果这具身体对你有用，[给它一个 star](https://github.com/1420079678-ctrl/agent-body/stargazers)** —— 零成本，
+却是让更多人看到这个项目最简单的方式。
+
+<img src="https://api.star-history.com/svg?repos=1420079678-ctrl/agent-body&type=Date" alt="Star 增长曲线" width="100%">
 
 </div>
