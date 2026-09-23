@@ -31,6 +31,38 @@
 
 ---
 
+## 一行安装
+
+```powershell
+dsh plugin --profile web add `
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz `
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-cortex-0.1.1.tgz `
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-zero-residence-0.1.0.tgz
+```
+
+```bash
+dsh plugin --profile web add \
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz \
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-cortex-0.1.1.tgz \
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-zero-residence-0.1.0.tgz
+```
+
+`dsh plugin` 会把参数原样转发给 profile 目录里的 `pnpm add`，所以一条命令能装多个包。装完重启 harness，`body_status`
+就应该列出这些器官。目录里其余器官各是一个 tarball，见[快速开始](#快速开始)。
+
+## 先看证据
+
+| 你想要… | 打开… | 能核到什么 |
+| --- | --- | --- |
+| 不装任何东西先看它跑 | `npm run demo` | 一条真实的「命令 → 冲动 → 支配 → 执行 → 归因 → 反射」链路，离线、无需 key |
+| 让提示词少塞点工具表 | [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) · `npm run bench:check` | 48 条命令上门控掉 **84.71%** 的 tool schema token（冷启动，可复现）；带历史口径 74.25% |
+| 让同一个失败别再犯第二遍 | `body_heal` | 重试之前先归因：`tool_missing` / `arg_error` / `permission` / `timeout` / `network` / `not_found` / `conflict`。开发机实测：**愈合 198、未愈 0、愈合率 99%** |
+| 确认系统还活着 | `body_status` · `body_heart` | 43 个器官、**332/332** 项能力已被认领、第 1121 跳、架构完整性 6/6（*开发机实测*） |
+| 拆掉一个器官身体还在 | `body_organ action=integrity` | 核心六件套不依赖任何单个器官；`body_call` 由能力重叠最高的器官代偿 |
+| 写自己的器官 | [`docs/ORGAN_SDK.md`](docs/ORGAN_SDK.md) | `defineOrgan()` 在声明处校验并带字段路径抛错；`npm run check` 把整个仓库纳入闸门 |
+
+---
+
 ## 为什么做这个
 
 几乎所有 Agent 框架最后都会长成同一个样子：一堆工具、一份越来越长的系统提示词清单，以及一个**会话之间什么都记不住**的 agent。

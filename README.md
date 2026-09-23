@@ -31,6 +31,39 @@
 
 ---
 
+## Install in one line
+
+```powershell
+dsh plugin --profile web add `
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz `
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-cortex-0.1.1.tgz `
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-zero-residence-0.1.0.tgz
+```
+
+```bash
+dsh plugin --profile web add \
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz \
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-cortex-0.1.1.tgz \
+  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-zero-residence-0.1.0.tgz
+```
+
+`dsh plugin` forwards its arguments to `pnpm add` inside the profile, so several packages install in one command. Restart
+the harness afterwards; `body_status` should list the organs. The other organs in the catalog are one tarball each — see
+[Quick start](#quick-start).
+
+## Start with the evidence
+
+| If you want… | Open… | What you can check |
+| --- | --- | --- |
+| to see it run without installing anything | `npm run demo` | a real command → impulse → dispatch → execute → attribute → reflex chain, offline, no key |
+| fewer tool schemas in your prompt | [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) · `npm run bench:check` | **84.71%** of tool-schema tokens gated away on 48 commands (cold-start, reproducible); 74.25% with history |
+| failures to stop repeating | `body_heal` | attribution before retry: `tool_missing` / `arg_error` / `permission` / `timeout` / `network` / `not_found` / `conflict`. Measured on a development install: **198 healed, 0 open, 99% heal rate** |
+| to know the system is still alive | `body_status` · `body_heart` | 43 organs, **332/332** capabilities claimed, beat #1121, architecture integrity 6/6 *(development install)* |
+| to lose an organ without losing the body | `body_organ action=integrity` | the six core pieces depend on no single organ; `body_call` compensates from the organ that overlaps most |
+| to write your own organ | [`docs/ORGAN_SDK.md`](docs/ORGAN_SDK.md) | `defineOrgan()` validates at declaration and throws with a field path; `npm run check` gates the whole repository |
+
+---
+
 ## Why this exists
 
 Every agent framework eventually becomes the same thing: a pile of tools, a growing list in the system prompt, and an
