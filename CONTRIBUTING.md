@@ -5,6 +5,20 @@ dependency-free core (`packages/organ-core`, `packages/organ-sdk`) — not the h
 carries the install path (one command, prebuilt tarballs) and a [recorded replay of a real
 install](https://1420079678-ctrl.github.io/agent-body/) that runs without installing anything.
 
+## Looking for something to do?
+
+You do not need to know anything about the internals to make a useful first contribution:
+
+- **[`good first issue`](https://github.com/1420079678-ctrl/agent-body/labels/good%20first%20issue)** — scoped tasks with
+  a stated acceptance test, chosen so that one sitting is enough.
+- **[`help wanted`](https://github.com/1420079678-ctrl/agent-body/labels/help%20wanted)** — larger work where a partial
+  contribution still lands.
+- **Write an offline regression for an organ that has none.** 19 of 24 packages currently ship without one and
+  `npm run verify` prints the list; the two easiest are named at the bottom of this file.
+
+If your first `npm run check` is red on a fresh clone, that is a bug and worth an issue on its own — say what you ran,
+what came back, and what you expected.
+
 ## Before you start
 
 ```powershell
@@ -69,7 +83,7 @@ workspace/plugins/dsh-<name>/
 **A new organ ships with an offline regression** — it is the only way the project can claim "measurably better with
 use" without lying, and a PR without one will be asked for it in review.
 
-The current tree is behind that standard: `npm run verify` reports an offline regression for **5 of 23 organs** and
+The current tree is behind that standard: `npm run verify` reports an offline regression for **5 of 24 packages** and
 prints the ones missing one. Adding those is the most useful contribution available right now — `dsh-pentagi` and
 `dsh-vuln-remediator` are the easiest starting points, since their core paths are deterministic functions that need no
 host runtime.

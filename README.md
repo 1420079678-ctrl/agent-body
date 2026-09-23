@@ -1,5 +1,7 @@
 <div align="center">
 
+**English** · [**中文**](README.zh-CN.md)
+
 <img src=".github/assets/banner.svg" alt="Agent-Body — plugins as organs: 26 curated organs across 8 systems, one heartbeat, 84.7% of tool-schema tokens gated away, 0 chronic wounds" width="100%">
 
 # Agent‑Body
@@ -9,7 +11,7 @@
 *Plugins here are not a tool list. They are organs in a living system.*
 
 [![Organs](https://img.shields.io/badge/catalog-26%20organs-ff69b4)](#organ-catalog)
-[![Plugins](https://img.shields.io/badge/plugins-23%20in%20this%20repo-blue)](#organ-catalog)
+[![Plugins](https://img.shields.io/badge/plugins-24%20in%20this%20repo-blue)](#organ-catalog)
 [![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20tool--schema%20tokens%20gated-2ecc71)](#token-economy)
 [![Benchmark](https://img.shields.io/badge/benchmark-reproducible%20in--repo-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
@@ -23,7 +25,7 @@
 
 [Official DSH discussion — **Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) · the channel the harness `CONTRIBUTING` points plugin authors to
 
-**v0.1.1** · MIT · Windows-first (Node 22.19 / 24) · **26 organs in the catalog, realised by 23 plugin packages in this repository** · [release notes](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
+**v0.1.1** · MIT · Windows-first (Node 22.19 / 24) · **26 organ identities in the catalog, realised by 24 plugin packages in this repository** · [release notes](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
 
 [![Live vitals replay — recorded from a real install](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
 
@@ -33,27 +35,81 @@
 
 </div>
 
+**Agent-Body turns a plugin list into an organism.** Every plugin declares itself an *organ*; a nerve bus routes your
+command to the organs that should handle it, a heartbeat circulates state between them, reflex arcs fire without a
+single model call, and every failure is attributed by cause before anything retries.
+
+**Try it in 30 seconds — no install, no host, no API key.** The core imports nothing outside Node built-ins, so a fresh
+clone runs the real end-to-end chain offline:
+
+```bash
+git clone https://github.com/1420079678-ctrl/agent-body && cd agent-body
+npm run demo     # command → impulse → dispatch → execute → attribute → reflex fires
+npm run check    # the gate CI runs: constant tables, catalog, tests, benchmark — all offline
+```
+
+**Already running DeepSeek Harness?** One command installs the body kernel, the memory organ and the context engine:
+
+```powershell
+$rel = "https://github.com/1420079678-ctrl/agent-body/releases/latest/download"
+dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.1.tgz" "$rel/dsh-external-dsh-cortex-0.1.1.tgz" "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
+```
+
+Restart the harness and `body_status` lists the organs. **The claim you can check for yourself:** the tool-schema block
+of the prompt drops **84.7%** across 48 representative commands, and `npm run bench:check` fails the build if that
+number drifts. The scope of the number is stated wherever it appears — tool-schema tokens only, not the whole prompt.
+
+⭐ **[Star the repository](https://github.com/1420079678-ctrl/agent-body/stargazers)** if you want it to keep tracking
+the host closely — it is a one-person project and the stars are how the next DSH user finds it.
+
+---
+
+## Where it's listed
+
+Checked, not claimed — every entry below resolves today:
+
+| Listing | What it is |
+| --- | --- |
+| [`awesome-dsh-plugin`](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) · 16.7k ★ | the main DSH plugin directory; both `dsh-organism` and `dsh-cortex` are indexed as separate entries |
+| [dshfind](https://dshfind.com/en/plugins/1420079678-ctrl/agent-body) | DSH plugin search engine, with a per-repository page |
+| [`imsai-sh/awesome-deepseek-harness-plugins`](https://github.com/imsai-sh/awesome-deepseek-harness-plugins) | plugin hub with machine-readable catalogue entries |
+| [`bruc3van/awesome-dsh-plugin`](https://github.com/bruc3van/awesome-dsh-plugin) | daily-crawled DSH plugin list, human-reviewed |
+| [`billLiao/awesome-dsh-plugin`](https://github.com/billLiao/awesome-dsh-plugin) | curated list, memory category |
+| [`unStone/dsh-xray`](https://github.com/unStone/dsh-xray) | declared-capabilities scanner; carries a page for this repository |
+| [`linny006/agent-framework-radar`](https://github.com/linny006/agent-framework-radar) · [`llmops-radar`](https://github.com/linny006/llmops-radar) | live indexes of newly shipping agent frameworks and LLMOps tooling |
+
+It is also the subject of the harness's official showcase thread —
+[**Show Your Plugins!** discussion #7555](https://github.com/deepseek-ai/deepseek-harness/discussions/7555).
+
 ---
 
 ## Install in one line
 
 ```powershell
+$rel = "https://github.com/1420079678-ctrl/agent-body/releases/latest/download"
 dsh plugin --profile web add `
-  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz `
-  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-cortex-0.1.1.tgz `
-  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-zero-residence-0.1.0.tgz
+  "$rel/dsh-external-dsh-organism-0.1.1.tgz" `
+  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" `
+  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
 ```
 
 ```bash
+rel=https://github.com/1420079678-ctrl/agent-body/releases/latest/download
 dsh plugin --profile web add \
-  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz \
-  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-cortex-0.1.1.tgz \
-  https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-zero-residence-0.1.0.tgz
+  "$rel/dsh-external-dsh-organism-0.1.1.tgz" \
+  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" \
+  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
 ```
 
 `dsh plugin` forwards its arguments to `pnpm add` inside the profile, so several packages install in one command. Restart
 the harness afterwards; `body_status` should list the organs. The other organs in the catalog are one tarball each — see
 [Quick start](#quick-start).
+
+**Why release tarballs and not `npm install`.** These packages are **not published to the npm registry** — the names
+above return 404 from `registry.npmjs.org` today, and the commands here never pretend otherwise. The published channel
+is the GitHub release: the URLs are versioned assets, the tarballs are built by CI, and `releases/latest/download/`
+always points at the newest release, so the command does not rot when a version is bumped. Publishing to npm is tracked
+as an open issue; until it lands, the tarball URL is the supported install path.
 
 ## Start with the evidence
 
@@ -230,13 +286,15 @@ Two honest caveats, because the headline is easy to over‑read:
 | --- | --- | --- |
 | **Individual** | this body (the running install) | 1 |
 | **System** | eight body systems: executive / nervous / immune / sensory / motor / memory / metabolic / endocrine | 8 |
-| **Organ** | a plugin, obeying one contract: sense → reflex → effect → homeostasis | **26 curated** in [`catalog/organs.json`](catalog/organs.json), **23** shipped as installable packages |
+| **Organ** | a plugin, obeying one contract: sense → reflex → effect → homeostasis | **26 organ identities** in [`catalog/organs.json`](catalog/organs.json), realised by **24** installable packages (23 in the table below, plus one legacy package kept for rollback) |
 | **Tissue** | functional clustering inside an organ: sensing / inspection / effect / synthesis / memory / regulation / clearance / metering / matrix | 9 classes |
 | **Cell** | a single capability unit (one tool) | counted at runtime |
 
 Every layer is observable: `body_map` (organs + systems), `body_cell` (cells + tissues), `body_status` (vitals).
-Undeclared plugins are auto‑promoted to *autonomic organs* — on the development install, **256/256 capabilities were
-claimed, zero orphans**.
+Undeclared plugins are auto‑promoted to *autonomic organs* — on the development install, **332/332 capabilities were
+claimed, zero orphans**. (332 is what that live install reports through `body_status`; the frozen benchmark corpus
+below is a separate, committed set of 256 capability definitions — the two numbers measure different things and are
+labelled wherever they appear.)
 
 ---
 
@@ -515,9 +573,13 @@ calls nothing. Model calls only happen where an organ asks the host to reason.
 directive layer, reflex engine, anatomist and impulse dispatch depend on no single organ, and `body_call` compensates
 with the online organ whose capability overlaps most. `body_organ action=integrity` prints that self-check.
 
-**Why do the organ numbers differ between places?** There are two things: **26 organ identities in the catalog** (the
-anatomy, across 8 systems) and **23 plugin packages in this repository** that implement them. Both numbers are labelled
-wherever they appear.
+**Why do the organ numbers differ between places?** There are three numbers and they measure different things:
+**26 organ identities** in [`catalog/organs.json`](catalog/organs.json) (the anatomy — `prefrontal`, `hands`, `cortex`, …),
+**24 plugin packages** under `workspace/plugins/` that realise them (23 in the catalog table above plus the legacy
+`dsh-crawl4ai`, kept for rollback), and **64 catalog capabilities** declared in that file. `body_status` reports a
+fourth, larger pair on a live install — 43 organs and 332 capabilities — because it counts every plugin the running
+harness has mounted, including ones this catalog does not name. Every number is labelled wherever it appears, and
+`npm run verify` prints the package count it derives from disk so it can be checked rather than trusted.
 
 **How is the 84.7% token figure measured?** It is tool-schema tokens only — the sum of every tool definition's name,
 description and parameters against what the first turn can see after gating — on 48 representative commands, in the
@@ -530,13 +592,16 @@ independently reproducible setting. The live setting, with history, measures 74.
 ## Contributing
 
 The most useful contribution right now is **another organ** — the contract is small enough to read in one sitting.
+Looking for somewhere to start? The
+[**`good first issue`**](https://github.com/1420079678-ctrl/agent-body/labels/good%20first%20issue) label collects
+scoped tasks with a stated acceptance test.
 
 1. On a fresh clone, `npm run demo` and `npm run check`. If those are not green, that is a bug report worth filing on
    its own.
 2. Copy the closest organ under `workspace/plugins/`, declare yours with `defineOrgan`, and add its entry to
    `catalog/organs.json` — the catalog is generated, and `npm run check:catalog` fails on drift rather than letting the
    two diverge.
-3. Ship an **offline regression** with it. Only **5 of the 23 organs have one today** — `npm run verify` prints the
+3. Ship an **offline regression** with it. Only **5 of the 24 packages have one today** — `npm run verify` prints the
    list of the 18 that do not — and `npm run verify:organs` reports SKIP with a reason rather than passing quietly when
    the host runtime is absent. Writing those tests, or an organ that brings its own, is the most useful contribution
    right now.
@@ -597,7 +662,7 @@ Runtime state (vitals, synapses, memory cards, pulse stream) lives in your harne
 
 ---
 
-****Six kernels. 26 cataloged organs across 8 systems, realised by 23 plugins. One heartbeat.**
+****Six kernels. 26 cataloged organ identities across 8 systems, realised by 24 plugins. One heartbeat.**
 
 If that's the kind of plugin platform you want, the architecture is all in [ARCHITECTURE.md](ARCHITECTURE.md).
 
