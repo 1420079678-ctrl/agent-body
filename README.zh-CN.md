@@ -240,15 +240,15 @@ npm run check     # 常量表 + 器官目录 + 29 项测试 + 基准比对，全
 自带依赖的器官在 Release 页面上附了**预构建 tarball**——不用 clone、不用编译。包内声明了 `dsh.bundle`，所以安装时会自动把它加进 `dsh.profile.bundles`，下次启动即挂载：
 
 ```powershell
-dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0/dsh-external-dsh-organism-0.1.0.tgz
+dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz
 ```
 
 已按这种方式发布的共有十个器官——都是不需要外部工具链的。把 tarball 文件名接到 Release 地址后面即可：
 
 | 器官 | tarball | 带来什么 |
 | --- | --- | --- |
-| `dsh-organism` | `dsh-external-dsh-organism-0.1.0.tgz` | 身体内核：解剖、体征、心跳泵、神经冲动、反射弧、自愈账本、按需显影的 schema 门控 |
-| `dsh-cortex` | `dsh-external-dsh-cortex-0.1.0.tgz` | 睡眠相位、确定性巩固、长期记忆、告警降噪 |
+| `dsh-organism` | `dsh-external-dsh-organism-0.1.1.tgz` | 身体内核：解剖、体征、心跳泵、神经冲动、反射弧、自愈账本、按需显影的 schema 门控 |
+| `dsh-cortex` | `dsh-external-dsh-cortex-0.1.1.tgz` | 睡眠相位、确定性巩固、长期记忆、告警降噪 |
 | `dsh-zero-residence` | `dsh-external-dsh-zero-residence-0.1.0.tgz` | 零驻留上下文：驱逐载荷、只留指针、需要时逐字重建 |
 | `dsh-mastery-loop` | `dsh-external-dsh-mastery-loop-0.0.1.tgz` | 学科无关的精通导师：定位 → 拆解 → 建模 → 诊断 → 迁移 → 复盘 |
 | `dsh-social-card` | `dsh-external-dsh-social-card-0.0.1.tgz` | 社交卡：图文组、21:9 + 1:1 封面对、实况卡 |
@@ -261,9 +261,9 @@ dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/relea
 装身体内核加记忆器官：
 
 ```powershell
-$rel = "https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0"
-dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.0.tgz"
-dsh plugin --profile web add "$rel/dsh-external-dsh-cortex-0.1.0.tgz"
+$rel = "https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1"
+dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.1.tgz"
+dsh plugin --profile web add "$rel/dsh-external-dsh-cortex-0.1.1.tgz"
 ```
 
 目录里其余的器官需要宿主侧工具链（编译器、浏览器或外部二进制），用各自的 replay 脚本安装——见下面的器官目录。

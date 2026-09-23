@@ -1,6 +1,6 @@
 {
   "name": "agent-body",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Agent-Body — an organ-based plugin layer for DeepSeek Harness: organs, nerve impulses, a heartbeat, reflex arcs, long-term memory and closed-loop self-healing.",
   "license": "MIT",

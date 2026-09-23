@@ -5,6 +5,19 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- **Message sources now use the one shape both session-format generations accept** — injected messages carry
+  `{ kind: 'plugin:<name>' }` instead of the retired `{ kind: 'plugin', plugin: … }` wrapper, which a format-v4 host
+  refuses with `format v4 message requires a producer-owned source kind` (the failure users see on 0.1.7-alpha.2).
+  All five injection sites migrated. `organ-sdk` gains `injectedSource(name)` so authors get the portable value
+  instead of rediscovering it, and `npm run check:sources` fails the build if the retired wrapper or a drifting
+  value reappears. Rationale, measurements and the diagnostic probe: `docs/session-format-v4-compat.md`.
+- **Release packaging is reproducible** — `scripts/pack-organs.mjs` stages each self-contained organ (manifest +
+  patch + README + committed `lib/`, or a `lib/` built for the occasion) and packs it, so the ten published
+  tarballs can be rebuilt from a clone. Before this, `npm pack` on an organ without a committed `lib/` silently
+  emitted a package whose `main` pointed at a file that was not in it.
+
 ### Added
 
 - **Reproducible token benchmark** (`benchmarks/`) — a frozen 256-capability corpus, a 48-command task set with

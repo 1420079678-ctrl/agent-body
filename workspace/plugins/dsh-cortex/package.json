@@ -1,6 +1,6 @@
 {
   "name": "@dsh-external/dsh-cortex",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Sleep, long-term memory and consolidation for DeepSeek Harness: wakefulness driven by conversation progress, deterministic consolidation into memory cards (pitfall / playbook / hotspot / unresolved), and homeostasis alert de-noising.",
   "type": "module",
   "main": "./lib/index.js",

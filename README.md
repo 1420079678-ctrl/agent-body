@@ -275,15 +275,15 @@ The self‑contained organs ship a **prebuilt tarball** on the release page — 
 `dsh.bundle`, so installing it also appends it to `dsh.profile.bundles` and the next start mounts it:
 
 ```powershell
-dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0/dsh-external-dsh-organism-0.1.0.tgz
+dsh plugin --profile web add https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz
 ```
 
 Ten organs ship this way — the ones that need no external toolchain. Append the tarball name to the release URL:
 
 | organ | tarball | what it adds |
 | --- | --- | --- |
-| `dsh-organism` | `dsh-external-dsh-organism-0.1.0.tgz` | the body kernel: anatomy, vitals, heartbeat pump, nerve impulses, reflex arcs, self-healing ledger, on-demand schema gating |
-| `dsh-cortex` | `dsh-external-dsh-cortex-0.1.0.tgz` | sleep phases, deterministic consolidation, long-term memory, alert de-noising |
+| `dsh-organism` | `dsh-external-dsh-organism-0.1.1.tgz` | the body kernel: anatomy, vitals, heartbeat pump, nerve impulses, reflex arcs, self-healing ledger, on-demand schema gating |
+| `dsh-cortex` | `dsh-external-dsh-cortex-0.1.1.tgz` | sleep phases, deterministic consolidation, long-term memory, alert de-noising |
 | `dsh-zero-residence` | `dsh-external-dsh-zero-residence-0.1.0.tgz` | zero-residence context: evict, keep a pointer, rebuild the payload verbatim on demand |
 | `dsh-mastery-loop` | `dsh-external-dsh-mastery-loop-0.0.1.tgz` | subject-agnostic mastery tutor: orient → deconstruct → model → diagnose → transfer → review |
 | `dsh-social-card` | `dsh-external-dsh-social-card-0.0.1.tgz` | social cards: image sets, 21:9 + 1:1 cover pairs, Live Photo plates |
@@ -296,9 +296,9 @@ Ten organs ship this way — the ones that need no external toolchain. Append th
 Install the body kernel plus the memory organ:
 
 ```powershell
-$rel = "https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.0"
-dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.0.tgz"
-dsh plugin --profile web add "$rel/dsh-external-dsh-cortex-0.1.0.tgz"
+$rel = "https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1"
+dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.1.tgz"
+dsh plugin --profile web add "$rel/dsh-external-dsh-cortex-0.1.1.tgz"
 ```
 
 The rest of the catalog needs a host-side toolchain (a compiler, a browser, or external binaries) and is installed with its

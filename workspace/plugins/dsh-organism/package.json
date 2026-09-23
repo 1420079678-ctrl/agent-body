@@ -1,6 +1,6 @@
 {
   "name": "@dsh-external/dsh-organism",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Organism kernel for DeepSeek Harness: promotes every plugin to an organ with one contract (sense / reflex / effect / homeostasis), adds a nerve bus, a heartbeat, reflex arcs, a self-healing ledger and on-demand tool-schema gating.",
   "type": "module",
   "main": "./lib/index.js",
