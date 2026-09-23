@@ -1,0 +1,16 @@
+{
+  "_source": "body_status 抓取于 2026-09-23 19:31（本机开发安装）。这些是工具输出里的原值，不是誊写估计。",
+  "organsLive": 43,
+  "organsDeclared": 29,
+  "organsAutonomous": 14,
+  "capabilitiesClaimed": "332/332",
+  "reflexesEnabled": "19/19",
+  "sovereignVersion": 17,
+  "archIntegrity": "6/6",
+  "cells": 332,
+  "tissues": 9,
+  "cellsActive": 144,
+  "cellsDormant": 188,
+  "cellsDiseased": 0,
+  "cellsApoptosis": 0
+}
