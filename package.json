@@ -42,7 +42,8 @@
     "corpus": "node benchmarks/tools/prepare-corpus.mjs",
     "check:tables": "node packages/organ-core/tools/extract-tables.mjs --check",
     "check:catalog": "node catalog/build.mjs --check",
-    "check": "npm run check:tables && npm run check:catalog && npm run test && npm run bench:check",
+    "check:sources": "node scripts/check-message-sources.mjs",
+    "check": "npm run check:tables && npm run check:catalog && npm run check:sources && npm run test && npm run bench:check",
     "demo": "node examples/quickstart/run.mjs"
   }
 }

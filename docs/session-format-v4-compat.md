@@ -42,8 +42,8 @@ each event and calls the encoder, so the answer comes from the host rather than 
 ## What this repository does about it
 
 The organs inject through `createUserMessage(...)`, `subagents.followup(...)` and `captain.send(...)` —
-all ordinary message slots, none of them `system/message`. They now emit the portable form directly, so
-they are correct on a V3 host today and already in the shape V4 requires:
+all ordinary message slots, none of them `system/message`. They emit the portable form directly, so they
+are correct on a V3 host today and already in the shape V4 requires:
 
 ```ts
 source: { kind: 'plugin:@dsh-external/dsh-organism' }
@@ -52,6 +52,18 @@ source: { kind: 'plugin:@dsh-external/dsh-organism' }
 The identity string is carried through unchanged, so the value is exactly what the V3→V4 migration would
 have produced for an existing row. `system/message` remains the one slot where a producer has to know
 which generation is hosting; no organ here writes that slot.
+
+Two things keep it that way, so a future edit cannot quietly reintroduce the retired wrapper:
+
+- **`organ-sdk` exports `injectedSource(name)`** — organ authors ask the SDK instead of hand-rolling the
+  object, and get `{ kind: 'plugin:<name>' }` with the reasoning attached. In-tree plugins write the
+  literal directly, so the SDK value and the in-tree values are checked against each other rather than
+  assumed equal.
+- **`npm run check:sources`** (`scripts/check-message-sources.mjs`, part of `npm run check`) fails the
+  build if any plugin source or built output carries `{ kind: 'plugin', plugin: … }`, or if a `plugin:`
+  literal drifts from what `injectedSource()` produces. Zero dependencies, no network, no plugin code
+  executed. Verified in both directions: the current tree passes with 10 occurrences across 23 plugin
+  directories and 0 retired wrappers, and a planted wrapper is reported with file and line.
 
 ## Diagnosis for anyone hitting the V4 refusal
 

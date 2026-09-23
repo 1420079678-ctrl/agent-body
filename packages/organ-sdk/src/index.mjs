@@ -114,6 +114,31 @@ export function describeOrgan(manifest) {
   return `${manifest.label}（${manifest.id}）· ${manifest.tier} · ${manifest.capabilities.length} 项能力 · ${perms}`
 }
 
+/**
+ * 注入消息时用的 `source` —— **跨会话格式代际的唯一正确写法**。
+ *
+ * 为什么不能自己拼 `{ kind: 'plugin', plugin: name }`：
+ *   - v3 的 `SOURCE_KINDS` 白名单挂在 `assertEvent(event, 2)` 上（只约束 v2→v3 **迁移**），
+ *     `version === 3` 时它直接返回，**原生 v3 写入并不校验普通消息的 kind** ——
+ *     所以旧写法在两代之间「看起来都能跑」，直到 v4 宿主拒收；
+ *   - v4 的 admission 明确拒绝 `kind === 'plugin'`，要求 producer-owned 的 kind，
+ *     第三方生产者就是 `plugin:<自己的名字>`（见 `producerKind()`）。
+ *
+ * `{ kind: 'plugin:<name>' }` 同时满足两代：v3 原生写入接受它，v4 正是要求它。
+ * 实测口径：宿主自己的 `encodeCurrentEvent` 对 `user/message` 与 `agent/inbox/spliced`
+ * 均放行该形式，对 `system/message` 拒绝 —— 两代没有共同写法的只有 `system/message`，
+ * 所以不要写那个槽位（本仓库没有器官写它）。
+ *
+ * @param {string} name 生产者身份（你自己的包名或插件名）；**不要借用第一方名字**
+ * @returns {{ kind: string }} 可直接放进 createUserMessage / followup / send 的 source
+ */
+export function injectedSource(name) {
+  if (typeof name !== 'string' || name.trim().length === 0) {
+    throw new OrganContractError('injectedSource 需要一个非空的生产者名字', [])
+  }
+  return Object.freeze({ kind: `plugin:${name.trim()}` })
+}
+
 /** 契约违规——单列一个类型，便于调用方区分「我传错了」与「内部炸了」 */
 export class OrganContractError extends Error {
   constructor(message, errors = []) {
