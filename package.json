@@ -2,6 +2,16 @@
   "name": "agent-body",
   "version": "0.1.1",
   "private": true,
+  "workspaces": [
+    "workspace/plugins/dsh-organism",
+    "workspace/plugins/dsh-cortex",
+    "workspace/plugins/dsh-zero-residence",
+    "workspace/plugins/dsh-anatomy-panel",
+    "workspace/plugins/dsh-pentagi",
+    "workspace/plugins/dsh-office-docs",
+    "workspace/plugins/dsh-academic-research",
+    "workspace/plugins/dsh-vuln-remediator"
+  ],
   "description": "Agent-Body — an organ-based plugin layer for DeepSeek Harness: organs, nerve impulses, a heartbeat, reflex arcs, long-term memory and closed-loop self-healing.",
   "license": "MIT",
   "type": "module",
