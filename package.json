@@ -34,6 +34,7 @@
     "verify:zero-residence": "node workspace/plugins/dsh-zero-residence/scripts/smoke-test.mjs",
     "verify:war-bridge": "node workspace/plugins/dsh-war-bridge/scripts/smoke-test.mjs",
     "verify:web-crawl": "python workspace/plugins/dsh-web-crawl/scripts/selftest_local.py",
+    "scan:sources": "node scripts/scan-session-sources.mjs",
     "test": "node scripts/run-tests.mjs",
     "bench": "node benchmarks/run.mjs",
     "bench:check": "node benchmarks/run.mjs --check",
