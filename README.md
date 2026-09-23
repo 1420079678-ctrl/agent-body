@@ -25,7 +25,7 @@
 
 **v0.1.1** · MIT · Windows-first (Node 22.19 / 24) · **26 organs in the catalog, realised by 23 plugin packages in this repository** · [release notes](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
 
-[![Live vitals replay — recorded from a real install](site/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
+[![Live vitals replay — recorded from a real install](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
 
 ▶ **[Open the live demo](https://1420079678-ctrl.github.io/agent-body/)** — a recorded replay of a real install: the heartbeat, the organs, the pulse stream, the healing ledger and the token gate, with nothing installed. It is generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`), not retyped from screenshots.
 

@@ -25,7 +25,7 @@
 
 **v0.1.1** · MIT · Windows 优先（Node 22.19 / 24） · **目录内 26 个器官，由本仓库 23 个插件包实现** · [发布说明](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
 
-[![实时体征回放——来自一台真实安装](site/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
+[![实时体征回放——来自一台真实安装](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
 
 ▶ **[打开在线 demo](https://1420079678-ctrl.github.io/agent-body/)** —— 一台真实安装的体征回放：心跳、器官、脉冲流、自愈账本与 token 门控，不用装任何东西。页面由运行时文件（`vitals.json`、`bloodstream.json`、`pulse.jsonl`）生成，不是照抄截图。
 
