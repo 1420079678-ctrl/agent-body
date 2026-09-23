@@ -8,7 +8,8 @@
 
 *Plugins here are not a tool list. They are organs in a living system.*
 
-[![Organs](https://img.shields.io/badge/organs-26-ff69b4)](#organ-catalog)
+[![Organs](https://img.shields.io/badge/catalog-26%20organs-ff69b4)](#organ-catalog)
+[![Plugins](https://img.shields.io/badge/plugins-23%20in%20this%20repo-blue)](#organ-catalog)
 [![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20tool--schema%20tokens%20gated-2ecc71)](#token-economy)
 [![Benchmark](https://img.shields.io/badge/benchmark-reproducible%20in--repo-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
@@ -20,6 +21,10 @@
 [Architecture](ARCHITECTURE.md) · [Organ Catalog](catalog/organs.json) · [Benchmark](benchmarks/results/REPORT.md) · [Roadmap](ROADMAP.md) · [**中文文档**](README.zh-CN.md)
 
 [Official DSH discussion — **Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) · the channel the harness `CONTRIBUTING` points plugin authors to
+
+**v0.1.1** · MIT · Windows-first (Node 22.19 / 24) · **26 organs in the catalog, realised by 23 plugin packages in this repository** · [release notes](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
+
+**Contents** · [Why this exists](#why-this-exists) · [What makes it different](#what-makes-it-different) · [The five biological layers](#the-five-biological-layers) · [Architecture at a glance](#architecture-at-a-glance) · [Organ catalog](#organ-catalog) · [Quick start](#quick-start) · [Write your own organ](#write-your-own-organ) · [Verify it yourself](#verify-it-yourself) · [When not to use this](#when-not-to-use-this) · [FAQ](#faq) · [Repository layout](#repository-layout) · [Contributing](#contributing) · [Roadmap](#roadmap)
 
 </div>
 
@@ -260,7 +265,7 @@ Every entry below is a real plugin under `workspace/plugins/`. Five core organs 
 ```bash
 git clone https://github.com/1420079678-ctrl/agent-body && cd agent-body
 npm run demo      # command → impulse → dispatch → execute → attribute → reflex fires
-npm run check     # constant tables + catalog + 29 tests + benchmark, all offline
+npm run check     # constant tables + catalog + message sources + 30 tests + benchmark, all offline
 ```
 
 There is nothing to install. The core packages import nothing outside Node built‑ins, so the demo runs a real
@@ -387,7 +392,7 @@ Two of these were red when this table was first written, and the failures were r
   and `process.exit()` racing an in-flight `AbortSignal.timeout` tripped a libuv assertion that turned a green run into
   exit code 1. Both are fixed; a skip now says so.
 
-The core packages are covered by `npm test`: **29 assertions, 0 failures**, including a **parity suite** that compares
+The core packages are covered by `npm test`: **30 assertions, 0 failures**, including a **parity suite** that compares
 the dependency-free port against the real kernel — exact agreement on `familyOf`/`tissueOf` across all 256 tool names,
 `innervate` across 5 commands, `evalCondition` across 27 combinations, and `attributeFailure` across 8 error strings.
 When no kernel build is present, parity **skips loudly** rather than passing quietly.
@@ -399,6 +404,107 @@ body_status      → organs · capabilities claimed · heartbeat #31 @15s · hea
 body_heal        → 21 wounds healed · 0 chronic
 body_pulse       → last nerve impulses, reflex fires, homeostasis alerts
 ```
+
+---
+
+## Write your own organ
+
+An organ is a declaration plus optional hooks. The SDK validates it where you write it and throws with a field path,
+instead of failing silently at runtime:
+
+```js
+import { defineOrgan, injectedSource } from './packages/organ-sdk/src/index.mjs'
+
+export default defineOrgan({
+  id: 'paper_reader',
+  label: 'Paper reading (literature)',
+  tier: 'professional',
+  group: 'memory',
+  purpose: 'turn one paper into searchable cards',
+  capabilities: ['paper_fetch', 'paper_digest'],
+  permissions: ['net:http'],
+  signals: ['tools/result'],
+  handles: ['network', 'timeout'],
+  fallback: ['hippocampus'],
+})
+```
+
+Two rules that save a debugging session:
+
+- **Inject with a producer-owned source kind.** `injectedSource('@you/paper-reader')` returns
+  `{ kind: 'plugin:@you/paper-reader' }` — the one shape both session-format generations accept. The retired
+  `{ kind: 'plugin', plugin: ... }` wrapper stops a whole turn on a format-V4 host; the measurements are in
+  [`docs/session-format-v4-compat.md`](docs/session-format-v4-compat.md).
+- **Declare what you handle.** An organ that says it handles `timeout` gets that failure routed to it; one that stays
+  silent gets a compensating neighbour through `fallback` instead.
+
+What your change has to pass:
+
+```bash
+npm run check            # constants + catalog + message sources + tests + benchmark
+npm run verify           # structure, JSON, links, secret hygiene
+```
+
+The full contract is in [`docs/ORGAN_SDK.md`](docs/ORGAN_SDK.md), and wiring an organ into a real host is in
+[`docs/host-adapter.md`](docs/host-adapter.md).
+
+---
+
+## When not to use this
+
+Being straight about this is cheaper for both of us:
+
+- **You do not run DeepSeek Harness.** This is a plugin layer for one specific host, not a standalone agent framework.
+- **You want a frozen third-party API.** The host's session format changed once already and broke every plugin that
+  wrote to it; this repository tracks that host, so it moves when the host moves.
+- **You need a supported product with an SLA.** v0.1.1 is a working release with reproducible gates, and the catalog is
+  curated against one development install — expect rough edges outside the paths that install exercises.
+- **You need Linux/macOS parity today.** Several organs carry Windows-specific hardening (hidden-window spawning, ACL
+  sandbox compatibility). CI exercises the zero-dependency core on Linux; the organs less so.
+
+---
+
+## FAQ
+
+**Do I need the host to try it?** No. `npm run demo` runs a real command → impulse → dispatch → execute → attribute →
+reflex chain against the committed corpus with nothing installed and no API key.
+
+**Does any of it call the network or a model?** Not in the part you can verify: `npm run check` installs nothing and
+calls nothing. Model calls only happen where an organ asks the host to reason.
+
+**What happens if I delete an organ?** Capability is lost, the body is not: the nervous system, heartbeat pump,
+directive layer, reflex engine, anatomist and impulse dispatch depend on no single organ, and `body_call` compensates
+with the online organ whose capability overlaps most. `body_organ action=integrity` prints that self-check.
+
+**Why do the organ numbers differ between places?** There are two things: **26 organ identities in the catalog** (the
+anatomy, across 8 systems) and **23 plugin packages in this repository** that implement them. Both numbers are labelled
+wherever they appear.
+
+**How is the 84.7% token figure measured?** It is tool-schema tokens only — the sum of every tool definition's name,
+description and parameters against what the first turn can see after gating — on 48 representative commands, in the
+cold-start setting (intent decides the visible set, no local history). That is the lower bound and the only
+independently reproducible setting. The live setting, with history, measures 74.25%. Both are in
+[`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md).
+
+---
+
+## Contributing
+
+The most useful contribution right now is **another organ** — the contract is small enough to read in one sitting.
+
+1. On a fresh clone, `npm run demo` and `npm run check`. If those are not green, that is a bug report worth filing on
+   its own.
+2. Copy the closest organ under `workspace/plugins/`, declare yours with `defineOrgan`, and add its entry to
+   `catalog/organs.json` — the catalog is generated, and `npm run check:catalog` fails on drift rather than letting the
+   two diverge.
+3. Ship an **offline regression** with it. Only **5 of the 23 organs have one today** — `npm run verify` prints the
+   list of the 18 that do not — and `npm run verify:organs` reports SKIP with a reason rather than passing quietly when
+   the host runtime is absent. Writing those tests, or an organ that brings its own, is the most useful contribution
+   right now.
+4. Open a PR describing what the organ does, which system it belongs to, and the exact commands you ran.
+
+Questions and discussions are welcome in the harness's
+[**Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) thread or as an issue here.
 
 ---
 
@@ -414,7 +520,7 @@ agent-body/
 ├─ examples/        the five-minute quickstart demo
 ├─ docs/            organ SDK guide · host adapter guide
 ├─ workspace/
-│  └─ plugins/      the organs — one plugin per organ, each with src/ + lib/ + an offline regression
+│  └─ plugins/      the organs — one plugin per organ, each with src/ + lib/ (offline regression where one exists)
 ├─ scripts/         verify-repo.mjs · run-organ-regressions.mjs · run-tests.mjs
 ├─ .github/         CI (repo-check on Windows + Linux) and issue templates
 ├─ ARCHITECTURE.md  full system architecture
@@ -452,7 +558,7 @@ Runtime state (vitals, synapses, memory cards, pulse stream) lives in your harne
 
 ---
 
-**Six kernels. Twenty‑three organs. One heartbeat.**
+****Six kernels. 26 cataloged organs across 8 systems, realised by 23 plugins. One heartbeat.**
 
 If that's the kind of plugin platform you want, the architecture is all in [ARCHITECTURE.md](ARCHITECTURE.md).
 

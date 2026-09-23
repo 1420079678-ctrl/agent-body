@@ -8,7 +8,8 @@
 
 *这里的插件不是一份工具清单，而是一具活着的身体里的器官。*
 
-[![Organs](https://img.shields.io/badge/organs-26-ff69b4)](#器官目录)
+[![Organs](https://img.shields.io/badge/catalog-26%20个器官-ff69b4)](#器官目录)
+[![Plugins](https://img.shields.io/badge/插件-本仓库%2023%20个-blue)](#器官目录)
 [![Schema gating](https://img.shields.io/badge/schema%20gating-门控掉%2084.7%25%20tool--schema%20token-2ecc71)](#token-经济)
 [![Benchmark](https://img.shields.io/badge/benchmark-仓库内可复现-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/离线回归-200%2B%20断言-informational)](#自己验证)
@@ -20,6 +21,10 @@
 [架构文档](ARCHITECTURE.md) · [器官目录](catalog/organs.json) · [基准报告](benchmarks/results/REPORT.md) · [路线图](ROADMAP.md) · [**English**](README.md)
 
 [官方 DSH 讨论区 · **Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) · 官方 `CONTRIBUTING` 指定给插件作者的展示通道
+
+**v0.1.1** · MIT · Windows 优先（Node 22.19 / 24） · **目录内 26 个器官，由本仓库 23 个插件包实现** · [发布说明](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
+
+**目录** · [为什么做这个](#为什么做这个) · [它有什么不一样](#它有什么不一样) · [五层生物层级](#五层生物层级) · [架构一览](#架构一览) · [器官目录](#器官目录) · [快速开始](#快速开始) · [写自己的器官](#写自己的器官) · [自己验证](#自己验证) · [什么时候不要用这个](#什么时候不要用这个) · [常见问题](#常见问题) · [仓库结构](#仓库结构) · [参与贡献](#参与贡献) · [路线图](#路线图)
 
 </div>
 
@@ -226,7 +231,7 @@ graph TD
 ```bash
 git clone https://github.com/1420079678-ctrl/agent-body && cd agent-body
 npm run demo      # 命令 → 冲动 → 支配 → 执行 → 失败归因 → 反射开火
-npm run check     # 常量表 + 器官目录 + 29 项测试 + 基准比对，全部离线
+npm run check     # 常量表 + 器官目录 + 消息来源 + 30 项测试 + 基准比对，全部离线
 ```
 
 **没有任何东西需要安装。** 核心包不 import Node 内置模块以外的任何东西，所以刚 clone 下来就能对着
@@ -339,7 +344,7 @@ npm run verify:organs   # 跑遍所有器官的离线回归
 - `dsh-war-bridge` 在没有样本 PE 时一律报 FAIL——因为「跳过」被记成了失败断言；且 `process.exit()` 与在途
   `AbortSignal.timeout` 相撞会触发 libuv 断言，把一次全绿跑成退出码 1。两处都已修，跳过现在就是跳过。
 
-核心包本身由 `npm test` 覆盖：**29 项断言，0 失败**，其中含一套**一致性（parity）测试**——把零依赖移植版与真实内核
+核心包本身由 `npm test` 覆盖：**30 项断言，0 失败**，其中含一套**一致性（parity）测试**——把零依赖移植版与真实内核
 逐项比对：`familyOf`/`tissueOf` 覆盖全部 256 个工具名、`innervate` 覆盖 5 条命令、`evalCondition` 覆盖 27 种组合、
 `attributeFailure` 覆盖 8 类错误串，全部精确一致。本机没有内核构建时，一致性测试会**大声跳过**，而不是悄悄通过。
 
@@ -353,12 +358,91 @@ body_pulse       → 最近的神经冲动、反射开火、稳态告警
 
 ---
 
+## 写自己的器官
+
+一个器官 = 一份声明（外加可选的钩子）。SDK 会在**声明处**校验，出错直接带上字段路径抛出来，而不是等到运行时静默失效：
+
+```js
+import { defineOrgan, injectedSource } from './packages/organ-sdk/src/index.mjs'
+
+export default defineOrgan({
+  id: 'paper_reader',
+  label: '论文阅读（文献）',
+  tier: 'professional',
+  group: 'memory',
+  purpose: '把一篇论文拆成可检索的卡片',
+  capabilities: ['paper_fetch', 'paper_digest'],
+  permissions: ['net:http'],
+  signals: ['tools/result'],
+  handles: ['network', 'timeout'],
+  fallback: ['hippocampus'],
+})
+```
+
+两条能省下一次半夜排查的规矩：
+
+- **注入消息必须用生产者自己的 source kind。** `injectedSource('@you/paper-reader')` 返回
+  `{ kind: 'plugin:@you/paper-reader' }` —— 这是会话格式两代都接受的唯一写法。退役写法
+  `{ kind: 'plugin', plugin: ... }` 会让 v4 宿主把整轮判失败，实测口径见
+  [`docs/session-format-v4-compat.md`](docs/session-format-v4-compat.md)。
+- **声明你处理什么。** 声明处理 `timeout` 的器官会真的收到这类失败；不声明的，则由 `fallback` 里能力重叠的邻居代偿。
+
+改完要过的闸：
+
+```bash
+npm run check            # 常量表 + 器官目录 + 消息来源 + 测试 + 基准
+npm run verify           # 结构、JSON、链接、密钥卫生
+```
+
+完整契约见 [`docs/ORGAN_SDK.md`](docs/ORGAN_SDK.md)，把器官接进真实宿主见 [`docs/host-adapter.md`](docs/host-adapter.md)。
+
+---
+
+## 什么时候不要用这个
+
+先说清楚对双方都省事：
+
+- **你不跑 DeepSeek Harness。** 这是给某一个具体宿主的插件层，不是独立 agent 框架。
+- **你需要一个冻结的第三方 API。** 宿主今年已经改过一次会话格式，把所有往会话里写消息的插件打挂；本仓库跟着宿主走，它动我们就动。
+- **你需要有 SLA 的商业支持。** v0.1.1 是有可复现闸门的工作版本，但目录是围绕**一台开发机**策展的 —— 安装流程没覆盖到的路径会有毛边。
+- **你需要立刻拿到 Linux/macOS 对等支持。** 若干器官带 Windows 专属加固（隐藏窗口启动、ACL 沙箱兼容）。CI 在 Linux 上跑的是零依赖内核，器官覆盖较少。
+
+---
+
+## 常见问题
+
+**不装宿主能不能先试试？** 能。`npm run demo` 在零安装、无 API key 的情况下跑通一条真实的「命令 → 冲动 → 支配 → 执行 → 归因 → 反射」链路。
+
+**它会联网或调用模型吗？** 你能自己验证的部分不会：`npm run check` 不装任何依赖、不发起任何调用。只有器官请宿主推理时才有模型调用。
+
+**删掉一个器官会怎样？** 丢的是能力，不是身体：神经总线、心脏泵、主权层、反射引擎、解剖器与冲动传导**不依赖任何一个器官**，`body_call` 会用能力重叠最高的在线器官代偿。`body_organ action=integrity` 会把这个自检打出来。
+
+**为什么不同地方写的器官数量不一样？** 因为是两件事：**目录里 26 个器官身份**（解剖模型，跨 8 个系统），以及**本仓库 23 个插件包**去实现它们。两处出现时都做了标注。
+
+**84.7% 这个 token 数字怎么测的？** 只算 **tool schema token**（全部工具定义的 name + description + parameters 之和，对比门控后首轮可见的那部分），在 48 条代表性命令上，采用**冷启动**口径（只由当前命令意图决定显影集，不掺本机历史）——这是收益下界，也是唯一可被别人独立复现的口径。带运行历史的活体口径是 74.25%。两者都在 [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md)。
+
+---
+
+## 参与贡献
+
+现在最缺的就是**又一个器官** —— 契约小到能坐着读完。
+
+1. 在干净 clone 上跑 `npm run demo` 与 `npm run check`；如果这两条不绿，那本身就是值得提的 bug。
+2. 复制 `workspace/plugins/` 下最接近的器官，用 `defineOrgan` 声明你自己的，并把条目加进 `catalog/organs.json` —— 目录是生成的，`npm run check:catalog` 会在漂移时报错，而不是让两处悄悄分叉。
+3. 带上**离线回归**。目前只有 **23 个器官中的 5 个**有——`npm run verify` 会把缺测试的 18 个列出来；`npm run verify:organs`
+   在缺宿主运行时会报 SKIP 并给出原因，不会静默通过。把这些测试补上，是当下最有价值的贡献。
+4. 提 PR：说明这个器官做什么、属于哪个系统、以及你实际跑过的命令。
+
+问题与讨论欢迎发到官方 [**Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) 帖，或直接开 issue。
+
+---
+
 ## 仓库结构
 
 ```
 agent-body/
 ├─ workspace/
-│  └─ plugins/      器官——一个插件一个器官，各自带 src/ + lib/ + 离线回归
+│  └─ plugins/      器官——一个插件一个器官，各自带 src/ + lib/（有离线回归的带回归）
 ├─ scripts/         verify-repo.mjs · run-organ-regressions.mjs
 ├─ .github/         CI（Windows + Linux 双平台仓库体检）与 issue 模板
 ├─ ARCHITECTURE.md  完整系统架构
@@ -390,7 +474,7 @@ agent-body/
 
 ---
 
-**六个内核，二十三个器官，一颗心脏。**
+**六个内核：目录内 26 个器官、本仓库 23 个插件，一颗心脏。**
 
 如果你想要的就是这样的插件平台，完整架构都在 [ARCHITECTURE.md](ARCHITECTURE.md)。
 
