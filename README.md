@@ -17,6 +17,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/1420079678-ctrl/agent-body?style=flat&logo=github&label=%E2%AD%90%20stars)](https://github.com/1420079678-ctrl/agent-body/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/1420079678-ctrl/agent-body)](https://github.com/1420079678-ctrl/agent-body/issues)
+[![dshfind](https://dshfind.com/api/badge/1420079678-ctrl/agent-body)](https://dshfind.com/en/plugins/1420079678-ctrl/agent-body)
 
 [Architecture](ARCHITECTURE.md) · [Organ Catalog](catalog/organs.json) · [Benchmark](benchmarks/results/REPORT.md) · [Roadmap](ROADMAP.md) · [**中文文档**](README.zh-CN.md)
 
