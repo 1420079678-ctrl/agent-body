@@ -1,0 +1,8 @@
+# dsh-anatomy-panel bundle for DeepSeek Harness (dsh).
+#
+# Host-only organ: serves a live vitals dashboard from the dsh-organism runtime files at
+# /anatomy (and /anatomy/data.json) inside the harness itself. No client bundle, no build
+# step — see README.md for why the host route is used instead of a Client slot.
+- insert:
+    - id: dsh-anatomy-panel
+      name: '@dsh-external/dsh-anatomy-panel'

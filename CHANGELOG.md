@@ -7,6 +7,12 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- **`dsh-anatomy-panel` — the vitals dashboard inside the harness itself**, at `/anatomy`. A host-only organ: it
+  registers two routes (`/anatomy`, `/anatomy/data.json`) and reads the organism's runtime files on every
+  request, so the panel is live rather than a snapshot - heartbeat, blood pressure, the wound ledger, learning
+  counters, every organ with its call count, and the real pulse stream (a pulse lights up the organ it hit).
+  No client bundle and no build step: `lib/index.js` is the source. Verified inside a running harness by fetching
+  both routes and rendering the page.
 - **A recorded replay of a real install, open to anyone** — <https://1420079678-ctrl.github.io/agent-body/>. The page is
   generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`) rather than retyped: organ call
   counts, the pulse stream, the healing ledger (198 healed / 0 open / 99%) and the reproducible token gate, with the

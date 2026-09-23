@@ -250,6 +250,7 @@ graph TD
 | **精通闭环** | `dsh-mastery-loop` | 内分泌 | `study_orient` `study_deconstruct` `study_model` `study_diagnose` `study_transfer` `study_review` `study_path` |
 | **学术研究** | `dsh-academic-research` | 执行 | `ars_pipeline`（10 阶段状态机）`ars_review`（5 席位评审）`ars_paper_plan` `ars_integrity` `ars_metrics` |
 | **Office 文档** | `dsh-office-docs` | 运动 | PDF / DOCX / PPTX / XLSX 构建、提取、渲染校验、pandoc 互转 |
+| **解剖面板** | `dsh-anatomy-panel` | nervous | `/anatomy` 上的活体体征：心跳、伤口、学习计数、器官调用量与真实脉冲流——每次请求现读器官的运行时文件 |
 | **社交卡** | `dsh-social-card` | 运动 | `social_card_scaffold` `social_card_render` `social_card_validate` `social_card_docs` |
 | **Agent 小队** | `dsh-agent-teams-pro` | 执行 | 队长 + 成员、任务依赖、消息传递、实时 Web 面板 |
 | **MiroFish** | `dsh-mirofish` | 执行 | `mirofish_status` `mirofish_api`——群体智能预测引擎客户端 |

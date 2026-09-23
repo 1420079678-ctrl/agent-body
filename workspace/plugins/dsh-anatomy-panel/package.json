@@ -1,0 +1,23 @@
+{
+  "name": "@dsh-external/dsh-anatomy-panel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Anatomy panel for the Agent-Body organs: serves a live vitals dashboard (organs, heartbeat, healing ledger, learning counters, real pulse stream) straight from the runtime files, at /anatomy inside the harness itself. Host-only: no client bundle, no build step.",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

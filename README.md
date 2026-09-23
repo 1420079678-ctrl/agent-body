@@ -285,6 +285,7 @@ Every entry below is a real plugin under `workspace/plugins/`. Five core organs 
 | **Mastery loop** | `dsh-mastery-loop` | endocrine | `study_orient` `study_deconstruct` `study_model` `study_diagnose` `study_transfer` `study_review` `study_path` |
 | **Academic research** | `dsh-academic-research` | executive | `ars_pipeline` (10‑stage state machine) `ars_review` (5‑seat panel) `ars_paper_plan` `ars_integrity` `ars_metrics` |
 | **Office docs** | `dsh-office-docs` | motor | PDF / DOCX / PPTX / XLSX build, extract, render‑verify, pandoc convert |
+| **Anatomy panel** | `dsh-anatomy-panel` | nervous | live vitals at `/anatomy`: heartbeat, wounds, learning counters, organ call counts and the real pulse stream - read from the organism runtime files on every request |
 | **Social card** | `dsh-social-card` | motor | `social_card_scaffold` `social_card_render` `social_card_validate` `social_card_docs` |
 | **Agent teams** | `dsh-agent-teams-pro` | executive | captain + members, task dependencies, messaging, live web panel |
 | **MiroFish** | `dsh-mirofish` | executive | `mirofish_status` `mirofish_api` — swarm‑intelligence prediction engine client |
