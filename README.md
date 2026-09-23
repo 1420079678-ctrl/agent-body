@@ -10,28 +10,7 @@
 
 *Plugins here are not a tool list. They are organs in a living system.*
 
-[![Organs](https://img.shields.io/badge/catalog-26%20organs-ff69b4)](#organ-catalog)
-[![Plugins](https://img.shields.io/badge/plugins-24%20in%20this%20repo-blue)](#organ-catalog)
-[![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20tool--schema%20tokens%20gated-2ecc71)](#token-economy)
-[![Benchmark](https://img.shields.io/badge/benchmark-reproducible%20in--repo-blueviolet)](benchmarks/results/REPORT.md)
-[![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
-[![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#quick-start)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/1420079678-ctrl/agent-body?style=flat&logo=github&label=%E2%AD%90%20stars)](https://github.com/1420079678-ctrl/agent-body/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/1420079678-ctrl/agent-body)](https://github.com/1420079678-ctrl/agent-body/issues)
-[![dshfind](https://dshfind.com/api/badge/1420079678-ctrl/agent-body)](https://dshfind.com/en/plugins/1420079678-ctrl/agent-body)
-
-[Architecture](ARCHITECTURE.md) · [Organ Catalog](catalog/organs.json) · [Benchmark](benchmarks/results/REPORT.md) · [Roadmap](ROADMAP.md) · [**中文文档**](README.zh-CN.md)
-
-[Official DSH discussion — **Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) · the channel the harness `CONTRIBUTING` points plugin authors to
-
-**v0.1.1** · MIT · Windows-first (Node 22.19 / 24) · **26 organ identities in the catalog, realised by 24 plugin packages in this repository** · [release notes](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
-
-[![Live vitals replay — recorded from a real install](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
-
-▶ **[Open the live demo](https://1420079678-ctrl.github.io/agent-body/)** — a recorded replay of a real install: the heartbeat, the organs, the pulse stream, the healing ledger and the token gate, with nothing installed. It is generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`), not retyped from screenshots.
-
-**Contents** · [Why this exists](#why-this-exists) · [What makes it different](#what-makes-it-different) · [The five biological layers](#the-five-biological-layers) · [Architecture at a glance](#architecture-at-a-glance) · [Organ catalog](#organ-catalog) · [Quick start](#quick-start) · [Write your own organ](#write-your-own-organ) · [Verify it yourself](#verify-it-yourself) · [When not to use this](#when-not-to-use-this) · [FAQ](#faq) · [Repository layout](#repository-layout) · [Contributing](#contributing) · [Roadmap](#roadmap)
+**26 organ identities · 84.7% of tool-schema tokens gated · 200+ offline assertions · MIT**
 
 </div>
 
@@ -61,6 +40,35 @@ number drifts. The scope of the number is stated wherever it appears — tool-sc
 
 ⭐ **[Star the repository](https://github.com/1420079678-ctrl/agent-body/stargazers)** if you want it to keep tracking
 the host closely — it is a one-person project and the stars are how the next DSH user finds it.
+
+---
+
+<div align="center">
+
+[![Organs](https://img.shields.io/badge/catalog-26%20organs-ff69b4)](#organ-catalog)
+[![Plugins](https://img.shields.io/badge/plugins-24%20in%20this%20repo-blue)](#organ-catalog)
+[![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20tool--schema%20tokens%20gated-2ecc71)](#token-economy)
+[![Benchmark](https://img.shields.io/badge/benchmark-reproducible%20in--repo-blueviolet)](benchmarks/results/REPORT.md)
+[![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
+[![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#quick-start)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/1420079678-ctrl/agent-body?style=flat&logo=github&label=%E2%AD%90%20stars)](https://github.com/1420079678-ctrl/agent-body/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/1420079678-ctrl/agent-body)](https://github.com/1420079678-ctrl/agent-body/issues)
+[![dshfind](https://dshfind.com/api/badge/1420079678-ctrl/agent-body)](https://dshfind.com/en/plugins/1420079678-ctrl/agent-body)
+
+[Architecture](ARCHITECTURE.md) · [Organ Catalog](catalog/organs.json) · [Benchmark](benchmarks/results/REPORT.md) · [Roadmap](ROADMAP.md) · [**中文文档**](README.zh-CN.md)
+
+[Official DSH discussion — **Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) · the channel the harness `CONTRIBUTING` points plugin authors to
+
+**v0.1.1** · MIT · Windows-first (Node 22.19 / 24) · **26 organ identities in the catalog, realised by 24 plugin packages in this repository** · [release notes](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
+
+[![Live vitals replay — recorded from a real install](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
+
+▶ **[Open the live demo](https://1420079678-ctrl.github.io/agent-body/)** — a recorded replay of a real install: the heartbeat, the organs, the pulse stream, the healing ledger and the token gate, with nothing installed. It is generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`), not retyped from screenshots.
+
+**Contents** · [Where it's listed](#where-its-listed) · [Install in one line](#install-in-one-line) · [Why this exists](#why-this-exists) · [What makes it different](#what-makes-it-different) · [The five biological layers](#the-five-biological-layers) · [Architecture at a glance](#architecture-at-a-glance) · [Organ catalog](#organ-catalog) · [Quick start](#quick-start) · [Write your own organ](#write-your-own-organ) · [Verify it yourself](#verify-it-yourself) · [When not to use this](#when-not-to-use-this) · [FAQ](#faq) · [Repository layout](#repository-layout) · [Contributing](#contributing) · [Roadmap](#roadmap)
+
+</div>
 
 ---
 
