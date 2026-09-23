@@ -28,7 +28,7 @@ npm run check    # the gate CI runs: constant tables, catalog, tests, benchmark 
 **Already running DeepSeek Harness?** One command installs the body kernel, the memory organ and the context engine:
 
 ```powershell
-$rel = "https://github.com/1420079678-ctrl/agent-body/releases/latest/download"
+$rel = "https://cdn.jsdelivr.net/gh/1420079678-ctrl/agent-body@v0.1.2/dist"
 dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.1.tgz" "$rel/dsh-external-dsh-cortex-0.1.1.tgz" "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
 ```
 
@@ -91,6 +91,38 @@ It is also the subject of the harness's official showcase thread —
 
 ## Install in one line
 
+### Recommended — served from this repository over jsDelivr
+
+No `github.com` release redirect involved: these files live in `dist/` in this repo and are served by a CDN with
+mainland nodes.
+
+```powershell
+$rel = "https://cdn.jsdelivr.net/gh/1420079678-ctrl/agent-body@v0.1.2/dist"
+dsh plugin --profile web add `
+  "$rel/dsh-external-dsh-organism-0.1.1.tgz" `
+  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" `
+  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
+```
+
+```bash
+rel=https://cdn.jsdelivr.net/gh/1420079678-ctrl/agent-body@v0.1.2/dist
+dsh plugin --profile web add \
+  "$rel/dsh-external-dsh-organism-0.1.1.tgz" \
+  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" \
+  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
+```
+
+`dsh plugin` forwards its arguments to `pnpm add` inside the profile, so several packages install in one command.
+Restart the harness afterwards; `body_status` should list the organs. The other organs in the catalog are one tarball
+each — see [Quick start](#quick-start).
+
+<details>
+<summary>Alternative — GitHub release assets</summary>
+
+Use this only if jsDelivr is unreachable for you. Note that these URLs 302-redirect to
+`objects.githubusercontent.com`, a hop that is blocked on some networks — if your install fails with
+`fetch failed` and `downloaded 0`, that hop is why.
+
 ```powershell
 $rel = "https://github.com/1420079678-ctrl/agent-body/releases/latest/download"
 dsh plugin --profile web add `
@@ -99,23 +131,28 @@ dsh plugin --profile web add `
   "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
 ```
 
-```bash
-rel=https://github.com/1420079678-ctrl/agent-body/releases/latest/download
-dsh plugin --profile web add \
-  "$rel/dsh-external-dsh-organism-0.1.1.tgz" \
-  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" \
-  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
+</details>
+
+<details>
+<summary>Alternative — fully offline</summary>
+
+Every tarball built by CI is committed under [`dist/`](dist/). Download them from any machine that can reach this
+repository, copy them over, then install from local paths:
+
+```powershell
+dsh plugin --profile web add .\dsh-external-dsh-organism-0.1.1.tgz .\dsh-external-dsh-cortex-0.1.1.tgz
 ```
 
-`dsh plugin` forwards its arguments to `pnpm add` inside the profile, so several packages install in one command. Restart
-the harness afterwards; `body_status` should list the organs. The other organs in the catalog are one tarball each — see
-[Quick start](#quick-start).
+</details>
 
-**Why release tarballs and not `npm install`.** These packages are **not published to the npm registry** — the names
-above return 404 from `registry.npmjs.org` today, and the commands here never pretend otherwise. The published channel
-is the GitHub release: the URLs are versioned assets, the tarballs are built by CI, and `releases/latest/download/`
-always points at the newest release, so the command does not rot when a version is bumped. Publishing to npm is tracked
-as an open issue; until it lands, the tarball URL is the supported install path.
+**Why not `npm install` yet.** These packages are **not published to the npm registry** — the names above return 404
+from `registry.npmjs.org` today, and nothing here pretends otherwise. That is the next step, and it is tracked as an
+open issue: once they are on npm, `dsh plugin add @dsh-external/dsh-organism` becomes a single short command. Until
+then the supported paths are the two above.
+
+**Why the tarballs also live in `dist/`.** They were previously only GitHub release assets. An install of the release
+URL failed on a user's machine with `fetch failed` / `downloaded 0` while dependency resolution succeeded — the
+download hop, not the packages, was the problem. Committing them here lets a CDN serve them without that hop.
 
 ## Start with the evidence
 
