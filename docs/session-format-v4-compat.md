@@ -1,74 +1,82 @@
 # Session format V4 compatibility — plugin-authored message sources
 
-A compatibility note for anyone running these organs on a harness newer than the one they were written
-against. It is short because the finding is binary: there is **no source literal that both generations
-accept**.
+How this repository's organs inject messages, and what changes when the harness moves from session
+format V3 to V4. The short version: **one literal is portable for ordinary injected messages, and the
+only slot that is not portable is `system/message`.**
 
-## What changed
+> Correction. An earlier revision of this note claimed that *no* literal satisfies both generations. That
+> was drawn from the V3 source kind whitelist without checking which code path reads it. It is wrong for
+> every slot except `system/message` — see "What was confirmed on a running host" below.
 
-Injected messages carry a `source` object that identifies their producer. The two format generations
-disagree about its `kind`:
+## The two rules
 
-| Generation | Rule | Consequence |
+| Generation | Rule | Where |
 | --- | --- | --- |
-| V3 (`packages/session/session-format-v2-to-v3/src/payload.ts`) | `SOURCE_KINDS` is a closed set that **includes** `'plugin'`; anything else throws `SessionFormatUnsupportedMigrationError('cannot safely transform unclassified message source')` | `{ kind: 'plugin', plugin: 'X' }` is the only accepted form |
-| V4 (`packages/session/session-format-v3-to-v4/src/message-sources.ts`) | a message source must be an object with a non-empty string `kind` and **`kind !== 'plugin'`** | `{ kind: 'plugin:X' }` is the accepted form; the retired wrapper is refused on both read and write |
+| V3 migration | `SOURCE_KINDS` is a closed set that **contains** `'plugin'`; anything else throws `cannot safely transform unclassified message source` | `packages/session/session-format-v2-to-v3/src/payload.ts` — `assertSource()`, called from `assertEvent(event, 2)` |
+| V3 native write/read | structural validation plus canonical payload checks; message sources are **not** classified | same file — `assertV3StructuralRow()` / `assertCanonicalPayload()`, reached from `assertV3Event()` |
+| V4 | a message source must be an object with a non-empty string `kind` and **`kind !== 'plugin'`** | `packages/session/session-format-v3-to-v4/src/message-sources.ts` |
 
-So `{ kind: 'plugin', plugin: 'X' }` is required by V3 and refused by V4, while `{ kind: 'plugin:X' }`
-is required by V4 and refused by V3. A producer that hardcodes either literal cannot serve both.
+`assertEvent()` returns before the source checks when the version is 3, so the whitelist governs
+**migration**, not native V3 traffic. What does keep a source requirement on the native V3 path is
+`system/message`: `assertSystem()` demands `kind === 'plugin'` and a non-empty `plugin` string.
 
-`producerKind()` in `session-format-v3-to-v4/src/sources.ts` defines the intended mapping — third-party
-producers become `plugin:<their name>` and drop the `plugin` field; the 24 names in
-`RELEASED_SAME_NAME_PRODUCERS` keep their own name; `@deepseek-ai/dsh-system-prompt` under
-`role: 'system'` becomes `system-prompt`. V3 *rows* are rewritten by the migration, which is why old
-sessions still open and why this only surfaces on a write under V4.
+V4's `producerKind()` defines the intended target shape — third-party producers become `plugin:<their
+name>` and drop the `plugin` field, the 24 names in `RELEASED_SAME_NAME_PRODUCERS` keep their own name,
+and `@deepseek-ai/dsh-system-prompt` under `role: 'system'` becomes `system-prompt`. V3 *rows* are
+rewritten by the migration on read, so history keeps opening either way.
 
-## How it reaches a user
+## What was confirmed on a running host
 
-A third-party organ that injects a message through `agent.inject` / `agent.steer`, or returns one from a
-step hook, supplies the `source` itself. On a V4 host that write is refused and the turn fails with:
+Not inferred from the source — asked of the harness's own current encoder (`encodeCurrentEvent`, the
+function the JSONL writer calls) on a 0.1.6 install:
 
+| Slot | `{ kind: 'plugin', plugin: 'x' }` | `{ kind: 'plugin:x' }` |
+| --- | --- | --- |
+| `user/message` | accepted | **accepted** |
+| `agent/inbox/spliced` | accepted | **accepted** |
+| `system/message` | accepted | **refused** — `system message requires plugin source` |
+
+Reproduce with `node scripts/probe-source-kind.mjs <path-to-the-installed-format-catalog>`; it builds
+each event and calls the encoder, so the answer comes from the host rather than from a reading of it.
+
+## What this repository does about it
+
+The organs inject through `createUserMessage(...)`, `subagents.followup(...)` and `captain.send(...)` —
+all ordinary message slots, none of them `system/message`. They now emit the portable form directly, so
+they are correct on a V3 host today and already in the shape V4 requires:
+
+```ts
+source: { kind: 'plugin:@dsh-external/dsh-organism' }
 ```
-本轮运行失败  format v4 message requires a producer-owned source kind
-```
 
-The organs in this repository construct `{ kind: 'plugin', plugin: '@dsh-external/dsh-<organ>' }`
-(`dsh-organism`, `dsh-cortex`, `dsh-agent-teams`), so they are in the affected population. Nothing is
-broken on the generation they were written for — the point of this note is that the upgrade changes the
-contract, and no in-repo change can satisfy both generations without knowing which one is hosting.
+The identity string is carried through unchanged, so the value is exactly what the V3→V4 migration would
+have produced for an existing row. `system/message` remains the one slot where a producer has to know
+which generation is hosting; no organ here writes that slot.
 
-## Diagnosis
+## Diagnosis for anyone hitting the V4 refusal
 
 Session logs are **multi-frame** zstd (`session.jsonl.zstd`, magic `28 B5 2F FD`). A single-frame
-decompressor reads only the first frame, so "not found" from a plain text search is meaningless. Walk
+decompressor returns only the first frame, so "not found" from a plain text search means nothing. Walk
 the frames instead:
 
 ```powershell
 node scripts/scan-session-sources.mjs --dir "$env:DSH_HOME/sessions"
 ```
 
-It reports how many messages still carry the retired wrapper and groups them by producer — the name it
-prints is the component that has to migrate. On a real 0.1.6 install, one session (12,019 rows) yielded
-85 such messages across five first-party producers, all of which the migration converts on read.
+It counts messages still carrying the retired wrapper and groups them by producer — the name it prints
+is the component that has to migrate. On a real 0.1.6 install, one 12,019-row session yielded 85 such
+messages across five producers; the migration converts all of them on read, which is why old sessions
+open while a *write* under V4 fails.
 
-## Options
-
-1. **Stay on the generation you target.** The retired literal remains correct for V3 hosts, and the
-   migration converts history, so nothing needs to change until the host moves.
-2. **Emit the version-correct source.** Write `plugin:<organ>` on a V4 host and the wrapper on a V3
-   host. This needs the host to expose its session format version — the source is hand-built today, and
-   the composed result is what `producerKind()` would have produced anyway.
-3. **Ask the host for it.** The durable fix is a producer-side helper (a session-scoped
-   `injectedSource(name)`) so producers stop hardcoding either literal. Until one exists, every
-   out-of-tree injector has to branch on the version or accept breakage on upgrade.
-
-Reported upstream with source citations and the measurement above:
+Reported upstream, including the correction:
 <https://github.com/deepseek-ai/deepseek-harness/discussions/7556>.
 
 ---
 
-**中文摘要**：会话格式 V3 的白名单只接受 `{kind:'plugin', plugin:'X'}`，V4 又明确拒绝 `'plugin'`、要求
-`plugin:<名字>`——两个版本**没有共同可用的字面量**。本仓库的器官（organism / cortex / agent-teams）都按 V3
-写法注入消息，因此在 V4 宿主上写入会被拒、报「本轮运行失败」。诊断用
+**中文摘要**：本仓库的器官通过 `createUserMessage` / `followup` / `send` 注入消息，都是普通消息槽位，现在
+统一写 `{ kind: 'plugin:<包名>' }`——这一形式在 **V3 与 V4 上都可用**（在本机 0.1.6 上用宿主自己的
+`encodeCurrentEvent` 实测：`user/message` 与 `agent/inbox/spliced` 接受，`system/message` 拒绝）。V3 那份
+`SOURCE_KINDS` 白名单只管 **v2→v3 迁移**，不校验原生 v3 写入。唯一不通用的是 `system/message`（V3 强制要求
+旧包装），本仓库没有任何器官写这个槽位。诊断脚本：
 `node scripts/scan-session-sources.mjs --dir "$env:DSH_HOME/sessions"`（会话日志是多帧 zstd，普通文本搜索
-读到的是假的「没有」）。已带源码出处与实测数据上报官方，见上方链接。
+读到的是假的「没有」）。

@@ -162,7 +162,7 @@ export async function deliverToMember(
 ): Promise<boolean> {
   try {
     await ctx.subagents.followup(captain, brandedSessionId(childId), [{ type: 'text', text }], {
-      source: { kind: 'plugin', plugin: 'dsh-agent-teams' },
+      source: { kind: 'plugin:dsh-agent-teams' },
       signal,
     })
     return true

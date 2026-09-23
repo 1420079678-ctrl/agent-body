@@ -710,7 +710,7 @@ export function apply(ctx, config) {
                 return {
                     ...decision,
                     messages: [...(Array.isArray(decision.messages) ? decision.messages : []), createUserMessage({
-                            source: { kind: 'plugin', plugin: '@dsh-external/dsh-cortex' },
+                            source: { kind: 'plugin:@dsh-external/dsh-cortex' },
                             content: [{ type: 'text', text: lines.join('\n') }],
                         })],
                 };

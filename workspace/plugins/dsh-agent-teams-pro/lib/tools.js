@@ -498,7 +498,7 @@ export function registerAgentTeamsTools(ctx, config) {
                 if (captain !== undefined && !isCaptain) {
                     captain.send(createUserMessage({
                         content: [{ type: 'text', text: `AgentTeams message from member ${from}:\n\n${args.content}` }],
-                        source: { kind: 'plugin', plugin: 'dsh-agent-teams' },
+                        source: { kind: 'plugin:dsh-agent-teams' },
                     }), 'next-turn', true);
                     delivered = 'wake';
                 }

@@ -1887,7 +1887,7 @@ export function apply(ctx: Context, config: Config): void {
                 return `${t.label}${track}${t.alive ? '' : '(离线→已代偿)'}${t.capability.length ? ` → ${t.capability.slice(0, 2).join('/')}` : ''}`
               }).join('；')
               extras.push(createUserMessage({
-                source: { kind: 'plugin', plugin: '@dsh-external/dsh-organism' },
+                source: { kind: 'plugin:@dsh-external/dsh-organism' },
                 content: [{ type: 'text', text: line }],
               }))
             }
@@ -1905,7 +1905,7 @@ export function apply(ctx: Context, config: Config): void {
               '（body_status 看全体征，body_map 看解剖图；运行指令见 body_law）',
             ].join('\n')
             extras.push(createUserMessage({
-              source: { kind: 'plugin', plugin: '@dsh-external/dsh-organism' },
+              source: { kind: 'plugin:@dsh-external/dsh-organism' },
               content: [{ type: 'text', text: brief }],
             }))
           }

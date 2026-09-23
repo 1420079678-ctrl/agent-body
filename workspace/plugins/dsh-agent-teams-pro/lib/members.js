@@ -124,7 +124,7 @@ export async function spawnMember(ctx, config, captain, team, member, stateDir, 
 export async function deliverToMember(ctx, captain, childId, text, signal) {
     try {
         await ctx.subagents.followup(captain, brandedSessionId(childId), [{ type: 'text', text }], {
-            source: { kind: 'plugin', plugin: 'dsh-agent-teams' },
+            source: { kind: 'plugin:dsh-agent-teams' },
             signal,
         });
         return true;
