@@ -193,8 +193,17 @@ console.log(
 )
 console.log(C.dim('  被截断/未路由都能经 body_call 取回，但会多一跳——所以它们被单独计数，不混进「省了多少」。'))
 
+// 器官数从目录读，不写死在这里——写死的数字迟早和 catalog 漂移（真实发生过：注释写 25、目录里是 26）
+const organCount = (() => {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(repoRoot, 'catalog', 'organs.json'), 'utf8')).stats.organs
+  } catch {
+    return undefined
+  }
+})()
+
 console.log(`\n${C.bold('接下来看哪')}`)
 console.log(`  ${C.cyan('benchmarks/results/REPORT.md')}　　${C.dim('完整的基准报告与缺口明细')}`)
-console.log(`  ${C.cyan('catalog/organs.json')}　　　　　　${C.dim('25 个器官的分级与权限声明')}`)
+console.log(`  ${C.cyan('catalog/organs.json')}　　　　　　${C.dim(`${organCount === undefined ? '' : `${organCount} 个`}器官的分级与权限声明`)}`)
 console.log(`  ${C.cyan('npm run check')}　　　　　　　　　${C.dim('提交前总闸：常量表 + 目录 + 测试 + 基准')}`)
 console.log('')
