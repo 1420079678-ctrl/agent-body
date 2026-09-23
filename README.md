@@ -91,10 +91,35 @@ It is also the subject of the harness's official showcase thread —
 
 ## Install in one line
 
-### Recommended — served from this repository over jsDelivr
+Two supported paths — start with the first, switch to the second if your network blocks `github.com`.
 
-No `github.com` release redirect involved: these files live in `dist/` in this repo and are served by a CDN with
-mainland nodes.
+### Path 1 — GitHub release assets
+
+Versioned assets built by CI. `releases/latest/download/` always resolves to the newest release, so this command does
+not need editing when a version is bumped.
+
+```powershell
+$rel = "https://github.com/1420079678-ctrl/agent-body/releases/latest/download"
+dsh plugin --profile web add `
+  "$rel/dsh-external-dsh-organism-0.1.1.tgz" `
+  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" `
+  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
+```
+
+```bash
+rel=https://github.com/1420079678-ctrl/agent-body/releases/latest/download
+dsh plugin --profile web add \
+  "$rel/dsh-external-dsh-organism-0.1.1.tgz" \
+  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" \
+  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
+```
+
+### Path 2 — served from this repository over jsDelivr
+
+The same tarballs, committed under [`dist/`](dist/) and served by a CDN with mainland nodes. Reach for this when Path 1
+hangs: those URLs 302-redirect to `objects.githubusercontent.com`, a hop that is blocked on some networks. The symptom
+is `fetch failed` with `downloaded 0` **while dependency resolution succeeds** — the download hop is the problem, not
+the packages.
 
 ```powershell
 $rel = "https://cdn.jsdelivr.net/gh/1420079678-ctrl/agent-body@v0.1.2/dist"
@@ -117,42 +142,23 @@ Restart the harness afterwards; `body_status` should list the organs. The other 
 each — see [Quick start](#quick-start).
 
 <details>
-<summary>Alternative — GitHub release assets</summary>
+<summary>If neither path works — install fully offline</summary>
 
-Use this only if jsDelivr is unreachable for you. Note that these URLs 302-redirect to
-`objects.githubusercontent.com`, a hop that is blocked on some networks — if your install fails with
-`fetch failed` and `downloaded 0`, that hop is why.
-
-```powershell
-$rel = "https://github.com/1420079678-ctrl/agent-body/releases/latest/download"
-dsh plugin --profile web add `
-  "$rel/dsh-external-dsh-organism-0.1.1.tgz" `
-  "$rel/dsh-external-dsh-cortex-0.1.1.tgz" `
-  "$rel/dsh-external-dsh-zero-residence-0.1.0.tgz"
-```
-
-</details>
-
-<details>
-<summary>Alternative — fully offline</summary>
-
-Every tarball built by CI is committed under [`dist/`](dist/). Download them from any machine that can reach this
-repository, copy them over, then install from local paths:
+Every tarball built by CI is committed under [`dist/`](dist/), and
+[`dist/agent-body-offline-kit.zip`](dist/agent-body-offline-kit.zip) bundles all ten plus a one-command installer.
+Download it from any machine that can reach this repository, copy it across, then:
 
 ```powershell
-dsh plugin --profile web add .\dsh-external-dsh-organism-0.1.1.tgz .\dsh-external-dsh-cortex-0.1.1.tgz
+Expand-Archive .\agent-body-offline-kit.zip -DestinationPath .
+pwsh .\install-agent-body.ps1
 ```
 
 </details>
 
 **Why not `npm install` yet.** These packages are **not published to the npm registry** — the names above return 404
-from `registry.npmjs.org` today, and nothing here pretends otherwise. That is the next step, and it is tracked as an
+from `registry.npmjs.org` today, and nothing here pretends otherwise. That is the next step and it is tracked as an
 open issue: once they are on npm, `dsh plugin add @dsh-external/dsh-organism` becomes a single short command. Until
-then the supported paths are the two above.
-
-**Why the tarballs also live in `dist/`.** They were previously only GitHub release assets. An install of the release
-URL failed on a user's machine with `fetch failed` / `downloaded 0` while dependency resolution succeeded — the
-download hop, not the packages, was the problem. Committing them here lets a CDN serve them without that hop.
+then, the paths above are the supported ones.
 
 ## Start with the evidence
 
