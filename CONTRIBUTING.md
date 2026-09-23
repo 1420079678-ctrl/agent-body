@@ -1,7 +1,9 @@
 # Contributing to DeepSeek Harness — Agent-Body
 
-Thanks for looking. This repository is a **complete harness install** (host source + data home +
-workspace + organs), not a library, so the workflow is a little different from a normal npm package.
+Thanks for looking. This repository is the **organ layer** for DeepSeek Harness — the organs plus a
+dependency-free core (`packages/organ-core`, `packages/organ-sdk`) — not the host itself and not a library. The README
+carries the install path (one command, prebuilt tarballs) and a [recorded replay of a real
+install](https://1420079678-ctrl.github.io/agent-body/) that runs without installing anything.
 
 ## Before you start
 
@@ -43,6 +45,10 @@ PRs sent back:
 - **`handles` names the failure causes you own.** Everything else goes to the kernel's remedy table. `arg_error` is
   never auto-retried — that is a caller bug, and retrying amplifies it.
 - **A reflex must be deterministic** (no `eval`, no model call) and must not be able to trigger itself.
+- **Inject messages with a producer-owned source kind.** `injectedSource('@you/your-organ')` returns
+  `{ kind: 'plugin:@you/your-organ' }` — the one shape both session-format generations accept. The retired
+  `{ kind: 'plugin', plugin: … }` wrapper stops a whole turn on a format-V4 host
+  ([measurements](docs/session-format-v4-compat.md)), and `npm run check:sources` fails the build if it returns.
 
 See [`docs/host-adapter.md`](docs/host-adapter.md) before touching anything host-specific. Organs must not import a
 host SDK directly — that boundary is the project's main risk mitigation.
@@ -60,8 +66,13 @@ workspace/plugins/dsh-<name>/
 └─ README.md             what the organ senses, what it does, how to verify it
 ```
 
-**The regression is not optional.** A new organ without an offline regression will be asked for one
-in review — it is the only way the project can claim "measurably better with use" without lying.
+**A new organ ships with an offline regression** — it is the only way the project can claim "measurably better with
+use" without lying, and a PR without one will be asked for it in review.
+
+The current tree is behind that standard: `npm run verify` reports an offline regression for **5 of 23 organs** and
+prints the ones missing one. Adding those is the most useful contribution available right now — `dsh-pentagi` and
+`dsh-vuln-remediator` are the easiest starting points, since their core paths are deterministic functions that need no
+host runtime.
 
 ### Adding an organ
 
@@ -75,7 +86,7 @@ in review — it is the only way the project can claim "measurably better with u
 
 ### Changing an organ contract
 
-The organ contract (sense → reflex → effect → homeostasis) is shared by all 25 curated organs. Changing how
+The organ contract (sense → reflex → effect → homeostasis) is shared by all 26 catalogued organs. Changing how
 organs are discovered, how impulses are routed, or how wounds close affects every organ at once —
 open an issue first, and update `ARCHITECTURE.md` in the same pull request.
 

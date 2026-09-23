@@ -5,6 +5,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **A recorded replay of a real install, open to anyone** — <https://1420079678-ctrl.github.io/agent-body/>. The page is
+  generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`) rather than retyped: organ call
+  counts, the pulse stream, the healing ledger (198 healed / 0 open / 99%) and the reproducible token gate, with the
+  figures' provenance stated on the page itself.
+- **A one-command install in the README's first screen** — `dsh plugin` forwards its arguments to `pnpm add` inside the
+  profile, so the body kernel, the memory organ and zero-residence install together. The clone-and-replay path stays,
+  as the contributor route.
+- **`CONTRIBUTING.md` corrected** — it described this repository as a complete harness install; it is the organ layer.
+  It also now carries the producer-owned message-source rule and states the real regression coverage (5 of 23).
+
 ### Fixed
 
 - **Message sources now use the one shape both session-format generations accept** — injected messages carry
