@@ -8,7 +8,7 @@
 
 **An organ‑based plugin layer for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): organs, nerve impulses, a heartbeat, reflex arcs, long‑term memory, and closed‑loop self‑healing.**
 
-**26 organ identities · 84.7% of tool-schema tokens gated · 200+ offline assertions · MIT**
+**26 organ identities · 84.7% of tool-schema tokens gated cold-start · 200+ offline assertions · MIT**
 
 </div>
 
@@ -25,6 +25,16 @@ npm run demo     # command → impulse → dispatch → execute → attribute �
 npm run check    # the gate CI runs: constant tables, catalog, tests, benchmark — all offline
 ```
 
+Here is that same body while it runs. Not a mockup — the frames are real tool output from a real install, rendered by
+`tools/make-demo-gif.py` out of [`docs/demo/captured.json`](docs/demo/captured.json), which records the raw output. The
+renderer **refuses to draw a number that is not in that file**:
+
+<a href="docs/demo/captured.json"><img src="docs/demo/agent-body.gif" alt="Live output: 43 organs, 332/332 capabilities claimed, 20/20 reflexes armed, 82,126 to 33,348 tool-schema tokens, 98% heal rate, and one Chinese command that innervates 4 organs with zero model calls" width="100%"></a>
+
+Read it left to right: anatomy and vitals, then the token ledger, then a **Chinese command becoming a nerve impulse**
+that innervates four organs — each told *which* capability to fire, with zero model calls spent deciding the route —
+and finally a wound attributed to `arg_error`, prescribed **do-not-retry**, and closed by re-check.
+
 **Already running DeepSeek Harness?** One command installs the body kernel, the memory organ and the context engine:
 
 ```powershell
@@ -33,8 +43,10 @@ dsh plugin --profile web add "$rel/dsh-external-dsh-organism-0.1.1.tgz" "$rel/ds
 ```
 
 Restart the harness and `body_status` lists the organs. **The claim you can check for yourself:** the tool-schema block
-of the prompt drops **84.7%** across 48 representative commands, and `npm run bench:check` fails the build if that
-number drifts. The scope of the number is stated wherever it appears — tool-schema tokens only, not the whole prompt.
+of the prompt drops **84.7%** on a cold start across 48 representative commands, and `npm run bench:check` fails the
+build if that number drifts. The scope is stated wherever the number appears — tool-schema tokens only, not the whole
+prompt. On a body that has been running for a while it is **58%** (127 of 332 visible); that figure, and why it
+declines, are in [Token economy](#token-economy).
 
 ⭐ **[Star the repository](https://github.com/1420079678-ctrl/agent-body/stargazers)** if you want it to keep tracking
 the host closely — it is a one-person project and the stars are how the next DSH user finds it.
@@ -45,7 +57,7 @@ the host closely — it is a one-person project and the stars are how the next D
 
 [![Organs](https://img.shields.io/badge/catalog-26%20organs-ff69b4)](#organ-catalog)
 [![Plugins](https://img.shields.io/badge/plugins-24%20in%20this%20repo-blue)](#organ-catalog)
-[![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20tool--schema%20tokens%20gated-2ecc71)](#token-economy)
+[![Schema gating](https://img.shields.io/badge/schema%20gating-84.7%25%20cold--start%20%7C%2058%25%20live-2ecc71)](#token-economy)
 [![Benchmark](https://img.shields.io/badge/benchmark-reproducible%20in--repo-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/offline%20regressions-200%2B%20assertions-informational)](#verify-it-yourself)
 [![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#quick-start)
@@ -165,7 +177,7 @@ then, the paths above are the supported ones.
 | If you want… | Open… | What you can check |
 | --- | --- | --- |
 | to see it run without installing anything | `npm run demo` | a real command → impulse → dispatch → execute → attribute → reflex chain, offline, no key |
-| fewer tool schemas in your prompt | [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) · `npm run bench:check` | **84.71%** of tool-schema tokens gated away on 48 commands (cold-start, reproducible); 74.25% with history |
+| fewer tool schemas in your prompt | [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) · `npm run bench:check` | **84.71%** of tool-schema tokens gated away on 48 commands (cold-start, reproducible); 58% with history (2026-09-25) |
 | failures to stop repeating | `body_heal` | attribution before retry: `tool_missing` / `arg_error` / `permission` / `timeout` / `network` / `not_found` / `conflict`. Measured on a development install: **198 healed, 0 open, 99% heal rate** |
 | to know the system is still alive | `body_status` · `body_heart` | 43 organs, **332/332** capabilities claimed, beat #1121, architecture integrity 6/6 *(development install)* |
 | to lose an organ without losing the body | `body_organ action=integrity` | the six core pieces depend on no single organ; `body_call` compensates from the organ that overlaps most |
@@ -305,7 +317,7 @@ Tool schemas are shown on demand, gated by what the current turn is actually abo
 **Scope of every number below: the tool‑schema block of the prompt only** — the `name` + `description` +
 JSON‑schema of every tool definition. Not the system prompt, not conversation history, not tool results.
 
-> **84.7% of tool‑schema tokens gated away** — `55,154` → `8,433` on average across 48 representative commands
+> **84.7% of tool‑schema tokens gated away (cold-start scope)** — `55,154` → `8,433` on average across 48 representative commands
 > (median 85.7%, worst case 75.2%), out of **256 capability definitions**. Everything else stays one `body_call` away.
 
 That number is produced by the benchmark in this repository and is **reproducible on your machine**:
@@ -319,9 +331,18 @@ Two honest caveats, because the headline is easy to over‑read:
 
 - **Cold‑start scope.** The figure above assumes the body has no recent activity — only the current command decides
   what is revealed. On a body with real run history, recently‑used and high‑trust organs stay hot, the visible set
-  grows, and savings drop: **74%** in the live snapshot committed at `benchmarks/corpus/trace-live-gate.json`
-  (64 of 256 capabilities visible). Historical README revisions quoted **82%** — a single live snapshot between the
-  two. Both extremes are real; always quote the scope with the number.
+  grows, and savings drop. Measured live figures, newest first:
+
+  | Measured | Basis | Visible | Tool-schema tokens saved |
+  | --- | --- | --- | --- |
+  | 2026‑09‑25 | this install (332 capabilities, real run history) | 127 / 332 | **58%** |
+  | 2026‑09‑11 | snapshot committed at `benchmarks/corpus/trace-live-gate.json` | 64 / 256 | 74% |
+  | earlier | live snapshot quoted by historical README revisions | — | 82% |
+
+  Both extremes are real; **always quote the scope with the number**. The cold‑start figure is the reproducible one —
+  run it yourself. The live figure is what you will actually see on a body that has been running for a while, and it
+  declines as the body grows, because more history keeps more organs hot. That worsening number is published here on
+  purpose: you would find it the moment you ran `body_tokens` yourself.
 - **10 of 48 commands need a second hop.** A per‑organ cap of 10 capabilities means large organs (the attack organ
   has 49) get truncated, and a few intents do not route to the organ that owns the capability. Those resolve through
   `body_call`, but they are **not** free. The benchmark classifies every miss as *bug* / *capped* / *unrouted* and
@@ -633,7 +654,9 @@ harness has mounted, including ones this catalog does not name. Every number is 
 **How is the 84.7% token figure measured?** It is tool-schema tokens only — the sum of every tool definition's name,
 description and parameters against what the first turn can see after gating — on 48 representative commands, in the
 cold-start setting (intent decides the visible set, no local history). That is the lower bound and the only
-independently reproducible setting. The live setting, with history, measures 74.25%. Both are in
+independently reproducible setting. The live setting, with history, **declines as the body grows**: measured
+**58%** on 2026‑09‑25 (127 of 332 visible), 74.25% on the 2026‑09‑11 snapshot. The whole series, and why it declines,
+is in [Token economy](#token-economy); the raw data is in
 [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md).
 
 ---

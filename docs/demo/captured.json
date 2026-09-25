@@ -1,0 +1,90 @@
+{
+  "_what": "Facts captured from a real DeepSeek Harness session on this machine. Every number in the demo GIF is read from this file — tools/make-demo-gif.py refuses to draw a number that is not here.",
+  "_capture": {
+    "date": "2026-09-25",
+    "host": "Windows 11, Node v24.19.0, DSH web profile, 43 organs installed",
+    "commands": [
+      "body_status",
+      "body_heart action=status",
+      "body_tokens action=summary",
+      "body_heal action=list",
+      "body_nerve action=send text=\"抓取这个站点的正文并抽取结构化数据，然后写成一份 Markdown 报告\"",
+      "node benchmarks/run.mjs  (cold-start gating benchmark, see benchmarks/results/REPORT.md)"
+    ]
+  },
+
+  "body": {
+    "organs": 43,
+    "organs_declared": 29,
+    "organs_autonomic": 14,
+    "capabilities": 332,
+    "capabilities_claimed": 332,
+    "tissues": 9,
+    "reflexes_total": 20,
+    "reflexes_enabled": 20,
+    "synapses": 7,
+    "learned_reflexes": 15,
+    "skills": 1,
+    "avg_trust": 0.791,
+    "heart_beats": 1569,
+    "heart_rate_per_min": 4.0,
+    "blood_pressure": "4/0",
+    "innervations": 33
+  },
+
+  "healing": {
+    "wounds_total": 200,
+    "wounds_open": 0,
+    "wounds_healed": 196,
+    "wounds_chronic": 4,
+    "healing_rate_pct": 98,
+    "auto_treatments": 269,
+    "example_attribution": "arg_error",
+    "example_prescription": "DO NOT RETRY",
+    "example_note": "old implementation auto-retried wrong arguments; that amplifies the mistake"
+  },
+
+  "tokens": {
+    "tools_full": 332,
+    "tools_gated": 127,
+    "tokens_full": 80126,
+    "tokens_gated": 33348,
+    "saved_pct_this_session": 58,
+    "floor_tokens_always_on": 6586,
+    "per_organ_cap": 10
+  },
+
+  "benchmark_cold_start": {
+    "_why": "Reproducible lower bound: intent-only gating, no run history. 48 tasks.",
+    "tools": 256,
+    "visible_mean": 36,
+    "tasks": 48,
+    "saved_pct_mean": 84.71,
+    "saved_pct_median": 85.67,
+    "saved_pct_worst": 75.20,
+    "worst_task": "T20 把逆向链的结论交接给攻击链",
+    "bugs": 0,
+    "unrouted": 0,
+    "capped": 6,
+    "params": "topK=4 x perOrganCap=10"
+  },
+
+  "live_snapshot_2026_09_11": {
+    "_why": "Same machine, before the organ count grew. Quoted to show the drift.",
+    "tools": 256,
+    "visible": 64,
+    "saved_pct": 74.25
+  },
+
+  "innervation_example": {
+    "command": "抓取这个站点的正文并抽取结构化数据，然后写成一份 Markdown 报告",
+    "organs_innervated": 4,
+    "organs": [
+      { "name": "眼睛（网页抓取）", "en": "eyes · web crawl", "why": "命令词「抓取」", "capability": "webcrawl" },
+      { "name": "手工艺（文档产物）", "en": "craft · documents", "why": "命令词「报告」「Markdown」", "capability": "_dsh_external_dsh_office_docs_pdf" },
+      { "name": "动态视觉（真实浏览器）", "en": "dynamic vision · browser", "why": "命令词「抓取」", "capability": "_dsh_external_dsh_browser_ultimate_open" },
+      { "name": "手（文件与命令）", "en": "hands · files & shell", "why": "命令词「写」", "capability": "write" }
+    ],
+    "model_calls_to_route": 0
+  }
+}

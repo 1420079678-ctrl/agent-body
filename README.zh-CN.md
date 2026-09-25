@@ -10,7 +10,7 @@
 
 [![Organs](https://img.shields.io/badge/catalog-26%20个器官-ff69b4)](#器官目录)
 [![Plugins](https://img.shields.io/badge/插件-本仓库%2023%20个-blue)](#器官目录)
-[![Schema gating](https://img.shields.io/badge/schema%20gating-门控掉%2084.7%25%20tool--schema%20token-2ecc71)](#token-经济)
+[![Schema gating](https://img.shields.io/badge/schema%20gating-冷启动%2084.7%25%20%7C%20活体%2058%25-2ecc71)](#token-经济)
 [![Benchmark](https://img.shields.io/badge/benchmark-仓库内可复现-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/离线回归-200%2B%20断言-informational)](#自己验证)
 [![Node](https://img.shields.io/badge/node-22.19%20%7C%2024-339933)](#快速开始)
@@ -24,6 +24,14 @@
 [官方 DSH 讨论区 · **Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) · 官方 `CONTRIBUTING` 指定给插件作者的展示通道
 
 **v0.1.1** · MIT · Windows 优先（Node 22.19 / 24） · **目录内 26 个器官，由本仓库 23 个插件包实现** · [发布说明](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
+
+<a href="docs/demo/captured.json"><img src="docs/demo/agent-body.gif" alt="真机实测输出：43 个器官 · 332/332 能力被认领 · 20/20 反射弧就绪 · 80126 → 33348 tool schema token · 愈合率 98% · 一条中文命令支配 4 个器官且零模型调用" width="100%"></a>
+
+上面这具身体正在运行——**不是示意图**。每一帧都是真机的工具输出，由 `tools/make-demo-gif.py` 从
+[`docs/demo/captured.json`](docs/demo/captured.json) 渲染而来，该文件记录的是原始输出。
+渲染器**拒绝画出任何不在这份文件里的数字**。
+
+从左到右读：解剖与体征 → token 账本 → **一句中文命令变成神经冲动**、支配 4 个器官并逐一告知该开哪项能力（决定路由花掉的模型调用：0）→ 一个被归因为 `arg_error` 的伤口，处方是**不重试**，最终经复检闭合。
 
 [![实时体征回放——来自一台真实安装](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
 
@@ -59,7 +67,7 @@ dsh plugin --profile web add \
 | 你想要… | 打开… | 能核到什么 |
 | --- | --- | --- |
 | 不装任何东西先看它跑 | `npm run demo` | 一条真实的「命令 → 冲动 → 支配 → 执行 → 归因 → 反射」链路，离线、无需 key |
-| 让提示词少塞点工具表 | [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) · `npm run bench:check` | 48 条命令上门控掉 **84.71%** 的 tool schema token（冷启动，可复现）；带历史口径 74.25% |
+| 让提示词少塞点工具表 | [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md) · `npm run bench:check` | 48 条命令上门控掉 **84.71%** 的 tool schema token（冷启动，可复现）；带历史口径 58%（2026-09-25 实装，332 项） |
 | 让同一个失败别再犯第二遍 | `body_heal` | 重试之前先归因：`tool_missing` / `arg_error` / `permission` / `timeout` / `network` / `not_found` / `conflict`。开发机实测：**愈合 198、未愈 0、愈合率 99%** |
 | 确认系统还活着 | `body_status` · `body_heart` | 43 个器官、**332/332** 项能力已被认领、第 1121 跳、架构完整性 6/6（*开发机实测*） |
 | 拆掉一个器官身体还在 | `body_organ action=integrity` | 核心六件套不依赖任何单个器官；`body_call` 由能力重叠最高的器官代偿 |
@@ -169,7 +177,7 @@ ctx.on('organism/heartbeat', (blood) => { /* 你的器官从此有了脉搏 */ }
 **下面每个数字的口径：只算提示词里的 tool schema 块**——每个工具定义的 `name` + `description` + JSON schema。
 不含系统提示正文、不含对话历史、不含工具结果。
 
-> **84.7% 的 tool schema token 被门控掉**——48 条代表性命令上，`55,154` → 均值 `8,433`
+> **84.7% 的 tool schema token 被门控掉（冷启动口径）**——48 条代表性命令上，`55,154` → 均值 `8,433`
 > （中位 85.7%，最差 75.2%），分母是 **256 项能力定义**。其余能力离一次 `body_call` 之遥。
 
 这个数字由仓库内的基准产出，**在你机器上可复现**：
@@ -182,10 +190,17 @@ npm run bench:check    # 与提交的基线不一致就非零退出
 两点如实说明，因为这个标题数字很容易被过度解读：
 
 - **冷启动口径**。上面的数字假设身体没有近期活动——只由当前命令决定显影哪些能力。带真实运行历史时，
-  近期用过的器官与高信任器官会保持「热」，显影集变大、省下的变少：本仓库固化在
-  `benchmarks/corpus/trace-live-gate.json` 的活体快照是 **74%**（256 项中显影 64 项）。
-  历史版本的 README 写过 **82%**——那是介于两者之间的某一次活体快照。两个极端都真实，
-  **引用时必须带上口径**。
+  近期用过的器官与高信任器官会保持「热」，显影集变大、省下的变少。以下是实测的活体数字，由新到旧：
+
+  | 实测日期 | 口径 | 显影 | 省下 |
+  | --- | --- | --- | --- |
+  | 2026‑09‑25 | 本机实装（332 项能力，带真实运行历史） | 127 / 332 | **58%** |
+  | 2026‑09‑11 | 固化在 `benchmarks/corpus/trace-live-gate.json` 的快照 | 64 / 256 | 74% |
+  | 更早 | 历史版本 README 引用过的某次活体快照 | — | 82% |
+
+  两个极端都真实，**引用时必须带上口径**。冷启动那个数是可复现的那个——你可以自己跑。活体那个数才是
+  身体跑久之后你实际会看到的，而它会随身体长大而下降：历史越多，保持「热」的器官越多。**这个「变差」的
+  数字我们是故意登出来的**——因为你只要自己跑一次 `body_tokens` 就会看见它。
 - **48 条命令里有 10 条需要第二次跳转**。单器官显影上限 10 项，意味着大型器官（攻击链有 49 项）会被截断，
   另有一些意图没有路由到拥有该能力的器官。这些都能经 `body_call` 取回，但**不是免费的**。
   基准把每一条漏显影归因为 *缺陷 / 被截断 / 未路由* 三类并逐条列在
@@ -457,7 +472,7 @@ npm run verify           # 结构、JSON、链接、密钥卫生
 
 **为什么不同地方写的器官数量不一样？** 因为是两件事：**目录里 26 个器官身份**（解剖模型，跨 8 个系统），以及**本仓库 23 个插件包**去实现它们。两处出现时都做了标注。
 
-**84.7% 这个 token 数字怎么测的？** 只算 **tool schema token**（全部工具定义的 name + description + parameters 之和，对比门控后首轮可见的那部分），在 48 条代表性命令上，采用**冷启动**口径（只由当前命令意图决定显影集，不掺本机历史）——这是收益下界，也是唯一可被别人独立复现的口径。带运行历史的活体口径是 74.25%。两者都在 [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md)。
+**84.7% 这个 token 数字怎么测的？** 只算 **tool schema token**（全部工具定义的 name + description + parameters 之和，对比门控后首轮可见的那部分），在 48 条代表性命令上，采用**冷启动**口径（只由当前命令意图决定显影集，不掺本机历史）——这是收益下界，也是唯一可被别人独立复现的口径。带运行历史的活体口径会随身体长大而下降：2026‑09‑25 实测 **58%**（332 项中显影 127 项），2026‑09‑11 的快照是 74.25%。完整口径序列见 [Token 经济](#token-经济)，原始数据在 [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md)。
 
 ---
 
