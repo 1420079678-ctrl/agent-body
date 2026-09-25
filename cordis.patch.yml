@@ -1,0 +1,22 @@
+# Agent-Body is a monorepo: every organ is its own package under workspace/plugins/.
+#
+# This root bundle exists so the repository itself is installable as ONE spec:
+#
+#   dsh plugin --profile web add github:1420079678-ctrl/agent-body
+#
+# The entries below address the sub-packages with relative paths, which the profile
+# composer resolves inside this package — so no organ has to be published to a
+# registry first, and the install stays a single command.
+#
+# Each organ keeps its own package-level cordis.patch.yml for people who install a
+# single tarball instead; the rows here are the same ids, so a profile that has both
+# resolves to one row per organ rather than two.
+- insert:
+    - id: dsh-organism
+      name: './workspace/plugins/dsh-organism/lib/index.js'
+
+    - id: dsh-cortex
+      name: './workspace/plugins/dsh-cortex/lib/index.js'
+
+    - id: dsh-zero-residence
+      name: './workspace/plugins/dsh-zero-residence/lib/index.js'
