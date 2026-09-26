@@ -72,9 +72,9 @@ the host closely — it is a one-person project and the stars are how the next D
 
 **v0.1.1** · MIT · Windows-first (Node 22.19 / 24) · **26 organ identities in the catalog, realised by 24 plugin packages in this repository** · [release notes](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
 
-[![Live vitals replay — recorded from a real install](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/)
+[![Live vitals replay — recorded from a real install](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/en.html)
 
-▶ **[Open the live demo](https://1420079678-ctrl.github.io/agent-body/)** — a recorded replay of a real install: the heartbeat, the organs, the pulse stream, the healing ledger and the token gate, with nothing installed. It is generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`), not retyped from screenshots.
+▶ **[Open the live demo](https://1420079678-ctrl.github.io/agent-body/en.html)** ([中文](https://1420079678-ctrl.github.io/agent-body/)) — a recorded replay of a real install: the heartbeat, the organs, the pulse stream, the healing ledger and the token gate, with nothing installed. It is generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`), not retyped from screenshots.
 
 **Contents** · [Where it's listed](#where-its-listed) · [Install in one line](#install-in-one-line) · [Why this exists](#why-this-exists) · [What makes it different](#what-makes-it-different) · [The five biological layers](#the-five-biological-layers) · [Architecture at a glance](#architecture-at-a-glance) · [Organ catalog](#organ-catalog) · [Quick start](#quick-start) · [Write your own organ](#write-your-own-organ) · [Verify it yourself](#verify-it-yourself) · [When not to use this](#when-not-to-use-this) · [FAQ](#faq) · [Repository layout](#repository-layout) · [Contributing](#contributing) · [Roadmap](#roadmap)
 

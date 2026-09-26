@@ -3,7 +3,7 @@
 Thanks for looking. This repository is the **organ layer** for DeepSeek Harness — the organs plus a
 dependency-free core (`packages/organ-core`, `packages/organ-sdk`) — not the host itself and not a library. The README
 carries the install path (one command, prebuilt tarballs) and a [recorded replay of a real
-install](https://1420079678-ctrl.github.io/agent-body/) that runs without installing anything.
+install](https://1420079678-ctrl.github.io/agent-body/en.html) that runs without installing anything.
 
 ## Looking for something to do?
 
@@ -139,7 +139,7 @@ directory placement, badge insertion. The answer is no, and it is written down h
 - **Badges and links in the README describe things the project actually uses or is listed in** - the CI gate, the
   directory listing it appears in - and are added as ordinary reviewed commits, never as part of a paid arrangement.
 - **The promotion work is done here, in the open**: the directory listing, the awesome-list submissions, the
-  [recorded replay page](https://1420079678-ctrl.github.io/agent-body/) and the official showcase thread are all in
+  [recorded replay page](https://1420079678-ctrl.github.io/agent-body/en.html) and the official showcase thread are all in
   this repository's history. If a service cannot explain what it does that we cannot, it is not needed.
 
 If you are the sender of such an offer and you want a serious answer, come with the specifics: who you are, the
