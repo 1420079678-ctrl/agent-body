@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en" translate="no">
 <head>
 <meta charset="utf-8">
+<!-- GENERATED from docs/index.html by scripts/make-demo-en.mjs — edit the Chinese page, then re-run the script. -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agent-Body — 器官化插件层的实时体征回放</title>
-<meta name="description" content="Agent-Body 把插件系统当一具有机体：心跳、器官、零模型调用的反射弧、睡眠期记忆巩固、闭环自愈。本页是一台真实安装的体征回放。">
+<title>Agent-Body — a live vitals replay of an organ-based plugin layer</title>
+<meta name="description" content="Agent-Body treats a plugin system as an organism: a heartbeat, organs, reflex arcs that fire with zero model calls, sleep-time memory consolidation and closed-loop self-healing. This page is a replay of the vitals from a real install.">
+<meta name="google" content="notranslate">
 <style>
  :root{--bg:#0b0e13;--panel:#121721;--line:#1e2634;--ink:#e8edf5;--dim:#8b97a8;--accent:#39d98a;--bad:#f0506e;--pulse:#5b8def;--warn:#f5a524}
  *{box-sizing:border-box}
@@ -43,48 +45,48 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Agent-Body <span class="heart">&#10084;</span><span class="lang"><b>中文</b> · <a href="en.html">English</a></span></h1>
-  <p class="sub">把插件系统当一具有机体：器官、神经冲动、心跳、零模型调用的反射弧、睡眠期记忆巩固、闭环自愈。<br>
-  本页是<strong>一台真实开发机的体征回放</strong>——数字是被测出来的，动画重放的是真实事件流。采样 <code>2026-09-23 19:40</code>。</p>
+  <h1>Agent-Body <span class="heart">&#10084;</span><span class="lang"><a href="index.html">&#20013;&#25991;</a> · <b>English</b></span></h1>
+  <p class="sub">A plugin system treated as an organism: organs, nerve impulses, a heartbeat, reflex arcs that fire with zero model calls, sleep-time memory consolidation, closed-loop self-healing.<br>
+  This page is <strong>a replay of the vitals from a real development machine</strong> — the numbers were measured, and the animation replays the real event stream. Sampled <code>2026-09-23 19:40</code>.</p>
   <div>
-    <span class="tag">43 个器官</span><span class="tag">332/332 项能力已被认领</span>
-    <span class="tag">19/19 条反射弧</span><span class="tag">架构完整性 6/6</span>
+    <span class="tag">43 organs</span><span class="tag">332/332 capabilities claimed</span>
+    <span class="tag">19/19 reflex arcs</span><span class="tag">architecture integrity 6/6</span>
   </div>
 
-  <h2>一行安装</h2>
+  <h2>One-line install</h2>
   <div class="install">dsh plugin --profile web add \
   https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-organism-0.1.1.tgz \
   https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-cortex-0.1.1.tgz \
   https://github.com/1420079678-ctrl/agent-body/releases/download/v0.1.1/dsh-external-dsh-zero-residence-0.1.0.tgz</div>
-  <p class="note">dsh plugin 把参数转发给 profile 里的 <code>pnpm add</code>，所以一条命令装三个器官 ·
+  <p class="note"><code>dsh plugin</code> forwards its arguments to <code>pnpm add</code> inside the profile, so one command installs three organs ·
   <a href="https://github.com/1420079678-ctrl/agent-body">github.com/1420079678-ctrl/agent-body</a></p>
 
-  <h2>生命体征</h2>
+  <h2>Vitals</h2>
   <div class="grid g4" id="stats"></div>
 
-  <h2>身体 · 按调用量排序的器官（体征里有记录的每一个）</h2>
+  <h2>Body · organs by call volume (every one the vitals have a record for)</h2>
   <div class="card"><div class="orgs" id="body"></div>
-  <p class="note">每格数字是该器官的累计调用次数。数据来自 <code>vitals.json</code>；鼠标悬停看成功/失败与疲劳度。</p></div>
+  <p class="note">The number in each cell is that organ's cumulative call count, read from <code>vitals.json</code>. Hover for successes / failures and fatigue.</p></div>
 
-  <h2>本体感觉 · 真实脉冲流</h2>
+  <h2>Proprioception · the real pulse stream</h2>
   <div class="card"><div id="stream"></div></div>
-  <p class="note">来自 <code>pulse.jsonl</code> 的真实记录，循环回放：💓 心跳 · 🫁 肺循环 · ✓ 器官调用 · 🧩 器官变化。心跳每跳把当前指令、体征与稳态告警打成血包泵向全身。</p>
+  <p class="note">Real records from <code>pulse.jsonl</code>, replayed on a loop: 💓 heartbeat · 🫁 pulmonary circulation · ✓ organ call · 🧩 organ change. Each heartbeat packages the current directives, the vitals and any homeostasis warnings into a blood packet and pumps it system-wide. <b>Pulse lines are verbatim tool output and stay in the language the machine ran in</b> — that is what makes them evidence rather than decoration.</p>
 
-  <h2>Token 门控（可复现口径）</h2>
+  <h2>Token gating (reproducible scope)</h2>
   <div class="card">
-    <div class="k">48 条代表性命令 · 冷启动 · 只算 tool schema token</div>
-    <div class="bar" style="margin-top:10px"><i style="width:100%;opacity:.22"></i><span style="color:#cfe3ff">门控前 平均 55,154 tok</span></div>
-    <div class="bar"><i style="width:15.29%"></i><span>门控后 平均 8,433 tok</span></div>
-    <div class="v" style="margin-top:8px">84.71% <small>省下的 tool schema token（带运行历史的活体口径 74.25%）</small></div>
-    <p class="note">基准、冻结语料与 CI 基线都在仓库里；<code>npm run bench:check</code> 在数字偏移时会失败。</p>
+    <div class="k">48 representative commands · cold start · tool-schema tokens only</div>
+    <div class="bar" style="margin-top:10px"><i style="width:100%;opacity:.22"></i><span style="color:#cfe3ff">Ungated: 55,154 tok on average</span></div>
+    <div class="bar"><i style="width:15.29%"></i><span>Gated: 8,433 tok on average</span></div>
+    <div class="v" style="margin-top:8px">84.71% <small>of tool-schema tokens gated away (74.25% on a live install that has run history)</small></div>
+    <p class="note">The benchmark, the frozen corpus and the CI baseline all live in the repository; <code>npm run bench:check</code> fails the build when the number drifts.</p>
   </div>
 
-  <h2>自愈账本与自训练</h2>
+  <h2>The healing ledger and self-training</h2>
   <div class="grid g2" id="learn"></div>
 
   <footer>
-    由真实运行时文件生成：<code>vitals.json</code> · <code>bloodstream.json</code> · <code>pulse.jsonl</code> · <code>snapshot.json</code>（body_status 抓取于 2026-09-23 19:31（本机开发安装）。这些是工具输出里的原值，不是誊写估计。）。
-    不装任何东西也能跑：<code>npm run demo</code> 会跑通同一条「命令 → 冲动 → 支配 → 执行 → 归因 → 反射」链路。MIT · 数据只在本机。
+    Generated from the real runtime files: <code>vitals.json</code> · <code>bloodstream.json</code> · <code>pulse.jsonl</code> · <code>snapshot.json</code> (body_status captured on 2026-09-23 19:31 from a local development install). These are the raw values from tool output, not a transcribed estimate.
+    Nothing needs installing to run it: <code>npm run demo</code> runs the same command → impulse → dispatch → execute → attribute → reflex chain. MIT · the data never leaves this machine.
   </footer>
 </div>
 <script>
@@ -93,24 +95,24 @@ const s = D.stats;
 if (D.stats.recordedAt) { const r = document.querySelector('[data-recorded]'); if (r) r.textContent = D.stats.recordedAt; }
 const k = (a,b,c)=>`<div class="card"><div class="k">${a}</div><div class="v">${b}${c?' <small>'+c+'</small>':''}</div></div>`;
 document.getElementById('stats').innerHTML = [
-  k('心跳', s.beat?('#'+s.beat):'—', (s.heartRate?s.heartRate+'/分 · ':'')+(s.rhythm||'')),
-  k('血压', (s.systolic!=null?s.systolic+'/'+s.diastolic:'—'), '收缩压=活跃器官告警数'),
-  k('器官', s.organsLive||s.organsVitals, (s.organsVitals?s.organsVitals+' 个有体征记录':'')),
-  k('细胞', s.cells||'—', '9 类组织 · 群体普查'),
-  k('伤口', (s.healed!=null?s.healed+' 已愈':'—'), (s.open!=null?s.open+' 未愈 · '+(s.chronic||0)+' 慢性':'')),
-  k('愈合率', (s.healRate!=null?s.healRate+'%':'—'), '复检通过才闭合'),
+  k('Heart', s.beat?('#'+s.beat):'—', (s.heartRate?s.heartRate+' bpm · ':'')+(s.rhythm||'')),
+  k('Blood pressure', (s.systolic!=null?s.systolic+'/'+s.diastolic:'—'), 'systolic = active organs · diastolic = alerts'),
+  k('Organs', s.organsLive||s.organsVitals, (s.organsVitals?s.organsVitals+' with a vitals record':'')),
+  k('Cells', s.cells||'—', '9 tissue classes · population census'),
+  k('Wounds', (s.healed!=null?s.healed+' healed':'—'), (s.open!=null?s.open+' open · '+(s.chronic||0)+' chronic':'')),
+  k('Heal rate', (s.healRate!=null?s.healRate+'%':'—'), 'closes only after a re-check'),
 ].join('');
 
 document.getElementById('body').innerHTML = D.organs.map(o =>
-  `<span class="organ" data-id="${o.id}" title="调用 ${o.calls} · 成功 ${o.ok} · 失败 ${o.fail} · 疲劳 ${(o.fatigue*100).toFixed(1)}%">${o.id}<small>${o.calls}</small></span>`).join('');
+  `<span class="organ" data-id="${o.id}" title="calls ${o.calls} · ok ${o.ok} · fail ${o.fail} · fatigue ${(o.fatigue*100).toFixed(1)}%">${o.id}<small>${o.calls}</small></span>`).join('');
 
 document.getElementById('learn').innerHTML = [
-  `<div class="card"><div class="k">自愈闭环</div><div class="v">${s.healed??'—'} 已愈合 <small>未愈 ${s.open??'—'} · 慢性 ${s.chronic??'—'} · 愈合率 ${s.healRate??'—'}%</small></div>
-   <p class="note">检测 → 确定性归因（tool_missing / arg_error / permission / timeout / network / not_found / conflict）→ 按处方处置 → <b>复检</b>（该器官下次成功才闭合伤口）。
-   <b>arg_error 永不自动重试</b>——重试一个错参数只会放大错误。</p></div>`,
-  `<div class="card"><div class="k">自训练（一直在跑，不用你教）</div><div class="v">${s.synapses??0} 突触 · ${s.reflexesLearned??0} 反射 · ${s.skills??0} 技能 <small>平均信任度 ${s.trust??'—'}</small></div>
-   <p class="note">干成 → 强化「命令类 → 器官」；干砸 → 削弱。同一失败重复 3 次，系统<b>自己写出一条反射弧</b>；跨器官链路全通 → 固化成可重放技能。
-   遗忘同样是故意的：突触按半衰期衰减、零贡献的反射自淘汰、持续失败的技能被忘掉。</p></div>`,
+  `<div class="card"><div class="k">Closed-loop healing</div><div class="v">${s.healed??'—'} healed <small>open ${s.open??'—'} · chronic ${s.chronic??'—'} · heal rate ${s.healRate??'—'}%</small></div>
+   <p class="note">Detect → deterministic attribution (tool_missing / arg_error / permission / timeout / network / not_found / conflict) → prescribed treatment → <b>re-check</b> (the wound closes only when that organ next succeeds).
+   <b>arg_error is never auto-retried</b> — retrying a wrong argument only amplifies the mistake.</p></div>`,
+  `<div class="card"><div class="k">Self-training (always running, nothing you have to teach)</div><div class="v">${s.synapses??0} synapses · ${s.reflexesLearned??0} reflexes · ${s.skills??0} skills <small>avg trust ${s.trust??'—'}</small></div>
+   <p class="note">Succeed → the "command class → organ" route is reinforced; fail → it decays. The same failure three times and the system <b>writes its own reflex arc</b>; a cross-organ chain that completes becomes a replayable skill.
+   Forgetting is equally deliberate: synapses decay on a half-life, reflexes that contribute nothing are retired, skills that keep failing are forgotten.</p></div>`,
 ].join('');
 
 const stream = document.getElementById('stream');

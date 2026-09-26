@@ -58,6 +58,14 @@ jobs:
       - name: Organ catalog is in sync
         run: node catalog/build.mjs --check
 
+      # docs/en.html is generated from docs/index.html, which is the page that carries the runtime
+      # data and the Chinese copy humans edit. A drifted English demo page is worse than none: it is
+      # the link the English README uses to prove the project actually runs. Regenerate with
+      # `node scripts/make-demo-en.mjs`; the script fails loudly if index.html's copy was edited
+      # without updating its rules, rather than shipping a half-translated page.
+      - name: English demo page is in sync
+        run: node scripts/make-demo-en.mjs --check
+
       # Unit tests + the parity suite that compares the ported core against the real kernel.
       # Parity SKIPs (loudly) when no kernel build is on disk; a bare clone has none, so this
       # job does not pretend the port is verified — it just runs what it can.
