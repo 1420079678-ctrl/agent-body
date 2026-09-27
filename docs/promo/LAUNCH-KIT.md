@@ -196,14 +196,17 @@ Re-render the card after a numbers change:
 
 ## 7. Where to post, and what each channel is actually worth
 
-| Channel | Status | Reality check |
+| Channel | Status | Reality check (measured 2026-09-26) |
 | --- | --- | --- |
-| **linux.do** (`开发调优` + `开源推广`) | **One post live, 150 views** | The only channel with measured conversion so far: ~150 views → ~9 stars. Posts go through a review queue. Use the "three payoffs" framing, not the metaphor. |
-| GitHub repo surface | Done | Description now leads with the token number; homepage points at the live demo; social preview set; 20 topics; CI green. |
+| **linux.do** (`开发调优` + `开源推广`) | **One post live, 150 views; a reply is in the review queue** | The only channel with measured conversion so far: ~150 views → ~9 stars. Replies are moderated — the server answers `{"action":"enqueued","success":true,"pending_count":N}` and nothing becomes visible until a moderator acts. Use the "three payoffs" framing, not the metaphor. |
+| GitHub repo surface | Done | Description leads with the token number; homepage points at the live demo; custom social preview set; 20 topics; CI green. |
 | DSH plugin marketplace (`market_search`) | Ranks well | #1 for `organ`, #1 for `heartbeat`, #2 for `self-healing`, #3 for `prompt tokens`. **It ranks by stars — so ranking improves as stars grow.** |
-| awesome-list PRs | Low value | Past PRs merged into small lists produced ~0 traffic. Skip unless trivial. |
+| `awesome-dsh-plugin` directory | **PR opened — [#5966](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5966)** | 16.7k ★, **4,367 entry files**. This account had **2** of them (`dsh-organism`, `dsh-cortex`) while the bundle ships **24** plugin packages. The two added are the other pieces of the same story: `dsh-zero-residence` (context engine, category `session`) and `dsh-anatomy-panel` (vitals panel, category `ui`). The PR is 2 files, +13 −0, `mergeable=True`. The rest are domain-specific tools that belong in their own categories — padding the list with 22 entries from one repository would not help anyone browsing it. |
+| Hacker News | **Account created, cannot submit yet** | Registered `dsh_agent_body` (HN needs only username + password, no email). Submissions are refused today: `Sorry, your account isn't able to submit this site.` Show HNs are separately restricted platform-wide ("massive influx"). Keep the account — it becomes usable once it has karma. |
+| V2EX | Blocked | Registration now needs either ≥10K V2EX Coin via Solana, or a Google signup plus an **invite code**. |
+| Reddit / dev.to / Bluesky | Blocked from this network | Unreachable from this machine; Reddit also needs an account whose karma will not clear a subreddit's gate on day one. |
+| X / Twitter, CSDN, bilibili | Session expired in this browser | Cookies remain but the sessions are dead — log in again if you want to use them. |
 | DSH official Discussions | Low value | It behaves as a ticket queue, not a discovery surface (#7555 got ~1 upvote in 2 days). |
-| Hacker News / V2EX / Reddit | Not attempted | Needs an account. HN signup takes only a username + password (no email); V2EX and Reddit need more. |
 
 **The bottleneck is reach, not conversion.** ~150 linux.do views converted to ~9 stars — that is a healthy
 rate. What's missing is a large enough audience seeing it once.
@@ -220,3 +223,12 @@ rate. What's missing is a large enough audience seeing it once.
   there is genuinely something new; open a new thread only for a new angle, spaced out.
 - **Don't lead with organs.** Two readers already told us it reads as a gimmick. That is the single most
   useful piece of feedback this project has received.
+- **Don't open a PR from a stale fork.** A fork taken on 2026-09-22 was **415 commits behind** by the time it
+  was used, so a PR from its `main` would have *reverted* the upstream `README.md`, `README.zh.md` and two
+  existing entries — the web form literally said `Can't automatically merge`, and syncing the fork failed with
+  **409 Conflict** because both sides had touched the README. The fix that works: read the file list with
+  `GET /repos/<upstream>/compare/main...<fork-owner>:<branch>` **before** opening the PR, and if it lists
+  anything you did not change, create a branch at the upstream head SHA and commit onto that instead:
+  `POST /repos/<fork>/git/refs {ref, sha}` → `PUT /repos/<fork>/contents/<path>`. A correct PR here was
+  2 files, `+13 −0`, `mergeable=true`; the stale-fork version was 6 files including two reverts.
+  **Check the diff file list, not just "the PR was created".**
