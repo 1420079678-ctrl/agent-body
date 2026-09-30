@@ -4,12 +4,14 @@
 
 # Agent‑Body
 
-**DeepSeek Harness 的器官化插件层：器官、神经冲动、心跳、反射弧、长期记忆，以及闭环自愈。**
+**按任务加载工具定义，让 Agent 拥有记忆、反射和失败恢复闭环。**
 
-*这里的插件不是一份工具清单，而是一具活着的身体里的器官。*
+为 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 提供意图路由与上下文门控：一轮任务只暴露相关能力，减少工具清单的固定开销。
+
+**[观看运行记录回放](https://1420079678-ctrl.github.io/agent-body/)** · **[查看基准报告](benchmarks/results/REPORT.md)** · **[安装到 Harness](#一行安装)** · [English](README.md)
 
 [![Organs](https://img.shields.io/badge/catalog-26%20个器官-ff69b4)](#器官目录)
-[![Plugins](https://img.shields.io/badge/插件-本仓库%2023%20个-blue)](#器官目录)
+[![Plugins](https://img.shields.io/badge/插件-本仓库%2024%20个-blue)](#器官目录)
 [![Schema gating](https://img.shields.io/badge/schema%20gating-冷启动%2084.7%25%20%7C%20活体%2058%25-2ecc71)](#token-经济)
 [![Benchmark](https://img.shields.io/badge/benchmark-仓库内可复现-blueviolet)](benchmarks/results/REPORT.md)
 [![Regressions](https://img.shields.io/badge/离线回归-200%2B%20断言-informational)](#自己验证)
@@ -23,9 +25,40 @@
 
 [官方 DSH 讨论区 · **Show Your Plugins!**](https://github.com/deepseek-ai/deepseek-harness/discussions/7555) · 官方 `CONTRIBUTING` 指定给插件作者的展示通道
 
-**v0.1.1** · MIT · Windows 优先（Node 22.19 / 24） · **目录内 26 个器官，由本仓库 23 个插件包实现** · [发布说明](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
+**v0.1.1** · MIT · Windows 优先（Node 22.19 / 24） · **目录内 26 个器官，由本仓库 24 个插件包实现** · [发布说明](https://github.com/1420079678-ctrl/agent-body/releases/tag/v0.1.1)
 
-<a href="docs/demo/captured.json"><img src="docs/demo/agent-body.gif" alt="真机实测输出：43 个器官 · 332/332 能力被认领 · 20/20 反射弧就绪 · 80126 → 33348 tool schema token · 愈合率 98% · 一条中文命令支配 4 个器官且零模型调用" width="100%"></a>
+</div>
+
+## 先用一分钟看懂
+
+Agent 可以装几百个工具，但一轮任务往往只用到其中几个。Agent-Body 根据当前意图显影相关能力，再用记忆、确定性反射和失败归因把执行过程串起来。
+
+| 你遇到的问题 | 项目提供的机制 | 可核对的证据 |
+| --- | --- | --- |
+| 每轮都塞入大批工具定义 | 根据任务意图门控 tool schema | 48 条命令基准：平均 **55,154 → 8,433** 个估算 schema token |
+| 路由工具还要调用一次模型 | 确定性意图规则选择能力 | 离线端到端 demo，路由本身零模型调用 |
+| 失败之后反复盲目重试 | 先归因、再选处方；参数错误不重试 | 下方真实运行记录的恢复链路 |
+| 会话结束后丢掉有用经验 | Cortex 提供持久记忆与空闲整理 | [架构文档](ARCHITECTURE.md)及插件源码 |
+
+**84.71% 是冷启动工具定义的估算 token 减少比例，不是总提示词或费用减少比例。** 基准中任务声明的必需能力有 **86.67% 首轮可见**，另有六项被数量上限截断，需要通过 `body_call` 取回。带运行历史的实装记录为 **58% 门控**。[完整口径与取舍](benchmarks/results/REPORT.md)。
+
+“器官”对应插件，“神经”对应意图路由，“反射”对应确定性事件处理，“心跳”负责协调状态。项目仍处于早期，Windows 优先；正式集成需要 DeepSeek Harness。
+
+### 离线体验，无需 API key
+
+需要 Node 22.19 或 24+，核心 demo 无需 `npm install`：
+
+```bash
+git clone https://github.com/1420079678-ctrl/agent-body
+cd agent-body
+npm run demo
+```
+
+⭐ 如果这个方向对你有用，欢迎 [Star 项目](https://github.com/1420079678-ctrl/agent-body)。也欢迎带复现步骤提交问题，或贡献一个新器官。
+
+<div align="center">
+
+<a href="docs/demo/captured.json"><img src="docs/demo/agent-body.gif" alt="真机实测输出：43 个器官 · 332/332 能力被认领 · 20/20 反射弧就绪 · 82126 → 33348 tool schema token · 愈合率 98% · 一条中文命令支配 4 个器官且零模型调用" width="100%"></a>
 
 上面这具身体正在运行——**不是示意图**。每一帧都是真机的工具输出，由 `tools/make-demo-gif.py` 从
 [`docs/demo/captured.json`](docs/demo/captured.json) 渲染而来，该文件记录的是原始输出。
@@ -470,7 +503,7 @@ npm run verify           # 结构、JSON、链接、密钥卫生
 
 **删掉一个器官会怎样？** 丢的是能力，不是身体：神经总线、心脏泵、主权层、反射引擎、解剖器与冲动传导**不依赖任何一个器官**，`body_call` 会用能力重叠最高的在线器官代偿。`body_organ action=integrity` 会把这个自检打出来。
 
-**为什么不同地方写的器官数量不一样？** 因为是两件事：**目录里 26 个器官身份**（解剖模型，跨 8 个系统），以及**本仓库 23 个插件包**去实现它们。两处出现时都做了标注。
+**为什么不同地方写的器官数量不一样？** 因为是两件事：**目录里 26 个器官身份**（解剖模型，跨 8 个系统），以及**本仓库 24 个插件包**去实现它们。两处出现时都做了标注。
 
 **84.7% 这个 token 数字怎么测的？** 只算 **tool schema token**（全部工具定义的 name + description + parameters 之和，对比门控后首轮可见的那部分），在 48 条代表性命令上，采用**冷启动**口径（只由当前命令意图决定显影集，不掺本机历史）——这是收益下界，也是唯一可被别人独立复现的口径。带运行历史的活体口径会随身体长大而下降：2026‑09‑25 实测 **58%**（332 项中显影 127 项），2026‑09‑11 的快照是 74.25%。完整口径序列见 [Token 经济](#token-经济)，原始数据在 [`benchmarks/results/REPORT.md`](benchmarks/results/REPORT.md)。
 

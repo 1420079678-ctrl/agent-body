@@ -6,15 +6,28 @@
 
 # Agent‑Body
 
-**An organ‑based plugin layer for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): organs, nerve impulses, a heartbeat, reflex arcs, long‑term memory, and closed‑loop self‑healing.**
+**Load the tools your task needs. Give your agent memory, reflexes, and a recovery loop.**
+
+A plugin layer for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) that routes intent to capabilities and keeps unused tool definitions out of the model’s context.
 
 **26 organ identities · 84.7% of tool-schema tokens gated cold-start · 200+ offline assertions · MIT**
 
 </div>
 
-**Agent-Body turns a plugin list into an organism.** Every plugin declares itself an *organ*; a nerve bus routes your
-command to the organs that should handle it, a heartbeat circulates state between them, reflex arcs fire without a
-single model call, and every failure is attributed by cause before anything retries.
+Your agent may have hundreds of tools. A single task usually needs only a few. Agent-Body adds a runtime layer that decides which capabilities to expose, remembers outcomes, and attributes failures before retrying.
+
+**[Watch the recorded demo](https://1420079678-ctrl.github.io/agent-body/en.html)** · **[Read the benchmark](benchmarks/results/REPORT.md)** · **[Install in DeepSeek Harness](#install-in-one-line)** · [中文](README.zh-CN.md)
+
+| Problem | What Agent-Body does | Evidence you can inspect |
+| --- | --- | --- |
+| Tool definitions consume context on every turn | Gates schemas by task intent | 48-command offline benchmark: **55,154 → 8,433 estimated schema tokens on average** |
+| Routing adds another model decision | Routes commands through deterministic intent rules | Offline end-to-end demo; routing needs no model call |
+| Failures trigger unhelpful retries | Classifies causes and selects a remedy; argument errors are not retried | Recovery trace in the recorded runtime output |
+| Useful outcomes disappear between sessions | Adds persistent memory and idle consolidation through the Cortex organ | [Architecture](ARCHITECTURE.md) and included plugin source |
+
+The **84.71% reduction is a cold-start tool-schema estimate**, not a total-prompt or billing claim. The benchmark exposes **86.67% of task-declared required capabilities on the first turn**; six are capped and must be retrieved via `body_call`. A recorded installation with history shows **58% schema gating**. [See the full trade-off and methodology](benchmarks/results/REPORT.md).
+
+The body metaphor maps to concrete components: plugins are organs, intent routing is the nerve bus, deterministic event handlers are reflexes, and the heartbeat coordinates state. **This is an early-stage, Windows-first project.** Host integration requires DeepSeek Harness; the offline core demo below runs independently.
 
 **Try it in 30 seconds — no install, no host, no API key.** The core imports nothing outside Node built-ins, so a fresh
 clone runs the real end-to-end chain offline:
@@ -49,7 +62,7 @@ prompt. On a body that has been running for a while it is **58%** (127 of 332 vi
 declines, are in [Token economy](#token-economy).
 
 ⭐ **[Star the repository](https://github.com/1420079678-ctrl/agent-body/stargazers)** if you want it to keep tracking
-the host closely — it is a one-person project and the stars are how the next DSH user finds it.
+the host closely — it is a one-person project. A star helps other developers discover it; a reproducible issue or a new organ helps improve it.
 
 ---
 
@@ -74,7 +87,7 @@ the host closely — it is a one-person project and the stars are how the next D
 
 [![Live vitals replay — recorded from a real install](docs/preview.png)](https://1420079678-ctrl.github.io/agent-body/en.html)
 
-▶ **[Open the live demo](https://1420079678-ctrl.github.io/agent-body/en.html)** ([中文](https://1420079678-ctrl.github.io/agent-body/)) — a recorded replay of a real install: the heartbeat, the organs, the pulse stream, the healing ledger and the token gate, with nothing installed. It is generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`), not retyped from screenshots.
+▶ **[Open the recorded demo](https://1420079678-ctrl.github.io/agent-body/en.html)** ([中文](https://1420079678-ctrl.github.io/agent-body/)) — a recorded replay of a real install: the heartbeat, the organs, the pulse stream, the healing ledger and the token gate, with nothing installed. It is generated from the runtime files (`vitals.json`, `bloodstream.json`, `pulse.jsonl`), not retyped from screenshots.
 
 **Contents** · [Where it's listed](#where-its-listed) · [Install in one line](#install-in-one-line) · [Why this exists](#why-this-exists) · [What makes it different](#what-makes-it-different) · [The five biological layers](#the-five-biological-layers) · [Architecture at a glance](#architecture-at-a-glance) · [Organ catalog](#organ-catalog) · [Quick start](#quick-start) · [Write your own organ](#write-your-own-organ) · [Verify it yourself](#verify-it-yourself) · [When not to use this](#when-not-to-use-this) · [FAQ](#faq) · [Repository layout](#repository-layout) · [Contributing](#contributing) · [Roadmap](#roadmap)
 
